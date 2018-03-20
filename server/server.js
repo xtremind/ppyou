@@ -42,7 +42,7 @@ function init() {
 function setEventHandlers () {
 	io.on("connection", function(client) {
 		console.log("New player has connected: " + client.id);
-		var player = new Player(client.id) ;
+		var player = new Player(client.id, client) ;
 		playerList.push(player);
 
 		client.on("disconnect", onClientDisconnect);

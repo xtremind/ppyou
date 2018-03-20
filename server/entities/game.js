@@ -44,7 +44,7 @@ Game.prototype = {
 
     start: function(socket) {
         this.status = 'INPROGRESS';
-        this.gameEngine = new GameEngine(socket, this.players);
+        this.gameEngine = new GameEngine(socket, this.id, this.players);
         this.gameEngine.start();
     }
 }

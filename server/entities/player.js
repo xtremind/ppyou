@@ -1,6 +1,7 @@
-var Player = function (id) {
+var Player = function (id, socket) {
     this.id = id;
     this.name = 'player' + id.substring(0,6);
+    this.socket = socket;
 };
 
 Player.prototype = {
@@ -12,6 +13,9 @@ Player.prototype = {
     },
     setName: function(name){
         this.name = name;
+    },
+    getSocket: function() {
+        return this.socket;
     }
 };
 
