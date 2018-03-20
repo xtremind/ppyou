@@ -1,4 +1,5 @@
-var Card = function(rank, suit, value){
+var Card = function(id, rank, suit, value){
+    this.id = id;
     this.rank = rank;
     this.suit = suit;
     this.value = value ? value : 0;

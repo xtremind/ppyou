@@ -30,10 +30,13 @@ GameEngine.prototype = {
 
     startGame : function() {
         // this.socket.addListener("test", function() {console.log("test")});
-        // start a play by distribute the given 
-        // get the gap (verify the gap, then distribute)
-        // start a turn by designate the first player
-        // get the played card (verify card, send played card, manage end turn and end play)
+        // when all players ready, start a play by distribute the given 
+        // wait the gap of players, verify it, then distribute it (send DTO)
+        // when all gap defined, start a turn by designate the first player
+        // wait the played card for the given player, verify it, and update the game (send DTO) 
+        // if all cards are played, end play
+        // else if all players have played, end turn
+        // else send DTO to refresh front
     },
 
     initiateGameScoring : function() {
@@ -47,9 +50,10 @@ GameEngine.prototype = {
     },
 
     initiateDeck : function(nbPlayer) {
+        var id = 0;
         listSuit.forEach(suit => {
             listRank.forEach(rank => {
-                var card = new Card(rank, suit);
+                var card = new Card(id++, rank, suit);
                 if ((nbPlayer < 8 || rank != "2") && (nbPlayer < 7 || rank != "1")){
                     this.deck.push(card);
                 }
@@ -57,7 +61,7 @@ GameEngine.prototype = {
         });
 
         for (rank = 1; rank < 21; rank++) {
-            var card = new Card(''+rank, 'B', rank);
+            var card = new Card(id++, ''+rank, 'B', rank);
             this.deck.push(card);
         }
     },

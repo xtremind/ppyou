@@ -9,8 +9,8 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/xtremind/template-multi.git"
-	  },
-	  "license": "Beerware",
+	},
+	"license": "Beerware",
 	"scripts": {
 		"start": "node server.js"
 	},
