@@ -56,13 +56,16 @@ GameEngine.prototype = {
     },
 
     refreshGame : function() {
+        var that = this;
         console.log("refreshGame");
         // send DTO to refresh front
-		// this.to(this.id).broadcast.emit("refresh game", this.computeDTO());
+        this.players.forEach(function(player) {
+            player.socket.emit("refresh game", that.computeDTO());
+        });
     },
 
     computeDTO : function() {
-        return new gameDTO();
+        return new GameDTO();
     },
 
     initiateGameScoring : function() {
