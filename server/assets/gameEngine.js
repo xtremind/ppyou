@@ -5,8 +5,7 @@ var GameDTO = require("../dto/gameDTO");
 var listRank = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 var listSuit = ['S', 'H', 'D', 'C'];
 
-var GameEngine = function(socket, id, players) {
-    this.socket = socket;
+var GameEngine = function(id, players) {
     this.id = id;
     this.players = players;
     this.deck = [];
@@ -36,18 +35,19 @@ GameEngine.prototype = {
     startGame : function() {
         var that = this;
 
-        //TODO utiliser le soket présent dans l'objet player, car ici, on ne réceptionne que les messages de l'admin
-        this.socket.addListener("test", function() {console.log("test")});
-        // when all players ready, start a play by distribute the given 
-        this.socket.addListener("ready to play", function() {
-            console.log("ready to play");
-            that.playerReady++;
-            if (that.playerReady == that.players.length ) {
-                // action : send the given and wait for the gap
-                //
-                that.refreshGame();
-            }
-        });
+        this.players.forEach(function(player) {
+            //TODO utiliser le soket présent dans l'objet player, car ici, on ne réceptionne que les messages de l'admin
+            player.socket.addListener("test", function() {console.log("test")});
+            // when all players ready, start a play by distribute the given 
+            player.socket.addListener("ready to play", function() {
+                console.log("ready to play");
+                that.playerReady++;
+                if (that.playerReady == that.players.length ) {
+                    // action : send the given and wait for the gap
+                    that.refreshGame();
+                }
+            });
+        })
         // wait the gap of players, verify it, then distribute it (send DTO)
         // when all gap defined, start a turn by designate the first player
         // wait the played card for the given player, verify it, and update the game (send DTO) 
@@ -56,8 +56,9 @@ GameEngine.prototype = {
     },
 
     refreshGame : function() {
+        console.log("refreshGame");
         // send DTO to refresh front
-		this.to(this.id).broadcast.emit("refresh game", this.computeDTO());
+		// this.to(this.id).broadcast.emit("refresh game", this.computeDTO());
     },
 
     computeDTO : function() {

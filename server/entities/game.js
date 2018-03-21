@@ -42,9 +42,9 @@ Game.prototype = {
         return this.status;
     },
 
-    start: function(socket) {
+    start: function() {
         this.status = 'INPROGRESS';
-        this.gameEngine = new GameEngine(socket, this.id, this.players);
+        this.gameEngine = new GameEngine(this.id, this.players);
         this.gameEngine.start();
     }
 }

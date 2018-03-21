@@ -261,7 +261,7 @@ function onStartGame() {
 	var gameId = playersInGame[this.id];
 	var currentGame = gameById(gameId);
 
-	currentGame.start(this);
+	currentGame.start();
 	this.to(gameId).broadcast.emit("start game");
 }
 
