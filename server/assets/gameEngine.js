@@ -20,24 +20,29 @@ var GameEngine = function(id, players) {
     this.startingPlayPlayer ;
     // a turn is finish when all players have played one card
     this.playTurn = new Map();
+
+    this.given = new Map();
     this.currenturnPlayer ;
 }
 
 GameEngine.prototype = {
+
     //should contains the logic of the game
     start : function() {
         this.initiateGameScoring();
         this.initiateDeck(this.players.length);
         this.randomizeDeck();
+        this.distributeGiven(this.players.length);
         this.startGame();
     },  
 
     startGame : function() {
-        var that = this;
-
+        that = this;
         this.players.forEach(function(player) {
             //TODO utiliser le soket présent dans l'objet player, car ici, on ne réceptionne que les messages de l'admin
-            player.socket.addListener("test", function() {console.log("test")});
+            player.socket.addListener("test", function() {
+                console.log("test")
+            });
             // when all players ready, start a play by distribute the given 
             player.socket.addListener("ready to play", function() {
                 console.log("ready to play");
@@ -56,21 +61,23 @@ GameEngine.prototype = {
     },
 
     refreshGame : function() {
-        var that = this;
+        that = this;
         console.log("refreshGame");
         // send DTO to refresh front
-        this.players.forEach(function(player) {
-            player.socket.emit("refresh game", that.computeDTO());
+        that.players.forEach(function(player) {
+            player.socket.emit("refresh game", new GameDTO(that.ScoringGame.get(player.getId()), that.play, that.playTurn, that.given.get(player.getId()) ,'NONE'));
         });
     },
 
     computeDTO : function() {
-        return new GameDTO();
+        that = this;
+        return new GameDTO(that.ScoringGame, that.play, that.playTurn, 'NONE');
     },
 
     initiateGameScoring : function() {
+        that = this;
         this.players.forEach(player => {
-            this.ScoringGame.set(player.id, 0);
+            that.ScoringGame.set(player.id, 0);
         });
     },
 
@@ -97,6 +104,10 @@ GameEngine.prototype = {
 
     randomizeDeck : function(){
         this.deck.sort(function() { return 0.5 - Math.random() });
+    },
+
+    distributeGiven : function(nbplayer){
+        this.given
     }
 }
 

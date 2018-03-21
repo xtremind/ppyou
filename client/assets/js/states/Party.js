@@ -17,11 +17,16 @@ Game.Party.prototype = {
 		this.cardID = graphics.drawInputText(game, {x: 10, y:90}, "cardID to play", styles.playerNameInput);
 		
 		// get all datas to refresh display
-		socket.on("updateGame", function(data){
+		socket.on("refresh game", function(data){
+			console.log("refresh game");
 			// display current score
+        	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, data.scoringGame, styles.titleText);
 			// display card in hand
+        	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
 			// display card played
+        	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
 			// define next action to do
+			that.actionList = data.action;
 		});
 
 		//send signal ready
