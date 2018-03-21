@@ -86,7 +86,12 @@ function onPlayerList(data) {
 		return;
 	}
 
-	this.emit("list players", game.getPlayers());
+	this.emit("list players", game.getPlayers().map(function(player){
+		return {
+					"id": player.getId(),
+					"name": player.getName()
+				}
+	}));
 }
 
 function onLeaveGame(data) {
@@ -107,11 +112,18 @@ function onLeaveGame(data) {
 		
 		//remove the hosted game from the list of games
 		gameList.splice(gameList.indexOf(game), 1);
-		this.broadcast.emit("list games", gameList.filter(checkWaitingGame).slice(0,4));
+		this.broadcast.emit("list games", gameList.filter(checkWaitingGame).slice(0,4).map(function(game){
+			return {"id": game.getId()}
+		}));
 	} else {
 		// force refresh list player
 		game.removePlayer(this.id);
-		this.to(data.id).broadcast.emit("list players", game.getPlayers());
+		this.to(data.id).broadcast.emit("list players", game.getPlayers().map(function(player){
+			return {
+						"id": player.getId(),
+						"name": player.getName()
+					}
+		}));
 	}
 	this.leave(data.id);
 }
@@ -143,12 +155,19 @@ function onClientDisconnect () {
 		gameList.splice(gameList.indexOf(currentGame), 1);
 	
 		//force refresh gamelist to others
-		this.broadcast.emit("list games", gameList.filter(checkWaitingGame).slice(0,4));
+		this.broadcast.emit("list games", gameList.filter(checkWaitingGame).slice(0,4).map(function(game){
+			return {"id": game.getId()}
+		}));
 
 	} else {
 		if (currentGame.getStatus() === 'WAITING'){
 			currentGame.removePlayer(this.id);
-			this.to(gameId).broadcast.emit("list players", currentGame.getPlayers());
+			this.to(gameId).broadcast.emit("list players", currentGame.getPlayers().map(function(player){
+				return {
+							"id": player.getId(),
+							"name": player.getName()
+						}
+			}));
 		}
 	}
 }
@@ -163,7 +182,9 @@ var gameById = function (id) {
 
 function onGameList() {
 	console.log("onGameList");
-	this.emit("list games", gameList.filter(checkWaitingGame).slice(0,4));
+	this.emit("list games", gameList.filter(checkWaitingGame).slice(0,4).map(function(game){
+		return {"id": game.getId()}
+	}));
 }
 
 function checkWaitingGame(game){
@@ -185,8 +206,10 @@ function onHostGame(data) {
 		gameList.push(game);
 
 		this.join(this.id);
-		this.emit("game joined", game);
-		this.broadcast.emit("list games", gameList);
+		this.emit("game joined", {"id": game.getId()});
+		this.broadcast.emit("list games", gameList.map(function(game){
+			return {"id": game.getId()};
+		}));
 	} else {
 		console.log("game already host : " + this.id);
 	}
@@ -214,8 +237,13 @@ function onJoinGame(data) {
 	
 	playersInGame[this.id] = data.id;
 	
-	this.to(data.id).broadcast.emit("list players", game.getPlayers());
-	this.emit("game joined", game);
+	this.to(data.id).broadcast.emit("list players", game.getPlayers().map(function(player){
+		return {
+					"id": player.getId(),
+					"name": player.getName()
+				}
+	}));
+	this.emit("game joined", {"id": game.getId()});
 }
 
 function gameAlreadyHostBy(id){
