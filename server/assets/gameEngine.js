@@ -16,12 +16,10 @@ var GameEngine = function(id, players) {
     // a game is finish after 10 play ? after a cap is over ?
     this.ScoringGame = new Map();
     // a play is finish when all cards are played
-    this.play = new Map();
-    this.startingPlayPlayer ;
-    // a turn is finish when all players have played one card
-    this.playTurn = new Map();
+    this.playedCards = new Map();
+    this.givenCards = new Map();
 
-    this.given = new Map();
+    this.startingPlayPlayer ;
     this.currenturnPlayer ;
 }
 
@@ -65,13 +63,8 @@ GameEngine.prototype = {
         console.log("refreshGame");
         // send DTO to refresh front
         that.players.forEach(function(player) {
-            player.socket.emit("refresh game", new GameDTO(that.ScoringGame.get(player.getId()), that.play, that.playTurn, that.given.get(player.getId()) ,'NONE'));
+            player.socket.emit("refresh game", new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.given.get(player.getId()) ,'NONE'));
         });
-    },
-
-    computeDTO : function() {
-        that = this;
-        return new GameDTO(that.ScoringGame, that.play, that.playTurn, 'NONE');
     },
 
     initiateGameScoring : function() {

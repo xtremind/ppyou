@@ -1,8 +1,7 @@
-var GameDTO = function(scoringGame, playedCards, currentTurn, given, action){
+var GameDTO = function(scoringGame, playedCards, givenCards, action){
   this.scoringGame = scoringGame; //last computed score
   this.playedCards = [];
-  this.currentTurn = [];
-  this.given = [];
+  this.givenCards = [];
   this.action = action;      //action for the player to do
 
   playedCards.forEach((element, key) => {
