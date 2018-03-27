@@ -1,5 +1,6 @@
 var Card = require("../entities/game/card");
 var GameDTO = require("../dto/gameDTO");
+var gameConfig = require("./gameConfiguration.json");
 
 //see https://en.wikipedia.org/wiki/French_playing_cards#Paris_pattern
 var listRank = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
@@ -28,6 +29,7 @@ GameEngine.prototype = {
     //should contains the logic of the game
     start : function() {
         this.initiateGameScoring();
+        //this.loadGameConfiguratiton(this.players.length)
         this.initiateDeck(this.players.length);
         this.randomizeDeck();
         this.distributeGiven(this.players.length);
@@ -63,7 +65,7 @@ GameEngine.prototype = {
         console.log("refreshGame");
         // send DTO to refresh front
         that.players.forEach(function(player) {
-            player.socket.emit("refresh game", new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.given.get(player.getId()) ,'NONE'));
+            //player.socket.emit("refresh game", new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.given.get(player.getId()) ,'NONE'));
         });
     },
 

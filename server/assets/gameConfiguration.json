@@ -1,0 +1,40 @@
+{  
+    "gameConfiguration": [
+        {
+            "nbplayer" : 3,
+            "gap": 5,
+            "turn": [3, 3, 3, 3, 3, 3, 2],
+            "filtering": false
+        },
+        {
+            "nbplayer" : 4,
+            "gap": 5,
+            "turn": [3, 3, 3, 3, 3],
+            "filtering": false
+        },
+        {
+            "nbplayer" : 5,
+            "gap": 4,
+            "turn": [3, 3, 3, 3],
+            "filtering": false
+        },
+        {
+            "nbplayer" : 6,
+            "gap": 3,
+            "turn": [3, 3, 3, 1],
+            "filtering": false
+        },
+        {
+            "nbplayer" : 7,
+            "gap": 3,
+            "turn": [3, 3, 2],
+            "filtering": true
+        },
+        {
+            "nbplayer" : 8,
+            "gap": 3,
+            "turn": [3, 3, 1],
+            "filtering": true
+        } 
+    ]
+}
