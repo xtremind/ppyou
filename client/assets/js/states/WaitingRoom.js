@@ -36,8 +36,8 @@ Game.WaitingRoom.prototype = {
                 that.playersList[player.id] = graphics.drawText(game, {x:that.world.centerX, y:100+70*position++, height:0, width: 0}, player.name, styles.playerNameText);
             });
             
-            // if hoster : button start if more at least 2 players
-            if(game.currentGameId === this.id && data.length > 1){
+            // if hoster : button start if more at least 3 players
+            if(game.currentGameId === this.id && data.length > 2){
                 startButton = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'start game', styles.startText, 'start game', function(){
                     that.resetEvents();
                     socket.emit('start game', {id: game.currentGameId});
