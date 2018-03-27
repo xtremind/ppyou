@@ -34,7 +34,7 @@ function init() {
 	setEventHandlers();
 
 	// Start game loop
-    setInterval(broadcastingLoop, updateInterval);
+    //setInterval(broadcastingLoop, updateInterval);
     
     console.log("Server Initialized");
 }
@@ -263,8 +263,4 @@ function onStartGame() {
 
 	currentGame.start();
 	this.to(gameId).broadcast.emit("start game");
-}
-
-function broadcastingLoop() {
-    //console.log("broadcastingLoop");
 }
