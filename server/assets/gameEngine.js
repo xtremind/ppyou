@@ -1,6 +1,6 @@
 var Card = require("../entities/game/card");
 var GameDTO = require("../dto/gameDTO");
-var gameConfig = require("./gameConfiguration.json");
+var config = require("./gameConfiguration.json");
 
 //see https://en.wikipedia.org/wiki/French_playing_cards#Paris_pattern
 var listRank = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
@@ -10,6 +10,7 @@ var GameEngine = function(id, players) {
     this.id = id;
     this.players = players;
     this.deck = [];
+    this.gameConfig;
 
     //
     this.playerReady = 0;
@@ -29,12 +30,16 @@ GameEngine.prototype = {
     //should contains the logic of the game
     start : function() {
         this.initiateGameScoring();
-        //this.loadGameConfiguratiton(this.players.length)
-        this.initiateDeck(this.players.length);
+        this.loadGameConfiguratiton(this.players.length)
+        this.initiateDeck();
         this.randomizeDeck();
         this.distributeGiven(this.players.length);
         this.startGame();
     },  
+
+    loadGameConfiguratiton : function(nbplayer) {
+        this.gameConfig = config.gameConfiguration.find(function(element){return element.nbplayer === nbplayer});
+    },
 
     startGame : function() {
         that = this;
@@ -80,12 +85,13 @@ GameEngine.prototype = {
         this.ScoringGame.set(playerId, this.ScoringGame.get(playerId) + score);
     },
 
-    initiateDeck : function(nbPlayer) {
+    initiateDeck : function() {
+        var that = this;
         var id = 0;
         listSuit.forEach(suit => {
             listRank.forEach(rank => {
                 var card = new Card(id++, rank, suit);
-                if ((nbPlayer < 8 || rank != "2") && (nbPlayer < 7 || rank != "1")){
+                if ( !that.gameConfig.filtering || rank !== "1"){
                     this.deck.push(card);
                 }
             });
@@ -101,8 +107,8 @@ GameEngine.prototype = {
         this.deck.sort(function() { return 0.5 - Math.random() });
     },
 
-    distributeGiven : function(nbplayer){
-        this.given
+    distributeGiven : function(){
+        this.gameConfig.given;
     }
 }
 
