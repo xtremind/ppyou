@@ -1,5 +1,64 @@
 // Graphics Utility
 var graphics = (function() {
+    
+    var drawCard = function (game, nb, card, callback) {
+        var graphics = game.add.graphics(100, 100);
+        graphics.clear();
+        
+        //id, rank, suit, value
+        var text = "";
+        switch (card.rank) {
+            case "H":
+                cardstyle = styles.redCard;
+                rank = "♥";
+                break;
+            case "D":
+                cardstyle = styles.redCard;
+                rank = "♦";
+                break;
+            case "S":
+                cardstyle = styles.blackCard;
+                rank = "♠";
+                break; 
+            case "C":
+                cardstyle = styles.blackCard;
+                rank = "♣";
+                break;
+            case "B":
+                cardstyle = styles.inverseCard;
+                rank = ""
+                break;
+            default:
+                throw "unknownd card";
+        }
+
+        var cardDefinition = {x:50+50*nb, y:200, height:200, width: 100};
+
+        var buttonRect = drawRoundedRect(graphics, cardDefinition, cardstyle);
+        var cardSuit = drawCardSuit(game, cardDefinition, card.suit, cardstyle);
+        var cardRank = drawCardRank(game, cardDefinition, rank, cardstyle);
+        buttonRect.addChild(cardSuit);
+        buttonRect.addChild(cardRank);
+    
+        return addInputDownToRect(buttonRect, callback);
+    };
+
+    var drawCardSuit = function (game, txtDefinition, label, labelStyle) {
+        var text = game.add.text(txtDefinition.x + 20, txtDefinition.y + 20, label, labelStyle);
+        text.smoothed = true;
+        text.anchor.x = 0.5;
+        text.anchor.y = 0.5;
+        return text;
+    };
+
+    var drawCardRank = function (game, txtDefinition, label, labelStyle) {
+        var text = game.add.text(txtDefinition.x + 20, txtDefinition.y + 40, label, labelStyle);
+        text.smoothed = true;
+        text.anchor.x = 0.5;
+        text.anchor.y = 0.5;
+        return text;
+    };
+
     var drawButtonWithText = function (game, btnDefinition, btnStyle, text, textStyle, btnName, callback) {
         var graphics = game.add.graphics(100, 100);
         
@@ -56,6 +115,7 @@ var graphics = (function() {
 
     //declare public functions
     return {
+        drawCard: drawCard,
         drawButtonWithText: drawButtonWithText,
         drawText: drawText,
         drawInputText: drawInputText,

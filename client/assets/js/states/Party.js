@@ -29,6 +29,12 @@ Game.Party.prototype = {
 			that.actionList = data.action;
 		});
 
+
+        //graphics.drawCard(game, 0, {"id": 1, "rank": "H", "suit": "3", "value": 0}, function(){});
+        //graphics.drawCard(game, 1, {"id": 1, "rank": "S", "suit": "10", "value": 0}, function(){});
+        //graphics.drawCard(game, 2, {"id": 1, "rank": "B", "suit": "20", "value": 20}, function(){});
+
+
 		//send signal ready
 		console.log("ready to play");
 		socket.emit("ready to play", null);
