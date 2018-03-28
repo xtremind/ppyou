@@ -12,10 +12,10 @@ Game.Party.prototype = {
 		// get all datas to refresh display
 		socket.on("refresh game", function(data){
 			console.log("refresh game");
-			// display current score
-			graphics.drawText(game, {x:game.world.centerX, y:600, height:0, width: 0}, data.scoringGame, styles.titleText);
 			// define next action to do
 			that.actionList = data.action;
+			// display current score
+			graphics.drawText(game, {x:game.world.centerX, y:600, height:0, width: 0}, data.scoringGame, styles.titleText);
 			// display card in hand
         	var index = 0;
 			data.givenCards.forEach(card => {

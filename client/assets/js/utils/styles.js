@@ -17,7 +17,7 @@ var styles = (function() {
     var subtitleText = {font: '30px Arial', fill: '#ffffff'};
 
     // card Style
-    var redCard = {radius: 7, bSize: 3, bColor: 0xFF0000, bAlpha: 1, fColor: 0xFFFFFF, fAlpha: 1, font: '25px Arial', fill: '#ff0000'};
+    var redCard = {radius: 7, bSize: 2, bColor: 0xFF0000, bAlpha: 1, fColor: 0xFFFFFF, fAlpha: 1, font: '25px Arial', fill: '#ff0000'};
     var blackCard = {radius: 7, bSize: 2, bColor: 0x000000, bAlpha: 1, fColor: 0xFFFFFF, fAlpha: 1, font: '25px Arial', fill: '#000000'};
     var inverseCard = {radius: 7, bSize: 2, bColor: 0xFFFFFF, bAlpha: 1, fColor: 0x000000, fAlpha: 1, font: '25px Arial', fill: '#ffffff'};
 

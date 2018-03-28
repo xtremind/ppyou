@@ -32,9 +32,6 @@ var graphics = (function() {
                 throw "unknownd card";
         }
 
-        //pour x : game.world.width
-        //pour y : game.world.height
-
         var cardDefinition = {x:cardPosition.x, y:cardPosition.y, height:200, width: 100};
 
         var buttonRect = drawRoundedRect(graphics, cardDefinition, cardstyle);
