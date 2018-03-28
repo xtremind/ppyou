@@ -8,36 +8,29 @@ Game.Party = function (game) {
 Game.Party.prototype = {
 	create : function () {
 		that = this;
-		startButton = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Do', styles.startText, 'test', function(){
-			socket.emit("ready to play", null);
-			//if( that.action != that.actionList[0])
-			//	socket.emit(that.action, that.cardID).value;
-		});
 		
 		// get all datas to refresh display
 		socket.on("refresh game", function(data){
 			console.log("refresh game");
-
-			
-
 			// display current score
-        	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, data.scoringGame, styles.titleText);
+			graphics.drawText(game, {x:game.world.centerX, y:600, height:0, width: 0}, data.scoringGame, styles.titleText);
+			// define next action to do
+			that.actionList = data.action;
 			// display card in hand
         	var index = 0;
 			data.givenCards.forEach(card => {
-				graphics.drawCard(game, index++, card, function(){});
+				var cardPosition = {x:-100+50*index++, y:game.world.height-250}
+				graphics.drawCard(game, cardPosition, card, function(){});
 			});
 			// display card played
-        	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
-			// define next action to do
-			that.actionList = data.action;
+			//graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
+			// display last hand played
+			startButton = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Last hand', styles.startText, 'test', function(){
+				//socket.emit("ready to play", null);
+				//if( that.action != that.actionList[0])
+				//	socket.emit(that.action, that.cardID).value;
+			});
 		});
-
-
-        //graphics.drawCard(game, 0, {"id": 1, "rank": "H", "suit": "3", "value": 0}, function(){});
-        //graphics.drawCard(game, 1, {"id": 1, "rank": "S", "suit": "10", "value": 0}, function(){});
-        //graphics.drawCard(game, 2, {"id": 1, "rank": "B", "suit": "20", "value": 20}, function(){});
-
 
 		//send signal ready
 		console.log("ready to play");

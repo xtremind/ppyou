@@ -1,7 +1,7 @@
 // Graphics Utility
 var graphics = (function() {
     
-    var drawCard = function (game, nb, card, callback) {
+    var drawCard = function (game, cardPosition, card, callback) {
         var graphics = game.add.graphics(100, 100);
         graphics.clear();
         
@@ -35,7 +35,7 @@ var graphics = (function() {
         //pour x : game.world.width
         //pour y : game.world.height
 
-        var cardDefinition = {x:-100+50*nb, y:game.world.height-250, height:200, width: 100};
+        var cardDefinition = {x:cardPosition.x, y:cardPosition.y, height:200, width: 100};
 
         var buttonRect = drawRoundedRect(graphics, cardDefinition, cardstyle);
         var cardSuit = drawCardSuit(game, cardDefinition, suit, cardstyle);
