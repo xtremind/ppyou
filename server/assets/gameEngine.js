@@ -4,7 +4,7 @@ var config = require("./gameConfiguration.json");
 
 //see https://en.wikipedia.org/wiki/French_playing_cards#Paris_pattern
 var listRank = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-var listSuit = ['S', 'H', 'D', 'C'];
+var listSuit = ['S', 'H', 'C', 'D'];
 
 var GameEngine = function(id, players) {
     this.id = id;
@@ -115,10 +115,15 @@ GameEngine.prototype = {
                 if (typeof hand === "undefined") {
                     hand = [];
                 }
-                this.givenCards.set(player.id, hand.concat(this.deck.slice(0, nbCard)));
+                hand = hand.concat(this.deck.slice(0, nbCard));
+                hand.sort(function(a, b){
+                    return a.id - b.id;
+                });
+                this.givenCards.set(player.id, hand);
                 this.deck = this.deck.slice(nbCard, this.deck.lengh);
             });
         });
+
     }
 }
 
