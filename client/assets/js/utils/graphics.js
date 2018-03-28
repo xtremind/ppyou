@@ -7,36 +7,39 @@ var graphics = (function() {
         
         //id, rank, suit, value
         var text = "";
-        switch (card.rank) {
+        switch (card.suit) {
             case "H":
                 cardstyle = styles.redCard;
-                rank = "♥";
+                suit = "♥";
                 break;
             case "D":
                 cardstyle = styles.redCard;
-                rank = "♦";
+                suit = "♦";
                 break;
             case "S":
                 cardstyle = styles.blackCard;
-                rank = "♠";
+                suit = "♠";
                 break; 
             case "C":
                 cardstyle = styles.blackCard;
-                rank = "♣";
+                suit = "♣";
                 break;
             case "B":
                 cardstyle = styles.inverseCard;
-                rank = ""
+                suit = ""
                 break;
             default:
                 throw "unknownd card";
         }
 
-        var cardDefinition = {x:50+50*nb, y:200, height:200, width: 100};
+        //pour x : game.world.width
+        //pour y : game.world.height
+
+        var cardDefinition = {x:-100+50*nb, y:game.world.height-250, height:200, width: 100};
 
         var buttonRect = drawRoundedRect(graphics, cardDefinition, cardstyle);
-        var cardSuit = drawCardSuit(game, cardDefinition, card.suit, cardstyle);
-        var cardRank = drawCardRank(game, cardDefinition, rank, cardstyle);
+        var cardSuit = drawCardSuit(game, cardDefinition, suit, cardstyle);
+        var cardRank = drawCardRank(game, cardDefinition, card.rank, cardstyle);
         buttonRect.addChild(cardSuit);
         buttonRect.addChild(cardRank);
     
@@ -44,7 +47,7 @@ var graphics = (function() {
     };
 
     var drawCardSuit = function (game, txtDefinition, label, labelStyle) {
-        var text = game.add.text(txtDefinition.x + 20, txtDefinition.y + 20, label, labelStyle);
+        var text = game.add.text(txtDefinition.x + 20, txtDefinition.y + 40, label, labelStyle);
         text.smoothed = true;
         text.anchor.x = 0.5;
         text.anchor.y = 0.5;
@@ -52,7 +55,7 @@ var graphics = (function() {
     };
 
     var drawCardRank = function (game, txtDefinition, label, labelStyle) {
-        var text = game.add.text(txtDefinition.x + 20, txtDefinition.y + 40, label, labelStyle);
+        var text = game.add.text(txtDefinition.x + 20, txtDefinition.y + 20, label, labelStyle);
         text.smoothed = true;
         text.anchor.x = 0.5;
         text.anchor.y = 0.5;

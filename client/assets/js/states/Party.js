@@ -9,20 +9,24 @@ Game.Party.prototype = {
 	create : function () {
 		that = this;
 		startButton = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Do', styles.startText, 'test', function(){
-			socket.emit("test", null);
+			socket.emit("ready to play", null);
 			//if( that.action != that.actionList[0])
 			//	socket.emit(that.action, that.cardID).value;
 		});
 		
-		this.cardID = graphics.drawInputText(game, {x: 10, y:90}, "cardID to play", styles.playerNameInput);
-		
 		// get all datas to refresh display
 		socket.on("refresh game", function(data){
 			console.log("refresh game");
+
+			
+
 			// display current score
         	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, data.scoringGame, styles.titleText);
 			// display card in hand
-        	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
+        	var index = 0;
+			data.givenCards.forEach(card => {
+				graphics.drawCard(game, index++, card, function(){});
+			});
 			// display card played
         	graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
 			// define next action to do

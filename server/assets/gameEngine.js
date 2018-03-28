@@ -70,7 +70,8 @@ GameEngine.prototype = {
         console.log("refreshGame");
         // send DTO to refresh front
         that.players.forEach(function(player) {
-            //player.socket.emit("refresh game", new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.given.get(player.getId()) ,'NONE'));
+            player.socket.emit("refresh game", 
+                new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.givenCards.get(player.getId()),'NONE'));
         });
     },
 
