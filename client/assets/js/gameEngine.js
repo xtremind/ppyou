@@ -5,7 +5,7 @@ window.onload = function () {
     socket = io.connect(window.location.href);
 
     //Initialise game variable
-    game = new Phaser.Game(800, 600, Phaser.CANVAS);
+    game = new Phaser.Game(1200, 800, Phaser.CANVAS);
 
     //Declare states
     game.state.add('Boot', Game.Boot);
