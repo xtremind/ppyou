@@ -90,8 +90,8 @@ GameEngine.prototype = {
         var id = 0;
         listSuit.forEach(suit => {
             listRank.forEach(rank => {
-                var card = new Card(id++, rank, suit);
                 if ( !that.gameConfig.filtering || rank !== "1"){
+                    var card = new Card(id++, rank, suit);
                     this.deck.push(card);
                 }
             });
@@ -108,7 +108,16 @@ GameEngine.prototype = {
     },
 
     distributeGiven : function(){
-        this.gameConfig.given;
+        this.gameConfig.given.forEach(nbCard => {
+            this.players.forEach(player => {
+                var hand = this.givenCards.get(player.id)
+                if (typeof hand === "undefined") {
+                    hand = [];
+                }
+                this.givenCards.set(player.id, hand.concat(this.deck.slice(0, nbCard)));
+                this.deck = this.deck.slice(nbCard, this.deck.lengh);
+            });
+        });
     }
 }
 
