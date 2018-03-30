@@ -54,7 +54,7 @@ GameEngine.prototype = {
                 that.playerReady++;
                 if (that.playerReady == that.players.length ) {
                     // action : send the given and wait for the gap
-                    that.refreshGame();
+                    that.refreshData();
                 }
             });
         })
@@ -65,12 +65,12 @@ GameEngine.prototype = {
         // else if all players have played, end turn
     },
 
-    refreshGame : function() {
+    refreshData : function() {
         that = this;
-        console.log("refreshGame");
+        console.log("refreshData");
         // send DTO to refresh front
         that.players.forEach(function(player) {
-            player.socket.emit("refresh game", 
+            player.socket.emit("refresh data", 
                 new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.givenCards.get(player.getId()),'NONE'));
         });
     },
