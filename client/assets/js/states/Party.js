@@ -25,13 +25,21 @@ Game.Party.prototype = {
 
 	refreshDisplay : function (){
 		console.log("refreshDisplay");
+		//clear display
+		game.add.world.children = [];
 		// display current score
 		//graphics.drawText(game, {x:game.world.centerX, y:600, height:0, width: 0}, data.scoringGame, styles.titleText);
 		// display card in hand
 		var index = 0;
 		this.hand.forEach(card => {
-			var cardPosition = {x:-100+50*index++, y:game.world.height-250}
-			graphics.drawCard(game, cardPosition, card, function(){});
+			var cardPosition = {x:-100+50*index++, y:game.world.height-250-(card.selected ?20:0)}
+			graphics.drawCard(game, cardPosition, card, function(){
+				for (var i = 0; i < that.hand.length; i++) {
+					if (that.hand[i].id == card.id)
+						that.hand[i].selected = !that.hand[i].selected;
+				}
+				that.refreshDisplay();
+			});
 		});
 		// display card played
 		//graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);

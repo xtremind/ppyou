@@ -3,6 +3,7 @@ var Card = function(id, rank, suit, value){
     this.rank = rank;
     this.suit = suit;
     this.value = value ? value : 0;
+    this.selected = false;
 }
 
 Card.prototype = {
