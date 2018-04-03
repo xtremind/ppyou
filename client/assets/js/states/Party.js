@@ -34,10 +34,13 @@ Game.Party.prototype = {
 		this.hand.forEach(card => {
 			var cardPosition = {x:-100+50*index++, y:game.world.height-250-(card.selected ?20:0)}
 			graphics.drawCard(game, cardPosition, card, function(){
+				var nbSelected = that.hand.filter(function(card){return card.selected}).length;
+
 				for (var i = 0; i < that.hand.length; i++) {
 					if (that.hand[i].id == card.id)
-						that.hand[i].selected = !that.hand[i].selected;
+						that.hand[i].selected = !that.hand[i].selected && nbSelected < 3;
 				}
+
 				that.refreshDisplay();
 			});
 		});
