@@ -71,19 +71,19 @@ GameEngine.prototype = {
         // send DTO to refresh front
         that.players.forEach(function(player) {
             player.socket.emit("refresh data", 
-                new GameDTO(that.ScoringGame.get(player.getId()), that.playedCards, that.givenCards.get(player.getId()),'NONE'));
+                new GameDTO(that.ScoringGame, that.playedCards, that.givenCards.get(player.getId()),'GAP', that.gameConfig.gap));
         });
     },
 
     initiateGameScoring : function() {
         that = this;
         this.players.forEach(player => {
-            that.ScoringGame.set(player.id, 0);
+            that.ScoringGame.set(player.id, {name: player.name, score: 0});
         });
     },
 
     updateScoringGame: function(playerId, score) {
-        this.ScoringGame.set(playerId, this.ScoringGame.get(playerId) + score);
+        this.ScoringGame.set(playerId, this.ScoringGame.get(playerId).score + score);
     },
 
     initiateDeck : function() {
