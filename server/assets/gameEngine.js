@@ -78,7 +78,7 @@ GameEngine.prototype = {
     initiateGameScoring : function() {
         that = this;
         this.players.forEach(player => {
-            that.ScoringGame.set(player.id, {name: player.name, score: 0});
+            that.ScoringGame.set(player.id, {id: player.id, name: player.name, score: 0});
         });
     },
 

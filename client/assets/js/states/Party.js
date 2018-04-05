@@ -2,6 +2,7 @@ Game.Party = function (game) {
 	this.debug = false;
 	this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
 	this.action = this.actionList[0];
+	this.playedCardPosition= new Map();
 	this.hand=[];
 };
 
@@ -12,7 +13,9 @@ Game.Party.prototype = {
 		// get all datas to refresh display
 		socket.on("refresh data", function(data){
 			console.log("refresh data");
-			// define next action to do
+			if (that.playedCardPosition.size === 0) {
+				that.computePlayedCardPosition(data.scoringGame);
+			}
 			that.action = data.action;
 			that.gap = data.action === "GAP" ? data.gap : 0;
 			that.hand = data.givenCards;
@@ -35,9 +38,8 @@ Game.Party.prototype = {
 		// display current score
 		//graphics.drawText(game, {x:game.world.centerX, y:600, height:0, width: 0}, data.scoringGame, styles.titleText);
 		// display card in hand
-		var index = 0;
 		var posX = (1200 - (100 + (this.hand.length-1) * 50))/2
-		this.hand.forEach(card => {
+		this.hand.forEach((card, index) => {
 			var cardPosition = {x:posX+50*index++, y:game.world.height-(card.selected ?200:150)}
 			graphics.drawCard(game, cardPosition, card, function(){
 
@@ -85,6 +87,15 @@ Game.Party.prototype = {
 			//if( that.action != that.actionList[0])
 			//	socket.emit(that.action, that.cardID).value;
 		//});
+	},
+
+	computePlayedCardPosition : function(players){
+		var playTable = {x0: 550,y0: 200, rayon: 200};
+		var radius = (Math.PI*2) / players.length;
+		players.forEach((player, index) => {
+			var cardPosition = {x:playTable.x0+playTable.rayon*Math.sin(radius*index), y:playTable.y0+playTable.rayon*Math.cos(radius*index)};
+			that.playedCardPosition.set(player.id, cardPosition);
+		});
 	},
 
 	update : function () {
