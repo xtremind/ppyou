@@ -33,10 +33,15 @@ var graphics = (function() {
         }
 
         var cardDefinition = {x:cardPosition.x, y:cardPosition.y, height:200, width: 100};
+        var reverseCardDefinition = Object.assign({x:cardPosition.x+60, y:cardPosition.y+140}, cardstyle);
 
         var buttonRect = drawRoundedRect(graphics, cardDefinition, cardstyle);
         var cardSuit = drawCardSuit(game, cardDefinition, suit, cardstyle);
         var cardRank = drawCardRank(game, cardDefinition, card.rank, cardstyle);
+        var cardReverseSuit = drawCardSuit(game, reverseCardDefinition, card.rank, cardstyle);
+        var cardReverseRank = drawCardRank(game, reverseCardDefinition, suit, cardstyle);
+        cardReverseRank.angle=180;
+        cardReverseSuit.angle=180;
         buttonRect.addChild(cardSuit);
         buttonRect.addChild(cardRank);
     
