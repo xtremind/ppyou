@@ -71,6 +71,13 @@ Game.Party.prototype = {
 			});
 		}
 		// display card played
+		/*var playTable = {x0: 550,y0: 200, rayon: 200};
+		var radius = (Math.PI*2) / this.hand.length;
+		this.hand.forEach((card, index) => {
+			var cardPosition = {x:playTable.x0+playTable.rayon*Math.sin(radius*index), y:playTable.y0+playTable.rayon*Math.cos(radius*index)};
+			graphics.drawCard(game, cardPosition, card, function(){});
+		});*/
+
 		//graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
 		// display last hand played
 		//lastHand = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Last hand', styles.startText, 'test', function(){
