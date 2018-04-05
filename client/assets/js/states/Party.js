@@ -36,8 +36,9 @@ Game.Party.prototype = {
 		//graphics.drawText(game, {x:game.world.centerX, y:600, height:0, width: 0}, data.scoringGame, styles.titleText);
 		// display card in hand
 		var index = 0;
+		var posX = (1200 - (100 + (this.hand.length-1) * 50))/2
 		this.hand.forEach(card => {
-			var cardPosition = {x:-100+50*index++, y:game.world.height-250-(card.selected ?50:0)}
+			var cardPosition = {x:posX+50*index++, y:game.world.height-(card.selected ?200:150)}
 			graphics.drawCard(game, cardPosition, card, function(){
 
 				if (that.action === "GAP"){
@@ -61,7 +62,7 @@ Game.Party.prototype = {
 		});
 		// draw valid gap
 		if (that.action === "GAP" && that.hand.filter(function(card){return card.selected}).length === that.gap){
-			graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Valider ecart', styles.startText, 'test', function(){
+			graphics.drawButtonWithText(game, {x:game.world.centerX-100, y:game.world.height-300, height:50, width: 200}, styles.startButton, 'Valider ecart', styles.startText, 'test', function(){
 				console.log("Send Gap");
 				that.hand.filter(function(card){return card.selected});
 				//socket.emit("ready to play", null);
