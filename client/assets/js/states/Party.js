@@ -2,6 +2,7 @@ Game.Party = function (game) {
 	this.debug = false;
 	this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
 	this.action = this.actionList[0];
+	this.playedCards=[]
 	this.playedCardPosition= new Map();
 	this.hand=[];
 };
@@ -19,6 +20,7 @@ Game.Party.prototype = {
 			that.action = data.action;
 			that.gap = data.action === "GAP" ? data.gap : 0;
 			that.hand = data.givenCards;
+			that.playedCards = data.playedCards;
         	that.refreshDisplay();
 		});
 
@@ -73,11 +75,9 @@ Game.Party.prototype = {
 			});
 		}
 		// display card played
-		/*var playTable = {x0: 550,y0: 200, rayon: 200};
-		var radius = (Math.PI*2) / this.hand.length;
-		this.hand.forEach((card, index) => {
-			var cardPosition = {x:playTable.x0+playTable.rayon*Math.sin(radius*index), y:playTable.y0+playTable.rayon*Math.cos(radius*index)};
-			graphics.drawCard(game, cardPosition, card, function(){});
+		/*
+		this.playedCards.forEach((playedCard, index) => {
+			graphics.drawCard(game, that.playedCardPosition.get(playedCard.playerid), playedCard.card, null);
 		});*/
 
 		//graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
