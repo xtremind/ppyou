@@ -2,7 +2,7 @@
 var graphics = (function() {
     
     var drawCard = function (game, cardPosition, card, callback) {
-        var graphics = game.add.graphics(100, 100);
+        var graphics = game.add.graphics(0, 0);
         graphics.clear();
         
         //id, rank, suit, value
@@ -60,7 +60,7 @@ var graphics = (function() {
     };
 
     var drawButtonWithText = function (game, btnDefinition, btnStyle, text, textStyle, btnName, callback) {
-        var graphics = game.add.graphics(100, 100);
+        var graphics = game.add.graphics(0, 0);
         
         graphics.clear();  
         graphics.name = btnName;
