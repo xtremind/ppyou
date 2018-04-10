@@ -23,13 +23,15 @@ var GameEngine = function(id, players) {
     this.gapCards = new Map();
 
     this.startingPlayPlayer ;
-    this.currenturnPlayer ;
+    this.currentTurnPlayer ;
 }
 
 GameEngine.prototype = {
 
     //should contains the logic of the game
     start : function() {
+        this.startingPlayPlayer = 0;
+        this.currentTurnPlayer = 0;
         this.initiateGameScoring();
         this.loadGameConfiguratiton(this.players.length)
         this.initiateDeck();
@@ -128,9 +130,9 @@ GameEngine.prototype = {
         that = this;
         console.log("refreshData");
         // send DTO to refresh front
-        that.players.forEach(function(player) {
+        that.players.forEach(function(player, index) {
             player.socket.emit("refresh data", 
-                new GameDTO(that.ScoringGame, that.playedCards, that.givenCards.get(player.getId()),action, that.gameConfig.gap));
+                new GameDTO(that.ScoringGame, that.playedCards, that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE" , that.gameConfig.gap));
         });
     },
 
