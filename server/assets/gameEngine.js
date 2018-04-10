@@ -82,11 +82,33 @@ GameEngine.prototype = {
                     }, 5000);
                     that.playerReady=0;
                 }
-            })
+            });
+
+            // wait the played card for the given player, verify it, and update the game (send DTO)
+            player.socket.addListener("play card", function(data){
+                console.log("EVENT :  play card");
+                // verify played card
+                    // the good player sent the card
+                    // the card is in his hand
+                    // the card play is of the same suit, or the player has no card with the same suit
+                // refresh display
+                // wait a little
+                    // if all cards are played, end play
+                        // define winner
+                        // compute score
+                        // display winning cards ?
+                        // define next starting player
+                        // new distribution
+                    // else if all players have played, end turn
+                        // define winner
+                        // next player will be winner
+                        // empty play table
+                        // refresh game
+                    // else 
+                        // define next player
+                        // refresh game
+            });
         })
-        // wait the played card for the given player, verify it, and update the game (send DTO) 
-        // if all cards are played, end play
-        // else if all players have played, end turn
     },
 
     clearHand: function(){
