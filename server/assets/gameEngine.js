@@ -73,7 +73,11 @@ GameEngine.prototype = {
                     //dispatch the gap
                     that.dispatchGap();
                     //sent new hand to players
-                    that.refreshData('PLAY');
+                    that.refreshData('NONE');
+                    setTimeout(function(){
+                        that.clearHand();
+                        that.refreshData('PLAY');
+                    }, 5000);
                     that.playerReady=0;
                 }
             })
@@ -83,11 +87,23 @@ GameEngine.prototype = {
         // else if all players have played, end turn
     },
 
+    clearHand: function(){
+        that.players.forEach(function(player){
+            that.givenCards.set(player.id, that.givenCards.get(player.id).map(function(card){
+                card.selected=false;
+                return card;
+            }));
+        });
+    },
+
     dispatchGap: function(){
         that.players.forEach(function(player, index){
             // add gap to next player
             var currentGap=that.givenCards.get(player.id).filter(function(card){
                 return that.gapCards.get(player.id).indexOf(card.id) >= 0;
+            }).map(function(card){
+                card.selected=true;
+                return card;
             });
             var nextPlayer = that.players[(index+1)%that.players.length]
             var nextPlayerHand=that.givenCards.get(nextPlayer.id).concat(currentGap);

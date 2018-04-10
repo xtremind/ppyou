@@ -13,7 +13,7 @@ Game.Party.prototype = {
 		
 		// get all datas to refresh display
 		socket.on("refresh data", function(data){
-			console.log("refresh data");
+			console.log("refresh data : " + data.action);
 			if (that.playedCardPosition.size === 0) {
 				that.computePlayedCardPosition(data.scoringGame);
 			}
