@@ -80,10 +80,9 @@ Game.Party.prototype = {
 			});
 		}
 		// display card played
-		/*
 		this.playedCards.forEach((playedCard, index) => {
-			graphics.drawCard(game, that.playedCardPosition.get(playedCard.playerid), playedCard.card, null);
-		});*/
+			graphics.drawCard(game, that.playedCardPosition.get(playedCard.id), playedCard.card, function(){});
+		});
 
 		//graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
 		// display last hand played
@@ -97,8 +96,11 @@ Game.Party.prototype = {
 	computePlayedCardPosition : function(players){
 		var playTable = {x0: 550,y0: 200, rayon: 200};
 		var radius = (Math.PI*2) / players.length;
+		var initial = players.findIndex(function(player){
+			return player.id === socket.id;
+		});
 		players.forEach((player, index) => {
-			var cardPosition = {x:playTable.x0+playTable.rayon*Math.sin(radius*index), y:playTable.y0+playTable.rayon*Math.cos(radius*index)};
+			var cardPosition = {x:playTable.x0+playTable.rayon*Math.sin(radius*(index-initial%players.length)), y:playTable.y0+playTable.rayon*Math.cos(radius*(index-initial%players.length))};
 			that.playedCardPosition.set(player.id, cardPosition);
 		});
 	},

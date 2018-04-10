@@ -18,7 +18,7 @@ var GameEngine = function(id, players) {
     // a game is finish after 10 play ? after a cap is over ?
     this.ScoringGame = new Map();
     // a play is finish when all cards are played
-    this.playedCards = new Map();
+    this.playedCards = [];
     this.givenCards = new Map();
     this.gapCards = new Map();
 
@@ -89,9 +89,12 @@ GameEngine.prototype = {
             player.socket.addListener("play card", function(data){
                 console.log("EVENT :  play card");
                 if(that.isValidPlayedCard(this.id, data)){
-                    //if firstCard === null
-                        // firstcard = card played 
+                    var playedCard = that.givenCards.get(this.id).filter(card => {return card.id === data})[0];
+                    if(that.firstCard === null) {
+                        that.firstCard = playedCard;
+                    }
                     // update table play
+                    that.playedCards[that.playedCards.length-1].set(this.id, playedCard);
                     // remove card from player
                     // refresh display
                     // wait a little
@@ -105,12 +108,15 @@ GameEngine.prototype = {
                         // else if all players have played, end turn
                             // define winner
                             // next player will be winner
+                            // next played cards
                             // empty play table
                             // empty starting card
                             // refresh game
                         // else 
                             // define next player
+                            that.currentTurnPlayer = (that.currentTurnPlayer+1) % that.players.length
                             // refresh game
+                            that.refreshData('PLAY');
                 } else {
                     that.refreshData('PLAY');
                 }
@@ -126,7 +132,7 @@ GameEngine.prototype = {
         var playedCard = that.givenCards.get(playerId).filter(card => {return card.id === cardId});
         isValid = isValid && playedCard.length === 1;
         // is first card played or the card play is of the same suit or the player has no card with the same suit
-        isValid = isValid && (that.firstCard === null || that.firstCard.suit === playerCard[0].suit || !that.givenCards.get(playerId).some(card => {return card.suit === that.firstCard.suit}));
+        isValid = isValid && (that.firstCard === null || that.firstCard.suit === playedCard[0].suit || !that.givenCards.get(playerId).some(card => {return card.suit === that.firstCard.suit}));
         return isValid;
     },
 
@@ -174,7 +180,7 @@ GameEngine.prototype = {
         // send DTO to refresh front
         that.players.forEach(function(player, index) {
             player.socket.emit("refresh data", 
-                new GameDTO(that.ScoringGame, that.playedCards, that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE" , that.gameConfig.gap));
+                new GameDTO(that.ScoringGame, that.playedCards[that.playedCards.length-1], that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE" , that.gameConfig.gap));
         });
     },
 
@@ -183,6 +189,7 @@ GameEngine.prototype = {
         this.players.forEach(player => {
             that.ScoringGame.set(player.id, {id: player.id, name: player.name, score: 0});
         });
+        this.playedCards.push(new Map());
     },
 
     updateScoringGame: function(playerId, score) {
@@ -223,7 +230,7 @@ GameEngine.prototype = {
                     return a.id - b.id;
                 });
                 this.givenCards.set(player.id, hand);
-                this.deck = this.deck.slice(nbCard, this.deck.lengh);
+                this.deck = this.deck.slice(nbCard, this.deck.length);
             });
         });
 
