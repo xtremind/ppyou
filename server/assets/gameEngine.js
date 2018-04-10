@@ -123,7 +123,7 @@ GameEngine.prototype = {
         // the card is in his hand
         var playedCard = that.givenCards.get(playerId).filter(card => {return card.id === cardId});
         isValid = isValid && playedCard.lengh === 1;
-        // if is first card played or the card play is of the same suit or the player has no card with the same suit)
+        // is first card played or the card play is of the same suit or the player has no card with the same suit
         isValid = isValid && (that.firstCard === null || that.firstCard.suit === playerCard[0].suit || !that.givenCards.get(playerId).some(card => {return card.suit === that.firstCard.suit}));
         return isValid;
     },
