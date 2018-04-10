@@ -80,14 +80,14 @@ GameEngine.prototype = {
                     setTimeout(function(){
                         that.clearHand();
                         that.refreshData('PLAY');
-                    }, 5000);
+                    }, 3000);
                     that.playerReady=0;
                 }
             });
 
             // wait the played card for the given player, verify it, and update the game (send DTO)
             player.socket.addListener("play card", function(data){
-                console.log("EVENT :  play card");
+                console.log("EVENT : play card");
                 if(that.isValidPlayedCard(this.id, data)){
                     var playedCard = that.givenCards.get(this.id).filter(card => {return card.id === data})[0];
                     if(that.firstCard === null) {
@@ -98,31 +98,45 @@ GameEngine.prototype = {
                     // remove card from player
                     that.givenCards.set(this.id, that.givenCards.get(this.id).filter(card => {return card.id != playedCard.id;}))
                     // refresh display
-                    // wait a little
-                        // if all cards are played, end play
+                    that.refreshData('NONE');
+                    // if all cards are played, end play
+                        // define winner
+                        // compute score
+                        // display winning cards ?
+                        // define next starting player
+                        // empty starting card
+                        // new distribution
+                    // else if all players have played, end turn*
+                    if (that.playedCards[that.playedCards.length-1].size === that.players.length){
+                        // wait a little
+                        setTimeout(function(){
                             // define winner
-                            // compute score
-                            // display winning cards ?
-                            // define next starting player
-                            // empty starting card
-                            // new distribution
-                        // else if all players have played, end turn
-                            // define winner
+                            var winner = that.defineWinner(that.playedCards[that.playedCards.length-1]);
                             // next player will be winner
+                            //that.currentTurnPlayer
                             // next played cards
                             // empty play table
+                            that.playedCards.push(new Map());
                             // empty starting card
-                            // refresh game
-                        // else 
-                            // define next player
-                            that.currentTurnPlayer = (that.currentTurnPlayer+1) % that.players.length
+                            that.firstCard = null;
                             // refresh game
                             that.refreshData('PLAY');
+                        }, 3000);
+                    } else { 
+                        // define next player
+                        that.currentTurnPlayer = (that.currentTurnPlayer+1) % that.players.length;
+                        // refresh game
+                        that.refreshData('PLAY');
+                    }
                 } else {
                     that.refreshData('PLAY');
                 }
             });
         })
+    },
+
+    defineWinner: function(tablePlay){
+        return null;
     },
 
     isValidPlayedCard: function(playerId, cardId){
