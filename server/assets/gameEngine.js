@@ -96,6 +96,7 @@ GameEngine.prototype = {
                     // update table play
                     that.playedCards[that.playedCards.length-1].set(this.id, playedCard);
                     // remove card from player
+                    that.givenCards.set(this.id, that.givenCards.get(this.id).filter(card => {return card.id != playedCard.id;}))
                     // refresh display
                     // wait a little
                         // if all cards are played, end play
