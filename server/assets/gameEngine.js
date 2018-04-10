@@ -3,7 +3,7 @@ var GameDTO = require("../dto/gameDTO");
 var config = require("./gameConfiguration.json");
 
 //see https://en.wikipedia.org/wiki/French_playing_cards#Paris_pattern
-var listRank = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+var listRank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 var listSuit = ['S', 'H', 'C', 'D'];
 
 var GameEngine = function(id, players) {
@@ -21,6 +21,7 @@ var GameEngine = function(id, players) {
     this.playedCards = [];
     this.givenCards = new Map();
     this.gapCards = new Map();
+    this.winningCard = new Map();
 
     this.startingPlayPlayer ;
     this.currentTurnPlayer ;
@@ -48,10 +49,6 @@ GameEngine.prototype = {
     startGame : function() {
         that = this;
         this.players.forEach(function(player) {
-            //TODO utiliser le soket présent dans l'objet player, car ici, on ne réceptionne que les messages de l'admin
-            player.socket.addListener("test", function() {
-                console.log("test")
-            });
             // when all players ready, start a play by distribute the given 
             player.socket.addListener("ready to play", function() {
                 console.log("EVENT : ready to play");
@@ -100,21 +97,31 @@ GameEngine.prototype = {
                     // refresh display
                     that.refreshData('NONE');
                     // if all cards are played, end play
-                        // define winner
-                        // compute score
-                        // display winning cards ?
-                        // define next starting player
-                        // empty starting card
-                        // new distribution
-                    // else if all players have played, end turn*
-                    if (that.playedCards[that.playedCards.length-1].size === that.players.length){
+                    if(that.playedCards.length === that.gameConfig.given.reduce(function(a,b){return a+b},0) && that.playedCards[that.playedCards.length-1].size === that.players.length) {
+                        setTimeout(function(){
+                            // define winner
+                            var winner = that.defineWinner(that.playedCards[that.playedCards.length-1]);
+                            // next played cards
+                            that.winningCard.set(winner, that.winningCard.get(winner).concat(that.playedCards[that.playedCards.length-1])); //TODO :actuellement MAP id/card. à changer en ARRAY CARD
+                            // compute score
+                            that.players.forEach(player => {
+                                that.updateScoringGame(player.id, that.winningCard.get(player.id).filter( card => {return card.value}).reduce(function(a,b){return a+b},0));
+                            });
+                            // display winning cards ?
+                            // define next starting player
+                            // empty starting card
+                            // new distribution
+                        }, 3000);
+                    // else if all players have played, end turn
+                    } else if (that.playedCards[that.playedCards.length-1].size === that.players.length){
                         // wait a little
                         setTimeout(function(){
                             // define winner
                             var winner = that.defineWinner(that.playedCards[that.playedCards.length-1]);
                             // next player will be winner
-                            //that.currentTurnPlayer
+                            that.currentTurnPlayer = that.players.findIndex(function(player){return player.id === winner});
                             // next played cards
+                            that.winningCard.set(winner, that.winningCard.get(winner).concat(that.playedCards[that.playedCards.length-1]));
                             // empty play table
                             that.playedCards.push(new Map());
                             // empty starting card
@@ -136,7 +143,20 @@ GameEngine.prototype = {
     },
 
     defineWinner: function(tablePlay){
-        return null;
+        var winner = null;
+        var highestCard = that.firstCard;
+        //that.firstCard (find first player)
+        tablePlay.forEach((element, key) => {
+            if (element === that.firstCard) 
+                winner = key;
+        });
+        tablePlay.forEach((element, key) => {
+            if (element.suit === highestCard.suit && element.rank > highestCard.rank){
+                winner = key;
+                highestCard = element;
+            }
+        });
+        return winner;
     },
 
     isValidPlayedCard: function(playerId, cardId){
@@ -203,6 +223,7 @@ GameEngine.prototype = {
         that = this;
         this.players.forEach(player => {
             that.ScoringGame.set(player.id, {id: player.id, name: player.name, score: 0});
+            that.winningCard.set(player.id, []);
         });
         this.playedCards.push(new Map());
     },
