@@ -100,11 +100,13 @@ GameEngine.prototype = {
                             // compute score
                             // display winning cards ?
                             // define next starting player
+                            // empty starting card
                             // new distribution
                         // else if all players have played, end turn
                             // define winner
                             // next player will be winner
                             // empty play table
+                            // empty starting card
                             // refresh game
                         // else 
                             // define next player
@@ -122,7 +124,7 @@ GameEngine.prototype = {
         isValid = that.players[that.currentTurnPlayer].id === playerId ;
         // the card is in his hand
         var playedCard = that.givenCards.get(playerId).filter(card => {return card.id === cardId});
-        isValid = isValid && playedCard.lengh === 1;
+        isValid = isValid && playedCard.length === 1;
         // is first card played or the card play is of the same suit or the player has no card with the same suit
         isValid = isValid && (that.firstCard === null || that.firstCard.suit === playerCard[0].suit || !that.givenCards.get(playerId).some(card => {return card.suit === that.firstCard.suit}));
         return isValid;

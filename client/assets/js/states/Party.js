@@ -55,7 +55,13 @@ Game.Party.prototype = {
 				} else if (that.action === "PLAY") {
 					console.log("Card action : PLAY");
 					//send card selected
-
+					var nbSelected = that.hand.filter(function(card){return card.selected}).length;
+					for (var i = 0; i < that.hand.length; i++) {
+						if (that.hand[i].id == card.id)
+							that.hand[i].selected = !that.hand[i].selected && nbSelected < 1 ;
+					}
+					socket.emit("play card", card.id);
+					that.action === "NONE"
 				} else {
 					console.log("Card action : NONE");
 
