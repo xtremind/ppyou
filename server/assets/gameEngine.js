@@ -20,6 +20,7 @@ var GameEngine = function(id, players) {
     // a play is finish when all cards are played
     this.playedCards = new Map();
     this.givenCards = new Map();
+    this.gapCards = new Map();
 
     this.startingPlayPlayer ;
     this.currenturnPlayer ;
@@ -50,28 +51,70 @@ GameEngine.prototype = {
             });
             // when all players ready, start a play by distribute the given 
             player.socket.addListener("ready to play", function() {
-                console.log("ready to play");
+                console.log("EVENT : ready to play");
                 that.playerReady++;
                 if (that.playerReady == that.players.length ) {
                     // action : send the given and wait for the gap
-                    that.refreshData();
+                    that.refreshData('GAP');
+                    that.playerReady=0;
                 }
             });
+
+            // wait the gap of players, verify it, then distribute it (send DTO)
+            player.socket.addListener("gap", function(data){
+                console.log("EVENT : gap");
+                //verify the gap
+                if(that.isValidGap(this.id, data)){
+                    that.playerReady++;
+                    that.gapCards.set(this.id, data);
+                }
+                // when all gap defined, start a turn by designate the first player
+                if (that.playerReady == that.players.length ) {
+                    //dispatch the gap
+                    that.dispatchGap();
+                    //sent new hand to players
+                    that.refreshData('PLAY');
+                    that.playerReady=0;
+                }
+            })
         })
-        // wait the gap of players, verify it, then distribute it (send DTO)
-        // when all gap defined, start a turn by designate the first player
         // wait the played card for the given player, verify it, and update the game (send DTO) 
         // if all cards are played, end play
         // else if all players have played, end turn
     },
 
-    refreshData : function() {
+    dispatchGap: function(){
+        that.players.forEach(function(player, index){
+            // add gap to next player
+            var currentGap=that.givenCards.get(player.id).filter(function(card){
+                return that.gapCards.get(player.id).indexOf(card.id) >= 0;
+            });
+            var nextPlayer = that.players[(index+1)%that.players.length]
+            var nextPlayerHand=that.givenCards.get(nextPlayer.id).concat(currentGap);
+            nextPlayerHand.sort(function(a, b){
+                return a.id - b.id;
+            })
+            that.givenCards.set(nextPlayer.id, nextPlayerHand);
+            // refresh current player hand
+            var currentPlayerHand=that.givenCards.get(player.id).filter(function(card){
+                return that.gapCards.get(player.id).indexOf(card.id) < 0;
+            });
+            that.givenCards.set(player.id, currentPlayerHand);
+        });
+    },
+
+    isValidGap: function(playerId, cards){
+        console.log("isValidGap");
+        return cards.every(r=> that.givenCards.get(playerId).map(function(card){return card.id;}).indexOf(r) >= 0)
+    },
+
+    refreshData : function(action) {
         that = this;
         console.log("refreshData");
         // send DTO to refresh front
         that.players.forEach(function(player) {
             player.socket.emit("refresh data", 
-                new GameDTO(that.ScoringGame, that.playedCards, that.givenCards.get(player.getId()),'GAP', that.gameConfig.gap));
+                new GameDTO(that.ScoringGame, that.playedCards, that.givenCards.get(player.getId()),action, that.gameConfig.gap));
         });
     },
 

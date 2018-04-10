@@ -68,8 +68,7 @@ Game.Party.prototype = {
 		if (that.action === "GAP" && that.hand.filter(function(card){return card.selected}).length === that.gap){
 			graphics.drawButtonWithText(game, {x:game.world.centerX-100, y:game.world.height-300, height:50, width: 200}, styles.startButton, 'Valider ecart', styles.startText, 'test', function(){
 				console.log("Send Gap");
-				that.hand.filter(function(card){return card.selected});
-				//socket.emit("ready to play", null);
+				socket.emit("gap", that.hand.filter(function(card){return card.selected}).map(function(card){return card.id}));
 				that.action = 'WAIT';
 				that.refreshDisplay();
 			});
