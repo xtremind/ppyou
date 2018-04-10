@@ -24,6 +24,7 @@ var GameEngine = function(id, players) {
 
     this.startingPlayPlayer ;
     this.currentTurnPlayer ;
+    this.firstCard = null;
 }
 
 GameEngine.prototype = {
@@ -87,29 +88,46 @@ GameEngine.prototype = {
             // wait the played card for the given player, verify it, and update the game (send DTO)
             player.socket.addListener("play card", function(data){
                 console.log("EVENT :  play card");
-                // verify played card
-                    // the good player sent the card
-                    // the card is in his hand
-                    // the card play is of the same suit, or the player has no card with the same suit
-                // refresh display
-                // wait a little
-                    // if all cards are played, end play
-                        // define winner
-                        // compute score
-                        // display winning cards ?
-                        // define next starting player
-                        // new distribution
-                    // else if all players have played, end turn
-                        // define winner
-                        // next player will be winner
-                        // empty play table
-                        // refresh game
-                    // else 
-                        // define next player
-                        // refresh game
+                if(that.isValidPlayedCard(this.id, data)){
+                    //if firstCard === null
+                        // firstcard = card played 
+                    // update table play
+                    // remove card from player
+                    // refresh display
+                    // wait a little
+                        // if all cards are played, end play
+                            // define winner
+                            // compute score
+                            // display winning cards ?
+                            // define next starting player
+                            // new distribution
+                        // else if all players have played, end turn
+                            // define winner
+                            // next player will be winner
+                            // empty play table
+                            // refresh game
+                        // else 
+                            // define next player
+                            // refresh game
+                } else {
+                    that.refreshData('PLAY');
+                }
             });
         })
     },
+
+    isValidPlayedCard: function(playerId, cardId){
+        var isValid;
+        // the good player sent the card
+        isValid = that.players[that.currentTurnPlayer].id === playerId ;
+        // the card is in his hand
+        var playedCard = that.givenCards.get(playerId).filter(card => {return card.id === cardId});
+        isValid = isValid && playedCard.lengh === 1;
+        // if is first card played or the card play is of the same suit or the player has no card with the same suit)
+        isValid = isValid && (that.firstCard === null || that.firstCard.suit === playerCard[0].suit || !that.givenCards.get(playerId).some(card => {return card.suit === that.firstCard.suit}));
+        return isValid;
+    },
+
 
     clearHand: function(){
         that.players.forEach(function(player){
