@@ -6,7 +6,8 @@ var graphics = (function() {
         graphics.clear();
         
         //id, rank, suit, value
-        var text = "";
+        var cardstyle = null;
+        var suit = "";
         switch (card.suit) {
             case "H":
                 cardstyle = styles.redCard;
