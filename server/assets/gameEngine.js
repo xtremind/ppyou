@@ -102,15 +102,26 @@ GameEngine.prototype = {
                             // define winner
                             var winner = that.defineWinner(that.playedCards[that.playedCards.length-1]);
                             // next played cards
-                            that.winningCard.set(winner, that.winningCard.get(winner).concat(that.playedCards[that.playedCards.length-1])); //TODO :actuellement MAP id/card. à changer en ARRAY CARD
+                            that.playedCards[that.playedCards.length-1].forEach((element, key) => {
+                                that.winningCard.get(winner).push(element);
+                            });
                             // compute score
                             that.players.forEach(player => {
-                                that.updateScoringGame(player.id, that.winningCard.get(player.id).filter( card => {return card.value}).reduce(function(a,b){return a+b},0));
+                                that.updateScoringGame(player.id, that.winningCard.get(player.id).map( card => {return card.value}).reduce(function(a,b){return a+b},0));
                             });
                             // display winning cards ?
                             // define next starting player
+                            that.startingPlayPlayer = (that.startingPlayPlayer+1) % that.players.length;
+                            // empty play table
+                            that.playedCards = []
+                            that.playedCards.push(new Map());
                             // empty starting card
+                            that.firstCard = null;
                             // new distribution
+                            that.initiateDeck();
+                            that.randomizeDeck();
+                            that.distributeGiven(that.players.length);
+                            that.refreshData('GAP');
                         }, 3000);
                     // else if all players have played, end turn
                     } else if (that.playedCards[that.playedCards.length-1].size === that.players.length){
@@ -121,7 +132,9 @@ GameEngine.prototype = {
                             // next player will be winner
                             that.currentTurnPlayer = that.players.findIndex(function(player){return player.id === winner});
                             // next played cards
-                            that.winningCard.set(winner, that.winningCard.get(winner).concat(that.playedCards[that.playedCards.length-1]));
+                            that.playedCards[that.playedCards.length-1].forEach((element, key) => {
+                                that.winningCard.get(winner).push(element);
+                            });
                             // empty play table
                             that.playedCards.push(new Map());
                             // empty starting card
@@ -244,7 +257,7 @@ GameEngine.prototype = {
             });
         });
 
-        for (rank = 1; rank < 21; rank++) {
+        for (var rank = 1; rank < 21; rank++) {
             var card = new Card(id++, ''+rank, 'B', rank);
             this.deck.push(card);
         }

@@ -37,7 +37,7 @@ Game.WaitingRoom.prototype = {
             });
             
             // if hoster : button start if more at least 3 players
-            if(game.currentGameId === this.id && data.length > 2){
+            if(game.currentGameId === this.id && data.length > 0){ //TODO change to 2
                 startButton = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'start game', styles.startText, 'start game', function(){
                     that.resetEvents();
                     socket.emit('start game', {id: game.currentGameId});
