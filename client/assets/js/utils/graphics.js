@@ -85,6 +85,12 @@ var graphics = (function() {
         text.anchor.y = 0.5;
         return text;
     };
+
+    var drawLeftText = function (game, txtDefinition, label, labelStyle) {
+        var text = game.add.text(txtDefinition.x + txtDefinition.width / 2, txtDefinition.y + txtDefinition.height / 2, label, labelStyle);
+        text.smoothed = true;
+        return text;
+    };
     
     var drawInputText = function (game, iptDefinition, defaultValue, iptStyle) {
         var ipt = game.add.inputField(iptDefinition.x, iptDefinition.y, iptStyle);
@@ -126,6 +132,7 @@ var graphics = (function() {
         drawText: drawText,
         drawInputText: drawInputText,
         deleteButton: deleteButton,
-        deleteText: deleteText
+        deleteText: deleteText,
+        drawLeftText: drawLeftText
     }
 }()) 
