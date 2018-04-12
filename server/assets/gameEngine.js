@@ -242,7 +242,8 @@ GameEngine.prototype = {
     },
 
     updateScoringGame: function(playerId, score) {
-        this.ScoringGame.set(playerId, this.ScoringGame.get(playerId).score + score);
+        var currentScore = this.ScoringGame.get(playerId);
+        this.ScoringGame.set(playerId, {id: currentScore.id, name: currentScore.name, score: currentScore.score + score});
     },
 
     initiateDeck : function() {
