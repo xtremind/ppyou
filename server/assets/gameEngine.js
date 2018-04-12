@@ -119,6 +119,9 @@ GameEngine.prototype = {
                             // empty starting card
                             that.firstCard = null;
                             // new distribution
+                            that.players.forEach(player => {
+                                that.winningCard.set(player.id, []);
+                            });
                             that.initiateDeck();
                             that.randomizeDeck();
                             that.distributeGiven(that.players.length);
