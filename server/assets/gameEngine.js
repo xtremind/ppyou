@@ -258,7 +258,7 @@ GameEngine.prototype = {
         });
 
         for (var rank = 1; rank < 21; rank++) {
-            var card = new Card(id++, ''+rank, 'B', rank);
+            var card = new Card(id++, rank, 'B', rank);
             this.deck.push(card);
         }
     },
