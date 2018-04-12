@@ -22,6 +22,7 @@ Game.Party.prototype = {
 			that.gap = data.action === "GAP" ? data.gap : 0;
 			that.hand = data.givenCards;
 			that.playedCards = data.playedCards;
+			that.ppyou = data.ppyou;
         	that.refreshDisplay();
 		});
 
@@ -42,6 +43,8 @@ Game.Party.prototype = {
 		that.scoringGame.forEach(function(element, index){
 			graphics.drawLeftText(game, {x:10, y:10+index*20, height:0, width: 0}, element.name + " : " + element.score, styles.titleText);
 		})
+		// display ppyou
+		graphics.drawPpyou(game, that.ppyou);
 		// display card in hand
 		var posX = (1200 - (100 + (this.hand.length-1) * 50))/2
 		this.hand.forEach((card, index) => {

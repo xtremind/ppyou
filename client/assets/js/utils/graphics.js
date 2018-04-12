@@ -45,6 +45,8 @@ var graphics = (function() {
         cardReverseSuit.angle=180;
         buttonRect.addChild(cardSuit);
         buttonRect.addChild(cardRank);
+        buttonRect.addChild(cardReverseSuit);
+        buttonRect.addChild(cardReverseRank);
     
         return addInputDownToRect(buttonRect, callback);
     };
@@ -63,6 +65,46 @@ var graphics = (function() {
         text.anchor.x = 0.5;
         text.anchor.y = 0.5;
         return text;
+    };
+
+    var drawPpyou = function (game, suit) {
+        var graphics = game.add.graphics(0, 0);
+        
+        graphics.clear();  
+        graphics.name = "ppyou";
+    
+        var text = "";
+        var cardstyle;
+        switch (suit) {
+            case "H":
+                text = "♥";
+                cardstyle = Object.assign({},styles.redCard);
+                break;
+            case "D":
+                text = "♦";
+                cardstyle = Object.assign({},styles.redCard);
+                break;
+            case "S":
+                text = "♠";
+                cardstyle = Object.assign({},styles.blackCard);
+                break; 
+            case "C":
+                text = "♣";
+                cardstyle = Object.assign({},styles.blackCard);
+                break;
+            default:
+                throw "unknowd suit";
+        }
+
+        var ppyouDefinition = {x:1140, y:20, height:40, width: 40};
+        cardstyle.font = '50px Arial';
+
+        var buttonRect = drawRoundedRect(graphics, ppyouDefinition, styles.ppyouButton);
+        var buttonText = drawText(game, ppyouDefinition, text, cardstyle);
+        buttonText.angle=180;
+        buttonRect.addChild(buttonText);
+    
+        return buttonRect;
     };
 
     var drawButtonWithText = function (game, btnDefinition, btnStyle, text, textStyle, btnName, callback) {
@@ -133,6 +175,7 @@ var graphics = (function() {
         drawInputText: drawInputText,
         deleteButton: deleteButton,
         deleteText: deleteText,
-        drawLeftText: drawLeftText
+        drawLeftText: drawLeftText,
+        drawPpyou: drawPpyou
     }
 }()) 

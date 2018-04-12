@@ -6,13 +6,14 @@ var GameDTO = function(scoringGame, playedCards, givenCards, action, gap, ppyou)
   this.gap = gap;
   this.ppyou = ppyou;
 
-  scoringGame.forEach(function(element) {
+
+  scoringGame.forEach((element) => {
     this.scoringGame.push(element) //current score
   });
 
   playedCards.forEach(function(element, key) {
     this.playedCards.push({id: key, card: element}) //all played cards in play
-  });
+  }, this);
 }
 
 GameDTO.prototype = {

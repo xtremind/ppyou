@@ -6,6 +6,7 @@ var styles = (function() {
     var joinButton = {radius: 7, bSize: 2, bColor: 0x0000FF, bAlpha: 1, fColor: 0x027a71, fAlpha: 1};
     var startButton = {radius: 7, bSize: 2, bColor: 0x0000FF, bAlpha: 1, fColor: 0x027a71, fAlpha: 1};
     var leaveButton = {radius: 7, bSize: 2, bColor: 0x0000FF, bAlpha: 1, fColor: 0x027a71, fAlpha: 1};
+    var ppyouButton = {radius: 7, bSize: 2, bColor: 0x0000FF, bAlpha: 1, fColor: 0xFFFFFF, fAlpha: 1};
 
     // text style
     var hostText = {font: '25px Arial', fill: '#ffffff'};
@@ -40,6 +41,7 @@ var styles = (function() {
         playerNameInput: playerNameInput,
         redCard: redCard,
         blackCard: blackCard,
-        inverseCard: inverseCard
+        inverseCard: inverseCard,
+        ppyouButton: ppyouButton
     }
 }())

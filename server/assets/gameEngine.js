@@ -33,6 +33,7 @@ GameEngine.prototype = {
 
     //should contains the logic of the game
     start : function() {
+        that = this;
         this.startingPlayPlayer = 0;
         this.currentTurnPlayer = 0;
         this.initiateGameScoring();
@@ -48,7 +49,6 @@ GameEngine.prototype = {
     },
 
     startGame : function() {
-        that = this;
         this.players.forEach(function(player) {
             // when all players ready, start a play by distribute the given 
             player.socket.addListener("ready to play", function() {
@@ -224,7 +224,6 @@ GameEngine.prototype = {
     },
 
     refreshData : function(action) {
-        that = this;
         console.log("refreshData");
         // send DTO to refresh front
         that.players.forEach(function(player, index) {
@@ -234,7 +233,7 @@ GameEngine.prototype = {
     },
 
     initiateGameScoring : function() {
-        that = this;
+        console.log("initiateGameScoring");
         this.players.forEach(player => {
             that.ScoringGame.set(player.id, {id: player.id, name: player.name, score: 0});
             that.winningCard.set(player.id, []);
@@ -243,13 +242,14 @@ GameEngine.prototype = {
     },
 
     updateScoringGame: function(playerId, score) {
+        console.log("updateScoringGame");
         var currentScore = this.ScoringGame.get(playerId);
         this.ScoringGame.set(playerId, {id: currentScore.id, name: currentScore.name, score: currentScore.score + score});
     },
 
     initiateDeck : function() {
+        console.log("initiateDeck");
         that.ppyou = listSuit[Math.floor(Math.random()*listSuit.length)];
-        var that = this;
         var id = 0;
         listSuit.forEach(suit => {
             listRank.forEach(rank => {
