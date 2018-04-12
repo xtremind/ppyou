@@ -14,7 +14,7 @@ Game.MainMenu.prototype = {
         // add a background image
 
         // add a title
-        var title = graphics.drawText(game, {x:this.world.centerX, y:-50, height:0, width: 0}, 'Template Game', styles.titleText);
+        var title = graphics.drawText(game, {x:this.world.centerX, y:-50, height:0, width: 0}, '♥ ♣  PPyou  ♠ ♦', styles.titleText);
         //animate title
         game.add.tween(title).to({y: 80}, 1000).easing(Phaser.Easing.Bounce.Out).start();
 
@@ -22,11 +22,12 @@ Game.MainMenu.prototype = {
         if (typeof game.playerName === 'undefined') {
             game.playerName="Player_" + socket.id.substring(0,6);
         }
-
-        var playerName = graphics.drawInputText(game, {x: 10, y:90}, game.playerName, styles.playerNameInput);
+        
+        graphics.drawText(game, {x:this.world.centerX-100, y:200, height:0, width: 0}, 'Player Name :', styles.hostText);
+        var playerName = graphics.drawInputText(game, {x: this.world.centerX, y:180}, game.playerName, styles.playerNameInput);
 
         //add rounded buttons
-        graphics.drawButtonWithText(game, {x:50, y:100, height:50, width:200}, styles.hostButton, 'host game', styles.hostText, 'host game', function(){game.playerName=playerName.value;socket.emit('host game', {name: playerName.value});});
+        graphics.drawButtonWithText(game, {x:this.world.centerX-200, y:280, height:50, width:200}, styles.hostButton, 'host game', styles.hostText, 'host game', function(){game.playerName=playerName.value;socket.emit('host game', {name: playerName.value});});
 
 		socket.on("list games", function(data){
             // delete current join List            
@@ -39,7 +40,7 @@ Game.MainMenu.prototype = {
 
             // create new join List
             data.forEach(function(party){
-                that.gameList[party.id] = graphics.drawButtonWithText(game, {x:50, y:100+70*++position, height:50, width: 200}, styles.joinButton, 'join game', styles.joinText, 'join game', function(){
+                that.gameList[party.id] = graphics.drawButtonWithText(game, {x:that.world.centerX+50, y:210+70*++position, height:50, width: 200}, styles.joinButton, 'join game', styles.joinText, 'join game', function(){
                     game.playerName=playerName.value;
                     console.log("join game " + party.id); 
                     socket.emit('join game', {id: party.id, name: playerName.value});
