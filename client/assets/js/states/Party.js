@@ -39,9 +39,12 @@ Game.Party.prototype = {
 		if(that.action === 'WAIT') {
 			graphics.drawText(game, {x:game.world.centerX, y:game.world.centerY, height:0, width: 0}, "En attente des autres joueurs", styles.titleText);
 		}
+		if(that.action === 'GAP') {
+			graphics.drawText(game, {x:game.world.centerX, y:game.world.centerY, height:0, width: 0}, "Merci de choisir " + that.gap + " cartes à donner à votre voisin", styles.titleText);
+		}
 		// display current score
 		that.scoringGame.forEach(function(element, index){
-			graphics.drawLeftText(game, {x:10, y:10+index*20, height:0, width: 0}, element.name + " : " + element.score, styles.titleText);
+			graphics.drawLeftText(game, {x:10, y:10+index*20, height:0, width: 0}, element.name + " : " + element.score, styles.playerScore);
 		})
 		// display ppyou
 		graphics.drawPpyou(game, that.ppyou);
@@ -50,7 +53,6 @@ Game.Party.prototype = {
 		this.hand.forEach((card, index) => {
 			var cardPosition = {x:posX+50*index++, y:game.world.height-(card.selected ?200:150)}
 			graphics.drawCard(game, cardPosition, card, function(){
-
 				if (that.action === "GAP"){
 					console.log("Card action : GAP");
 					var nbSelected = that.hand.filter(function(card){return card.selected}).length;
@@ -90,7 +92,6 @@ Game.Party.prototype = {
 			graphics.drawCard(game, that.playedCardPosition.get(playedCard.id), playedCard.card, function(){});
 		});
 
-		//graphics.drawText(game, {x:10, y:10, height:0, width: 0}, 'Template Game', styles.titleText);
 		// display last hand played
 		//lastHand = graphics.drawButtonWithText(game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Last hand', styles.startText, 'test', function(){
 			//socket.emit("ready to play", null);

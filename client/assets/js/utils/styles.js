@@ -16,6 +16,7 @@ var styles = (function() {
     var playerNameText = {font: '25px Arial', fill: '#ffffff'};
     var titleText = {font: '50px Arial', fill: '#ffffff'};
     var subtitleText = {font: '30px Arial', fill: '#ffffff'};
+    var playerScore = {font: '20px Arial', fill: '#ffffff'};
 
     // card Style
     var redCard = {radius: 7, bSize: 2, bColor: 0xFF0000, bAlpha: 1, fColor: 0xFFFFFF, fAlpha: 1, font: '25px Arial', fill: '#ff0000'};
@@ -42,6 +43,7 @@ var styles = (function() {
         redCard: redCard,
         blackCard: blackCard,
         inverseCard: inverseCard,
-        ppyouButton: ppyouButton
+        ppyouButton: ppyouButton,
+        playerScore: playerScore
     }
 }())
