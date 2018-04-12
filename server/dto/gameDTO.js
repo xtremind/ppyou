@@ -1,16 +1,16 @@
-var GameDTO = function(scoringGame, playedCards, givenCards, action, gap){
+var GameDTO = function(scoringGame, playedCards, givenCards, action, gap, ppyou){
   this.scoringGame = []; //last computed score
   this.playedCards = [];
   this.givenCards = givenCards;
   this.action = action;      //action for the player to do
-  this.gap = gap
+  this.gap = gap;
+  this.ppyou = ppyou;
 
-
-  scoringGame.forEach((element, key) => {
-    this.scoringGame.push(element) //all played cards in play
+  scoringGame.forEach(function(element) {
+    this.scoringGame.push(element) //current score
   });
 
-  playedCards.forEach((element, key) => {
+  playedCards.forEach(function(element, key) {
     this.playedCards.push({id: key, card: element}) //all played cards in play
   });
 }

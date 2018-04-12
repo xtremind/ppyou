@@ -26,6 +26,7 @@ var GameEngine = function(id, players) {
     this.startingPlayPlayer ;
     this.currentTurnPlayer ;
     this.firstCard = null;
+    this.ppyou;
 }
 
 GameEngine.prototype = {
@@ -228,7 +229,7 @@ GameEngine.prototype = {
         // send DTO to refresh front
         that.players.forEach(function(player, index) {
             player.socket.emit("refresh data", 
-                new GameDTO(that.ScoringGame, that.playedCards[that.playedCards.length-1], that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE" , that.gameConfig.gap));
+                new GameDTO(that.ScoringGame, that.playedCards[that.playedCards.length-1], that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE", that.gameConfig.gap, that.ppyou));
         });
     },
 
@@ -247,12 +248,13 @@ GameEngine.prototype = {
     },
 
     initiateDeck : function() {
+        that.ppyou = listSuit[Math.floor(Math.random()*listSuit.length)];
         var that = this;
         var id = 0;
         listSuit.forEach(suit => {
             listRank.forEach(rank => {
                 if ( !that.gameConfig.filtering || rank !== "1"){
-                    var card = new Card(id++, rank, suit);
+                    var card = new Card(id++, rank, suit, rank===7&&suit===that.ppyou? 40:0);
                     this.deck.push(card);
                 }
             });
