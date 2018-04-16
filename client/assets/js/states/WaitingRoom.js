@@ -34,7 +34,7 @@ Game.WaitingRoom.prototype = {
             }
             // create new join List
             data.forEach(function(player){
-                that.playersList[player.id] = graphics.drawLeftText(game, {x:that.world.centerX+130, y:305+70*position++, height:0, width: 0}, player.name, styles.playerNameText);
+                that.playersList[player.id] = graphics.drawLeftText(game, {x:that.world.centerX+100, y:305+70*position++, height:0, width: 0}, player.name, styles.playerNameText);
             });
             
             // if hoster : button start if more at least 3 players
