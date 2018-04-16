@@ -1,18 +1,15 @@
 {
-	"name": "ppyou-server",
+	"name": "ppyou",
 	"version": "0.0.1",
-	"description": "a server for multi game of ppyou",
-	"dependencies": {
-		"express": "4.15.4",
-		"socket.io": "2.0.3"
-	},
+	"description": "test",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/xtremind/ppyou.git"
 	},
 	"license": "Beerware",
 	"scripts": {
-		"start": "node server.js"
+		"start": "node server/server.js",
+		"install": "npm --prefix ./server install ./server"
 	},
 	"author": "developer"
 }
