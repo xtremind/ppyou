@@ -161,6 +161,9 @@ var graphics = (function() {
     };
     
     var addInputDownToRect = function(graphics, callback){
+        if (callback === null){
+            return graphics;
+        }
         graphics.inputEnabled = true;
         graphics.input.useHandCursor = true;
         graphics.events.onInputDown.add(callback, this);
