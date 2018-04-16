@@ -12,6 +12,7 @@ Game.MainMenu.prototype = {
         game.add.plugin(PhaserInput.Plugin);
 
         // add a background image
+        sprite = game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
 
         // add a title
         var title = graphics.drawText(game, {x:this.world.centerX, y:-50, height:0, width: 0}, '♥ ♣  PPyou  ♠ ♦', styles.titleText);

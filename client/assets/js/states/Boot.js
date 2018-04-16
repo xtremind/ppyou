@@ -8,7 +8,7 @@ Game.Boot.prototype = {
     init : function () {
         this.input.maxPointers = 1;
         this.stage.disableVisibilityChange = true;
-		this.stage.backgroundColor = '#3A5963';
+		this.stage.backgroundColor = '#22B34E';
     },
     
     preload : function () {

@@ -19,6 +19,7 @@ Game.Preloader.prototype = {
         //this.load.tilemap('map', 'assets/tileset/level1.csv');
         //this.load.image('tileset', 'assets/img/tileset_map2.png');
         
+        this.load.image('cardTable', 'assets/img/cardTable.png');
         //this.load.spritesheet('player', 'assets/img/player.png');
         //this.load.spritesheet('red_phantom', 'assets/img/red_ghost.png');
         //this.load.spritesheet('pink_phantom', 'assets/img/pink_ghost.png');
