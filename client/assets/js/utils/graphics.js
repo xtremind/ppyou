@@ -96,7 +96,7 @@ var graphics = (function() {
                 throw "unknowd suit";
         }
 
-        var ppyouDefinition = {x:1140, y:20, height:40, width: 40};
+        var ppyouDefinition = {x:1130, y:30, height:40, width: 40};
         cardstyle.font = '50px Arial';
 
         var buttonRect = drawRoundedRect(graphics, ppyouDefinition, styles.ppyouButton);

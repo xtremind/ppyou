@@ -10,7 +10,8 @@ Game.Party = function (game) {
 Game.Party.prototype = {
 	create : function () {
 		that = this;
-		
+        // add a background image
+        sprite = game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
 		// get all datas to refresh display
 		socket.on("refresh data", function(data){
 			console.log("refresh data : " + data.action);
@@ -46,7 +47,7 @@ Game.Party.prototype = {
 		}
 		// display current score
 		that.scoringGame.forEach(function(element, index){
-			graphics.drawLeftText(game, {x:10, y:10+index*20, height:0, width: 0}, element.name + " : " + element.score, styles.playerScore);
+			graphics.drawLeftText(game, {x:30, y:30+index*20, height:0, width: 0}, element.name + " : " + element.score, styles.playerScore);
 		})
 		// display ppyou
 		graphics.drawPpyou(game, that.ppyou);
