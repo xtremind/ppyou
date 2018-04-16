@@ -10,7 +10,7 @@ Game.MainMenu.prototype = {
 
         //Add Library
         game.add.plugin(PhaserInput.Plugin);
-
+ 
         // add a background image
         sprite = game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
 

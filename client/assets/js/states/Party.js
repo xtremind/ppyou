@@ -35,6 +35,8 @@ Game.Party.prototype = {
 		console.log("refreshDisplay");
 		//clear display
 		game.world.removeAll()
+        // add a background image
+        sprite = game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
 		//display message
 		if(that.action === 'WAIT') {
 			graphics.drawText(game, {x:game.world.centerX, y:game.world.centerY, height:0, width: 0}, "En attente des autres joueurs", styles.titleText);
