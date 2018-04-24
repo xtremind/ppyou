@@ -1,20 +1,20 @@
-# template-multi
+# PPYou
 
-DONE room to send informations to only the players connected to the same game
-DONE review process in client disconnected
-DONE adding player's name
-DONE editing name's player
-DONE fix vertical scaling
+* DONE room to send informations to only the players connected to the same game
+* DONE review process in client disconnected
+* DONE adding player's name
+* DONE editing name's player
+* DONE fix vertical scaling
 
-TODO style for buttons and informations on each screen
-TODO display player's name on table
-TODO add feedback when player has to play
-TODO take into account when player quit game
-TODO add button to display last play
-TODO show winning cards before starting new play
-TODO save player's name with a cookie
-TODO when connected, get saved player
-TODO add history by player
-TODO add achievements by player
-TODO add reactions
-TODO add chat
+* TODO style for buttons and informations on each screen
+* TODO display player's name on table or display an icon
+* TODO add feedback when player has to play
+* TODO take into account when player quit game
+* TODO add button to display last play
+* TODO show winning cards before starting new play
+* TODO save player's name with a cookie
+* TODO when connected, get saved player
+* TODO add history by player
+* TODO add achievements by player
+* TODO add troll reactions
+* TODO add chat
