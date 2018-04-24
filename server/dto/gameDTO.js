@@ -1,10 +1,11 @@
-var GameDTO = function(scoringGame, playedCards, givenCards, action, gap, ppyou){
+var GameDTO = function(scoringGame, playedCards, givenCards, action, gap, ppyou, currentPlayer){
   this.scoringGame = []; //last computed score
   this.playedCards = [];
   this.givenCards = givenCards;
   this.action = action;      //action for the player to do
   this.gap = gap;
   this.ppyou = ppyou;
+  this.currentPlayer = currentPlayer;
 
 
   scoringGame.forEach((element) => {

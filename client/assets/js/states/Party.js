@@ -24,6 +24,7 @@ Game.Party.prototype = {
 			that.hand = data.givenCards;
 			that.playedCards = data.playedCards;
 			that.ppyou = data.ppyou;
+			that.currentPlayer = data.currentPlayer;
         	that.refreshDisplay();
 		});
 
@@ -47,7 +48,8 @@ Game.Party.prototype = {
 		}
 		// display current score
 		that.scoringGame.forEach(function(element, index){
-			graphics.drawLeftText(game, {x:30, y:30+index*20, height:0, width: 0}, element.name + " : " + element.score, styles.playerScore);
+			var style = Object.assign(index === that.currentPlayer && that.action != "GAP" ? {fontWeight: 'bold'} : {}, styles.playerScore);
+			graphics.drawLeftText(game, {x:30, y:30+index*20, height:0, width: 0}, element.name + " : " + element.score, style);
 		})
 		// display ppyou
 		graphics.drawPpyou(game, that.ppyou);

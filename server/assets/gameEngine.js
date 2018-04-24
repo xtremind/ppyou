@@ -231,7 +231,7 @@ GameEngine.prototype = {
         // send DTO to refresh front
         that.players.forEach(function(player, index) {
             player.socket.emit("refresh data", 
-                new GameDTO(that.ScoringGame, that.playedCards[that.playedCards.length-1], that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE", that.gameConfig.gap, that.ppyou));
+                new GameDTO(that.ScoringGame, that.playedCards[that.playedCards.length-1], that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE", that.gameConfig.gap, that.ppyou, that.currentTurnPlayer));
         });
     },
 
