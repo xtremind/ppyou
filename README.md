@@ -5,6 +5,7 @@
 * DONE adding player's name
 * DONE editing name's player
 * DONE fix vertical scaling
+* DONE add feedback to display current player
 
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
