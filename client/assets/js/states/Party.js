@@ -56,7 +56,8 @@ Game.Party.prototype = {
 		// display card in hand
 		var posX = (1200 - (100 + (this.hand.length-1) * 50))/2
 		this.hand.forEach((card, index) => {
-			var cardPosition = {x:posX+50*index++, y:game.world.height-(card.selected ?200:150)}
+			var cardPosition = {x:posX+50*index++, y:game.world.height-(card.selected ?200:150)};
+			
 			graphics.drawCard(game, cardPosition, card, function(){
 				if (that.action === "GAP"){
 					console.log("Card action : GAP");
@@ -77,7 +78,6 @@ Game.Party.prototype = {
 					}
 				} else {
 					console.log("Card action : NONE");
-
 				}
 
 				that.refreshDisplay();
@@ -94,7 +94,7 @@ Game.Party.prototype = {
 		}
 		// display card played
 		this.playedCards.forEach((playedCard, index) => {
-			graphics.drawCard(game, that.playedCardPosition.get(playedCard.id), playedCard.card, function(){});
+			graphics.drawCard(game, that.playedCardPosition.get(playedCard.id), playedCard.card, null);
 		});
 
 		// display last hand played

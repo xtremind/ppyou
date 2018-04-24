@@ -6,7 +6,9 @@
 * DONE editing name's player
 * DONE fix vertical scaling
 * DONE add feedback to display current player
+* FIX click pointer on played card
 
+* BUG
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
 * TODO add feedback when player has to play
@@ -20,4 +22,3 @@
 * TODO add troll reactions
 * TODO add chat
 
-* BUG click pointer on played card
