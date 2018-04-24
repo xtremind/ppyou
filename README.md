@@ -19,3 +19,5 @@
 * TODO add achievements by player
 * TODO add troll reactions
 * TODO add chat
+
+* BUG click pointer on played card
