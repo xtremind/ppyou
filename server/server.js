@@ -18,7 +18,7 @@ var gameList = [],
 
 // Serve up index.html.
 app.use(express.static("client"));
-http.listen(process.env.PORT || 8000);
+http.listen(process.env.PORT || 8080);
 
 //redirect client part
 app.get('/', function(req, res){
