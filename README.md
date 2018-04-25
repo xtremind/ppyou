@@ -4,7 +4,7 @@
 * DONE review process in client disconnected
 * DONE adding player's name
 * DONE editing name's player
-* DONE fix vertical scaling
+* FIX vertical scaling
 * DONE add feedback to display current player
 * FIX click pointer on played card
 
