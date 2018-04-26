@@ -1,7 +1,8 @@
 window.onload = function () {
 
     //connect to server
-    socket = io.connect(window.location.href, {'forceNew':true });
+    //socket = io.connect(window.location.href, {'forceNew':true });
+    socket = io.connect("ws://" + window.location.host + ":8000", {'forceNew':true });
 
     //Initialise game variable
     game = new Phaser.Game(1200, 800, Phaser.CANVAS);
