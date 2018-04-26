@@ -43,8 +43,8 @@ var gameList = [],
 // Serve up index.html.
 app.use(express.static("client"));
 
-var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080;
-var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1"
+var port = 	process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT 	|| 8080;
+var ip = 	process.env.IP   || process.env.OPENSHIFT_NODEJS_IP 	|| '0.0.0.0';
 //http.listen(process.env.PORT || 8080);
 http.listen(port, ip);
 
