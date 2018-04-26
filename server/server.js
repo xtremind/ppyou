@@ -1,11 +1,33 @@
 var express = require("express"),
     app = express(),
     http = require("http").Server(app),
-    io = require("socket.io").listen(http);
+	io = require("socket.io").listen(http),
+	winston = require('winston');
 
+var config = winston.config;
+var logger = new (winston.Logger)({
+	level: 'debug',
+	transports: [
+		new (winston.transports.Console)({
+		timestamp: function() {
+			return Date.now();
+		},
+		formatter: function(options) {
+			return new Intl.DateTimeFormat('fr-FR', {
+				year: 'numeric', month: '2-digit', day: '2-digit',
+				hour: '2-digit', minute: '2-digit', second: '2-digit',
+				hour24: true
+			}).format(options.timestamp()) + ' ' +
+				config.colorize(options.level, options.level.toUpperCase()) + ' ' +
+				(options.message ? options.message : '') +
+				(options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' );
+			}
+		})
+	]
+});
 
-	var Game = require("./entities/game"),
-		Player = require("./entities/player");
+var Game = require("./entities/game"),
+	Player = require("./entities/player");
 
 
 // Broadcasting loop works better than sending an update every time a player moves because waiting for player movement messages adds
@@ -28,7 +50,7 @@ app.get('/', function(req, res){
 init();
 
 function init() {
-	console.log("Starting Server");
+	logger.debug( "Starting Server");
 	
 	// Begin listening for events.
 	setEventHandlers();
@@ -36,12 +58,12 @@ function init() {
 	// Start game loop
     //setInterval(broadcastingLoop, updateInterval);
     
-    console.log("Server Initialized");
+    logger.debug( "Server Initialized");
 }
 
 function setEventHandlers () {
 	io.on("connection", function(client) {
-		console.log("New player has connected: " + client.id);
+		logger.debug( "New player has connected: " + client.id);
 		var player = new Player(client.id, client) ;
 		playerList.push(player);
 
@@ -61,7 +83,7 @@ function setEventHandlers () {
 }
 
 function onRename(data) {
-	console.log("onRename");
+	logger.debug( "onRename");
 	var currentPlayer = playerById(this.id);
 	currentPlayer.setName(data);
 }
@@ -75,14 +97,14 @@ var playerById = function (id) {
 }
 
 function onPlayerList(data) {
-	console.log("onPlayerList");
+	logger.debug( "onPlayerList");
 
 	//find the game by his id
 	var game = gameById(data.id);
 	
 	//if no game find
 	if (!game) {
-		console.log("Game not found: "+ data.id);
+		logger.debug( "Game not found: "+ data.id);
 		return;
 	}
 
@@ -95,14 +117,14 @@ function onPlayerList(data) {
 }
 
 function onLeaveGame(data) {
-	console.log("onLeaveGame");
+	logger.debug( "onLeaveGame");
 
 	//find the game by his id
 	var game = gameById(data.id);
 	
 	//if no game find
 	if (!game) {
-		console.log("Game not found: "+this.id);
+		logger.debug( "Game not found: "+this.id);
 		return;
 	}
 	
@@ -129,8 +151,8 @@ function onLeaveGame(data) {
 }
 
 function onClientDisconnect () {
-    console.log("onClientDisconnect");
-	console.log("\tPlayer disconnected: " + this.id);
+    logger.debug( "onClientDisconnect");
+	logger.debug( "\tPlayer disconnected: " + this.id);
 		
     //find the game by his id
 	var gameId = playersInGame[this.id];
@@ -138,7 +160,7 @@ function onClientDisconnect () {
 	
 	//if no game find
 	if (!currentGame) {
-		console.log("Game not found: "+ gameId);
+		logger.debug( "Game not found: "+ gameId);
 		return;
 	}
 
@@ -181,7 +203,7 @@ var gameById = function (id) {
 }
 
 function onGameList() {
-	console.log("onGameList");
+	logger.debug( "onGameList");
 	this.emit("list games", gameList.filter(checkWaitingGame).slice(0,4).map(function(game){
 		return {"id": game.getId()}
 	}));
@@ -192,9 +214,9 @@ function checkWaitingGame(game){
 }
 
 function onHostGame(data) {
-	console.log("onHostGame");
+	logger.debug( "onHostGame");
 	if(!gameAlreadyHostBy(this.id)){
-		console.log("host new game : " + this.id);
+		logger.debug( "host new game : " + this.id);
 		var game = new Game(this.id);
 
 		var currentPlayer = playerById(this.id);
@@ -211,19 +233,19 @@ function onHostGame(data) {
 			return {"id": game.getId()};
 		}));
 	} else {
-		console.log("game already host : " + this.id);
+		logger.debug( "game already host : " + this.id);
 	}
 }
 
 function onJoinGame(data) {
-	console.log("onJoinGame : " + data.id);
+	logger.debug( "onJoinGame : " + data.id);
 
     //find the game by his id
 	var game = gameById(data.id);
 
 	//if no game find
 	if(!game){
-		console.log("Game not found: "+data.id);
+		logger.debug( "Game not found: "+data.id);
 		return;
 	}
 
@@ -256,7 +278,7 @@ function gameAlreadyHostBy(id){
 }
 
 function onStartGame() {
-	console.log("onStartGame");
+	logger.debug( "onStartGame");
     //find the game by his id
 	var gameId = playersInGame[this.id];
 	var currentGame = gameById(gameId);

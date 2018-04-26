@@ -52,7 +52,7 @@ GameEngine.prototype = {
         this.players.forEach(function(player) {
             // when all players ready, start a play by distribute the given 
             player.socket.addListener("ready to play", function() {
-                console.log("EVENT : ready to play");
+                logger.debug("EVENT : ready to play");
                 that.playerReady++;
                 if (that.playerReady == that.players.length ) {
                     // action : send the given and wait for the gap
@@ -63,7 +63,7 @@ GameEngine.prototype = {
 
             // wait the gap of players, verify it, then distribute it (send DTO)
             player.socket.addListener("gap", function(data){
-                console.log("EVENT : gap");
+                logger.debug("EVENT : gap");
                 //verify the gap
                 if(that.isValidGap(this.id, data)){
                     that.playerReady++;
@@ -85,7 +85,7 @@ GameEngine.prototype = {
 
             // wait the played card for the given player, verify it, and update the game (send DTO)
             player.socket.addListener("play card", function(data){
-                console.log("EVENT : play card");
+                logger.debug("EVENT : play card");
                 if(that.isValidPlayedCard(this.id, data)){
                     var playedCard = that.givenCards.get(this.id).filter(card => {return card.id === data})[0];
                     if(that.firstCard === null) {
@@ -222,12 +222,12 @@ GameEngine.prototype = {
     },
 
     isValidGap: function(playerId, cards){
-        console.log("isValidGap");
+        logger.debug("isValidGap");
         return cards.every(r=> that.givenCards.get(playerId).map(function(card){return card.id;}).indexOf(r) >= 0)
     },
 
     refreshData : function(action) {
-        console.log("refreshData");
+        logger.debug("refreshData");
         // send DTO to refresh front
         that.players.forEach(function(player, index) {
             player.socket.emit("refresh data", 
@@ -236,7 +236,7 @@ GameEngine.prototype = {
     },
 
     initiateGameScoring : function() {
-        console.log("initiateGameScoring");
+        logger.debug("initiateGameScoring");
         this.players.forEach(player => {
             that.ScoringGame.set(player.id, {id: player.id, name: player.name, score: 0});
             that.winningCard.set(player.id, []);
@@ -245,13 +245,13 @@ GameEngine.prototype = {
     },
 
     updateScoringGame: function(playerId, score) {
-        console.log("updateScoringGame");
+        logger.debug("updateScoringGame");
         var currentScore = this.ScoringGame.get(playerId);
         this.ScoringGame.set(playerId, {id: currentScore.id, name: currentScore.name, score: currentScore.score + score});
     },
 
     initiateDeck : function() {
-        console.log("initiateDeck");
+        logger.debug("initiateDeck");
         that.ppyou = listSuit[Math.floor(Math.random()*listSuit.length)];
         var id = 0;
         listSuit.forEach(suit => {
