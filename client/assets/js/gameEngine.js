@@ -1,6 +1,5 @@
 window.onload = function () {
 
-
     //connect to server
     socket = io.connect(window.location.href);
 

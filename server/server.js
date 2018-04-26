@@ -26,6 +26,8 @@ var logger = new (winston.Logger)({
 	]
 });
 
+io.set('transports', [ 'polling', 'websocket' ]);
+
 var Game = require("./entities/game"),
 	Player = require("./entities/player");
 
