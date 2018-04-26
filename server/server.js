@@ -44,9 +44,9 @@ var gameList = [],
 app.use(express.static("client"));
 
 var port = 	process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT 	|| 8080;
-var ip = 	process.env.IP   || process.env.OPENSHIFT_NODEJS_IP 	|| '0.0.0.0';
-//http.listen(process.env.PORT || 8080);
-http.listen(port, ip);
+//var ip = 	process.env.IP   || process.env.OPENSHIFT_NODEJS_IP 	|| '0.0.0.0';
+http.listen(port);
+//http.listen(port, ip);
 
 //redirect client part
 app.get('/', function(req, res){
