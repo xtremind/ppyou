@@ -64,7 +64,7 @@ function init() {
 	// Start game loop
     //setInterval(broadcastingLoop, updateInterval);
     
-    logger.debug( "Server Initialized " + ip + ":" + port);
+    logger.debug( "Server Initialized : " + port);
 }
 
 function setEventHandlers () {
