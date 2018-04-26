@@ -26,7 +26,7 @@ var logger = new (winston.Logger)({
 	]
 });
 
-io.set('transports', [ 'polling', 'websocket' ]);
+io.set('transports', ['polling', 'websocket' ]);
 
 var Game = require("./entities/game"),
 	Player = require("./entities/player");
@@ -43,10 +43,12 @@ var gameList = [],
 // Serve up index.html.
 app.use(express.static("client"));
 
-var port = 	process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT 	|| 8080;
-//var ip = 	process.env.IP   || process.env.OPENSHIFT_NODEJS_IP 	|| '0.0.0.0';
-http.listen(port);
-//http.listen(port, ip);
+var server_port = 	process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT 	|| 8080;
+var server_ip_address = 	process.env.IP   || process.env.OPENSHIFT_NODEJS_IP 	|| '127.0.0.1';
+//http.listen(server_port, null);
+http.listen(server_port, null, function(){
+	logger.debug("Listening on " + this._connectionKey);
+});
 
 //redirect client part
 app.get('/', function(req, res){
@@ -56,7 +58,7 @@ app.get('/', function(req, res){
 init();
 
 function init() {
-	logger.debug( "Starting Server");
+	logger.debug("Starting Server");
 	
 	// Begin listening for events.
 	setEventHandlers();
@@ -64,7 +66,7 @@ function init() {
 	// Start game loop
     //setInterval(broadcastingLoop, updateInterval);
     
-    logger.debug( "Server Initialized : " + port);
+    logger.debug( "Server Initialized");
 }
 
 function setEventHandlers () {
