@@ -5,7 +5,7 @@ var express = require("express"),
 	winston = require('winston');
 
 var config = winston.config;
-var logger = new (winston.Logger)({
+logger = new (winston.Logger)({
 	level: 'debug',
 	transports: [
 		new (winston.transports.Console)({
