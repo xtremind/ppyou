@@ -160,7 +160,7 @@ function onLeaveGame(data) {
 
 function onClientDisconnect () {
     logger.debug( "onClientDisconnect");
-	logger.debug( "\tPlayer disconnected: " + this.id);
+	logger.debug( "Player disconnected: " + this.id);
 		
     //find the game by his id
 	var gameId = playersInGame[this.id];

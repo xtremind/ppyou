@@ -9,7 +9,8 @@
 	"license": "Beerware",
 	"scripts": {
 		"start": "node server/server.js",
-		"install": "npm --prefix ./server install ./server"
+		"install": "npm --prefix ./server install ./server",
+		"postinstall": "npm --prefix ./client install ./client"
 	},
 	"author": "developer"
 }
