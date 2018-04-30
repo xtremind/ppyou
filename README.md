@@ -7,11 +7,11 @@
 * FIX vertical scaling
 * DONE add feedback to display current player
 * FIX click pointer on played card
+* DONE add feedback when player has to play
 
 * TODO add log module with devlopment and production profile
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
-* TODO add feedback when player has to play
 * TODO take into account when player quit game
 * TODO add button to display last play
 * TODO show winning cards before starting new play

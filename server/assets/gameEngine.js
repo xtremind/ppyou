@@ -87,14 +87,14 @@ GameEngine.prototype = {
       player.socket.addListener("play card", function (data) {
         logger.debug("EVENT : play card");
         if (that.isValidPlayedCard(this.id, data)) {
-          var playedCard = that.givenCards.get(this.id).filter(card => { return card.id === data })[0];
+          var playedCard = that.givenCards.get(this.id).filter(function (card) { return card.id === data })[0];
           if (that.firstCard === null) {
             that.firstCard = playedCard;
           }
           // update table play
           that.playedCards[that.playedCards.length - 1].set(this.id, playedCard);
           // remove card from player
-          that.givenCards.set(this.id, that.givenCards.get(this.id).filter(card => { return card.id != playedCard.id; }))
+          that.givenCards.set(this.id, that.givenCards.get(this.id).filter(function (card) { return card.id != playedCard.id; }))
           // refresh display
           that.refreshData('NONE');
           // if all cards are played, end play
@@ -103,12 +103,12 @@ GameEngine.prototype = {
               // define winner
               var winner = that.defineWinner(that.playedCards[that.playedCards.length - 1]);
               // next played cards
-              that.playedCards[that.playedCards.length - 1].forEach((element, key) => {
+              that.playedCards[that.playedCards.length - 1].forEach(function (element) {
                 that.winningCard.get(winner).push(element);
               });
               // compute score
-              that.players.forEach(player => {
-                that.updateScoringGame(player.id, that.winningCard.get(player.id).map(card => { return card.value }).reduce(function (a, b) { return a + b }, 0));
+              that.players.forEach(function (player) {
+                that.updateScoringGame(player.id, that.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
               });
               // display winning cards ?
               // define next starting player
@@ -119,7 +119,7 @@ GameEngine.prototype = {
               // empty starting card
               that.firstCard = null;
               // new distribution
-              that.players.forEach(player => {
+              that.players.forEach(function (player) {
                 that.winningCard.set(player.id, []);
               });
               that.initiateDeck();
@@ -136,7 +136,7 @@ GameEngine.prototype = {
               // next player will be winner
               that.currentTurnPlayer = that.players.findIndex(function (player) { return player.id === winner });
               // next played cards
-              that.playedCards[that.playedCards.length - 1].forEach((element, key) => {
+              that.playedCards[that.playedCards.length - 1].forEach(function (element) {
                 that.winningCard.get(winner).push(element);
               });
               // empty play table
@@ -163,11 +163,11 @@ GameEngine.prototype = {
     var winner = null;
     var highestCard = that.firstCard;
     //that.firstCard (find first player)
-    tablePlay.forEach((element, key) => {
+    tablePlay.forEach(function (element, key) {
       if (element === that.firstCard)
         winner = key;
     });
-    tablePlay.forEach((element, key) => {
+    tablePlay.forEach(function (element, key) {
       if (element.suit === highestCard.suit && element.rank > highestCard.rank) {
         winner = key;
         highestCard = element;
@@ -181,10 +181,10 @@ GameEngine.prototype = {
     // the good player sent the card
     isValid = that.players[that.currentTurnPlayer].id === playerId;
     // the card is in his hand
-    var playedCard = that.givenCards.get(playerId).filter(card => { return card.id === cardId });
+    var playedCard = that.givenCards.get(playerId).filter(function (card) { return card.id === cardId });
     isValid = isValid && playedCard.length === 1;
     // is first card played or the card play is of the same suit or the player has no card with the same suit
-    isValid = isValid && (that.firstCard === null || that.firstCard.suit === playedCard[0].suit || !that.givenCards.get(playerId).some(card => { return card.suit === that.firstCard.suit }));
+    isValid = isValid && (that.firstCard === null || that.firstCard.suit === playedCard[0].suit || !that.givenCards.get(playerId).some(function (card) { return card.suit === that.firstCard.suit }));
     return isValid;
   },
 
@@ -223,7 +223,7 @@ GameEngine.prototype = {
 
   isValidGap: function (playerId, cards) {
     logger.debug("isValidGap");
-    return cards.every(r => that.givenCards.get(playerId).map(function (card) { return card.id; }).indexOf(r) >= 0)
+    return cards.every(function (r) { that.givenCards.get(playerId).map(function (card) { return card.id; }).indexOf(r) >= 0 });
   },
 
   refreshData: function (action) {
@@ -237,7 +237,7 @@ GameEngine.prototype = {
 
   initiateGameScoring: function () {
     logger.debug("initiateGameScoring");
-    this.players.forEach(player => {
+    this.players.forEach(function (player) {
       that.ScoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
       that.winningCard.set(player.id, []);
     });
@@ -254,8 +254,8 @@ GameEngine.prototype = {
     logger.debug("initiateDeck");
     that.ppyou = listSuit[Math.floor(Math.random() * listSuit.length)];
     var id = 0;
-    listSuit.forEach(suit => {
-      listRank.forEach(rank => {
+    listSuit.forEach(function (suit) {
+      listRank.forEach(function (rank) {
         if (!that.gameConfig.filtering || rank !== "1") {
           var card = new Card(id++, rank, suit, rank === 7 && suit === that.ppyou ? 40 : 0);
           this.deck.push(card);
@@ -274,8 +274,8 @@ GameEngine.prototype = {
   },
 
   distributeGiven: function () {
-    this.gameConfig.given.forEach(nbCard => {
-      this.players.forEach(player => {
+    this.gameConfig.given.forEach(function (nbCard) {
+      this.players.forEach(function (player) {
         var hand = this.givenCards.get(player.id)
         if (typeof hand === "undefined") {
           hand = [];
