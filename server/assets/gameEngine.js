@@ -6,6 +6,8 @@ var config = require("./gameConfiguration.json");
 var listRank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 var listSuit = ['S', 'H', 'C', 'D'];
 
+var TIMEOUT_WAITING_TIME = 3000;
+
 var GameEngine = function (id, players) {
   this.id = id;
   this.players = players;
@@ -126,7 +128,7 @@ GameEngine.prototype = {
               that.randomizeDeck();
               that.distributeGiven(that.players.length);
               that.refreshData('GAP');
-            }, 3000);
+            }, TIMEOUT_WAITING_TIME);
             // else if all players have played, end turn
           } else if (that.playedCards[that.playedCards.length - 1].size === that.players.length) {
             // wait a little
@@ -145,7 +147,7 @@ GameEngine.prototype = {
               that.firstCard = null;
               // refresh game
               that.refreshData('PLAY');
-            }, 3000);
+            }, TIMEOUT_WAITING_TIME);
           } else {
             // define next player
             that.currentTurnPlayer = (that.currentTurnPlayer + 1) % that.players.length;
