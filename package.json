@@ -1,16 +1,16 @@
 {
-	"name": "ppyou",
-	"version": "0.0.1",
-	"description": "test",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/xtremind/ppyou.git"
-	},
-	"license": "Beerware",
-	"scripts": {
-		"start": "node server/server.js",
-		"install": "npm --prefix ./server install ./server",
-		"postinstall": "npm --prefix ./client install ./client"
-	},
-	"author": "developer"
+  "name": "ppyou",
+  "version": "0.0.1",
+  "description": "test",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xtremind/ppyou.git"
+  },
+  "license": "Beerware",
+  "scripts": {
+    "start": "node server/server.js",
+    "install": "npm --prefix ./server install ./server",
+    "postinstall": "npm --prefix ./client install ./client"
+  },
+  "author": "developer"
 }

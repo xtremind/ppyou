@@ -3,8 +3,8 @@ Game.WaitingRoom = function (game) {
 };
 
 Game.WaitingRoom.prototype = {
-	create : function () {
-		console.log("WaitingRoom.create");
+  create : function () {
+    console.log("WaitingRoom.create");
 
         position = 0;
         that = this;
@@ -19,8 +19,8 @@ Game.WaitingRoom.prototype = {
         //animate title
         game.add.tween(subtitle).to({y: 150}, 1000).easing(Phaser.Easing.Bounce.Out).start();
        
-		socket.on("list players", function(data){
-			console.log("refresh list of players in the game");
+    socket.on("list players", function(data){
+      console.log("refresh list of players in the game");
             // delete current List            
             for(var key in that.playersList){
                 graphics.deleteText(that.playersList[key]);
@@ -45,15 +45,15 @@ Game.WaitingRoom.prototype = {
                     that.state.start('Party');
                 });
             }
-		});
+    });
 
-		socket.on("end game", function(data){
+    socket.on("end game", function(data){
             that.resetEvents();
             game.currentGameId = null;
             that.state.start('MainMenu');
         });
 
-		socket.on("start game", function(data){
+    socket.on("start game", function(data){
             that.resetEvents();
             that.state.start('Party');
         });
@@ -66,7 +66,7 @@ Game.WaitingRoom.prototype = {
         });
         
         socket.emit('get playerlist', {id: game.currentGameId});
-	},
+  },
     
     resetEvents : function (){
         socket.off("list players");

@@ -16,6 +16,12 @@ Player.prototype = {
     },
     getSocket: function() {
         return this.socket;
+    },
+    getDTO: function(){
+        return {
+            "id": this.getId(),
+            "name": this.getName()
+        }
     }
 };
 

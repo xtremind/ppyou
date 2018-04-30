@@ -4,7 +4,7 @@ Game.MainMenu = function (game) {
 
 Game.MainMenu.prototype = {
     create : function () {       
-		console.log("MainMenu.create");
+    console.log("MainMenu.create");
         position = 0,
             that = this;
 
@@ -30,7 +30,7 @@ Game.MainMenu.prototype = {
         //add rounded buttons
         graphics.drawButtonWithText(game, {x:this.world.centerX-200, y:280, height:50, width:200}, styles.hostButton, 'host game', styles.hostText, 'host game', function(){game.playerName=playerName.value;socket.emit('host game', {name: playerName.value});});
 
-		socket.on("list games", function(data){
+    socket.on("list games", function(data){
             // delete current join List            
             for(var key in that.gameList){
                 graphics.deleteButton(that.gameList[key]);
