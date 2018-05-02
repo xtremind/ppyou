@@ -1,8 +1,8 @@
 var express = require("express"),
   app = express(),
   http = require("http").Server(app),
-  io = require("socket.io").listen(http),
-  winston = require('winston');
+  io = require('socket.io')(http, { serveClient: false }),
+  winston = require("winston");
 
 var config = winston.config;
 logger = new (winston.Logger)({
