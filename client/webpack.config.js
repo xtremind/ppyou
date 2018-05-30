@@ -3,7 +3,9 @@ const path = require('path');
 
 // Phaser webpack config
 var phaserModule = path.join(__dirname, '/node_modules/phaser-ce/')
-var phaser = path.join(phaserModule, 'src/Phaser.js')
+var phaser = path.join(phaserModule, 'build/custom/phaser-split.js')
+var pixi = path.join(phaserModule, 'build/custom/pixi.js')
+var p2 = path.join(phaserModule, 'build/custom/p2.js')
 
 // Phaser-Input webpack config
 var phaserInputModule = path.join(__dirname, '/node_modules/@orange-games/phaser-input/')
@@ -17,14 +19,15 @@ let config = {
   entry: {
     app: [
         path.resolve(__dirname, './src/gameEngine.js')
-    ],
-    vendor: ['phaser', 'phaserInput', 'socketIoClient']
+    ]
+    //,vendor: ['phaser', 'phaserInput', 'socketIoClient']
   },
   target: 'web',
   output: {
     filename: './[name]-bundle.js',
     path: path.resolve(__dirname, './dist')
   },
+  
   node: {
     fs: "empty",
     net: "empty"
@@ -37,6 +40,8 @@ let config = {
     ],
     alias: {
       'phaser': phaser,
+      'p2': p2,
+      'pixi': pixi,
       'phaserInput': phaserInput,
       'socketIoClient': socketIoClient
     }
