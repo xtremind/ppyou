@@ -13,12 +13,16 @@ var phaserInput = path.join(phaserInputModule, 'build/phaser-input.js')
 var socketIoClientModule = path.join(__dirname, '/node_modules/socket.io-client/')
 var socketIoClient = path.join(socketIoClientModule, 'dist/socket.io.js')
 
-
 let config = {
-  entry: './src/gameEngine.js',
+  entry: {
+    app: [
+        path.resolve(__dirname, './src/gameEngine.js')
+    ],
+    vendor: ['phaser', 'phaserInput', 'socketIoClient']
+  },
   target: 'web',
   output: {
-    filename: './bundle.js',
+    filename: './[name]-bundle.js',
     path: path.resolve(__dirname, './dist')
   },
   node: {
