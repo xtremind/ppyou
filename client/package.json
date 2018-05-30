@@ -1,11 +1,20 @@
 {
   "name": "ppyou-client",
-  "version": "0.0.1",
+  "version": "2.0.0-SNAPSHOT",
   "description": "a client for multi game of ppyou",
   "dependencies": {
     "phaser-ce": "2.8.5",
     "@orange-games/phaser-input": "2.0.5",
-    "socket.io-client": "2.0.3"
+    "socket.io-client": "2.0.3",
+    "webpack": "4.6.0",
+    "webpack-cli": "2.1.2",
+    "babel-loader": "7.1.4",
+    "babel-core": "6.26.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --progress --colors",
+    "watch": "webpack --watch"
   },
   "repository": {
     "type": "git",

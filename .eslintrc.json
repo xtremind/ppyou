@@ -1,6 +1,8 @@
 {
     "env": {
-        "browser": true
+      "es6": true,
+      "browser": true,
+      "commonjs": true 
     },
     "extends": "eslint:recommended",
     "rules": {
@@ -137,8 +139,8 @@
         "no-proto": "off",
         "no-prototype-builtins": "off",
         "no-restricted-globals": "error",
-        "no-restricted-imports": "error",
-        "no-restricted-modules": "error",
+        "no-restricted-imports": "off",
+        "no-restricted-modules": "off",
         "no-restricted-properties": "error",
         "no-restricted-syntax": "error",
         "no-return-assign": "off",

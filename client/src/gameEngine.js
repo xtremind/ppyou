@@ -1,3 +1,19 @@
+// declare modules
+import 'phaser';
+import 'phaserInput';
+import 'socketIoClient';
+
+// declare states
+import './states/Boot.js';
+import './states/Preloader.js';
+import './states/MainMenu.js';
+import './states/WaitingRoom.js';
+import './states/Party.js';
+
+// declare Utils
+import './utils/graphics.js';
+import './utils/styles.js';
+
 window.onload = function () {
 
   //connect to server
