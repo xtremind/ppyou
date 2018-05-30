@@ -20,7 +20,7 @@ let config = {
     app: [
         path.resolve(__dirname, './src/gameEngine.js')
     ]
-    //,vendor: ['phaser', 'phaserInput', 'socketIoClient']
+    ,vendor: ['phaser', 'phaserInput', 'socketIoClient', 'p2', 'pixi']
   },
   target: 'web',
   output: {
@@ -32,6 +32,19 @@ let config = {
     fs: "empty",
     net: "empty"
   },
+
+  optimization: {
+    splitChunks: {
+        cacheGroups: {
+            commons: {
+                test: /[\\/]node_modules[\\/]/,
+                name: 'vendor',
+                chunks: 'all'
+            }
+        }
+    }
+},
+
   resolve: {
     extensions: ['.js', '.json'],
     modules: [
