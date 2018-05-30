@@ -1,6 +1,6 @@
 // declare modules
 import 'p2';
-import 'pixi';
+import PIXI from 'pixi';
 import 'phaser';
 import 'phaserInput';
 import 'socketIoClient';
