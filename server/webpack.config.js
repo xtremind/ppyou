@@ -4,10 +4,10 @@ var fs = require('fs');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
-  .filter(function(x) {
+  .filter(function (x) {
     return ['.bin'].indexOf(x) === -1;
   })
-  .forEach(function(mod) {
+  .forEach(function (mod) {
     nodeModules[mod] = 'commonjs ' + mod;
   });
 
@@ -21,7 +21,7 @@ let config = {
   resolve: {
     extensions: ['.js', '.json'],
     modules: [
-      path.resolve(__dirname, '/src'), 
+      path.resolve(__dirname, '/src'),
       'node_modules'
     ]
   },
@@ -31,7 +31,7 @@ let config = {
       exclude: /node_modules/,
       loader: "babel-loader"
     }]
-   },
+  },
   externals: nodeModules
 };
 

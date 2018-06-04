@@ -1,9 +1,15 @@
 // declare modules
-import '../node_modules/phaser-ce/build/custom/pixi.js';
-import '../node_modules/phaser-ce/build/custom/p2.js';
-import '../node_modules/phaser-ce/build/custom/phaser-split.js';
+//import '../node_modules/phaser-ce/build/custom/pixi.js';
+//import '../node_modules/phaser-ce/build/custom/p2.js';
+//import '../node_modules/phaser-ce/build/custom/phaser-split.js';
+
+import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
+import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
+import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
+
 import '../node_modules/@orange-games/phaser-input/build/phaser-input.js';
-import '../node_modules/socket.io-client/dist/socket.io.js';
+
+import io from '../node_modules/socket.io-client/dist/socket.io.js';
 
 // declare states
 import './states/Boot.js';
@@ -19,12 +25,14 @@ import './utils/styles.js';
 window.onload = function () {
 
   //connect to server
-  socket = io.connect(window.location.href);
+  const socket = io.connect(window.location.href);
 
   //Initialise game variable
-  game = new Phaser.Game(1200, 800, Phaser.CANVAS);
+  const game = new Phaser.Game(1200, 800, Phaser.CANVAS);
 
   //Declare states
+  var Game = {};
+
   game.state.add('Boot', Game.Boot);
   game.state.add('Preloader', Game.Preloader);
   game.state.add('MainMenu', Game.MainMenu);

@@ -1,3 +1,5 @@
+var Game = {};
+
 Game.Preloader = function (game) {
   //this.preloadBar = null;
 };

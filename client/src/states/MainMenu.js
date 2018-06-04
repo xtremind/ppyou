@@ -1,3 +1,5 @@
+var Game = {};
+
 Game.MainMenu = function (game) {
   this.gameList = [];
 };

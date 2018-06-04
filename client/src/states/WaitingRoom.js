@@ -1,3 +1,5 @@
+var Game = {};
+
 Game.WaitingRoom = function (game) {
   this.playersList = [];
 };

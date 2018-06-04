@@ -1,3 +1,5 @@
+var Game = {};
+
 Game.Party = function (game) {
   this.debug = false;
   this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
