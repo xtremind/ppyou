@@ -28,7 +28,7 @@ window.onload = function () {
   const socket = io.connect(window.location.href);
 
   //Initialise game variable
-  const game = new Phaser.Game(1200, 800, Phaser.CANVAS);
+  var game = new Phaser.Game(1200, 800, Phaser.CANVAS);
 
   //Declare states
   var Game = {};
