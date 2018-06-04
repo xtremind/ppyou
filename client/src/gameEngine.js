@@ -1,9 +1,9 @@
 // declare modules
-import 'p2';
-import PIXI from 'pixi';
-import 'phaser';
-import 'phaserInput';
-import 'socketIoClient';
+import '../node_modules/phaser-ce/build/custom/pixi.js';
+import '../node_modules/phaser-ce/build/custom/p2.js';
+import '../node_modules/phaser-ce/build/custom/phaser-split.js';
+import '../node_modules/@orange-games/phaser-input/build/phaser-input.js';
+import '../node_modules/socket.io-client/dist/socket.io.js';
 
 // declare states
 import './states/Boot.js';

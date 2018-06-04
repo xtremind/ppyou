@@ -12,8 +12,8 @@
   "license": "Beerware",
   "scripts": {
     "start": "node server/dist/bundle.js",
-    "postinstall": "concurrent -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix ./server install ./server\" \"npm --prefix ./client install ./client\" ",
-    "build": "concurrent -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix server run build\" \"npm --prefix client run build\" "
+    "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix ./server install ./server\" \"npm --prefix ./client install ./client\" ",
+    "build": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix server run build\" \"npm --prefix client run build\" "
   },
   "author": "developer"
 }
