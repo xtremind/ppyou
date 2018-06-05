@@ -243,7 +243,7 @@ GameEngine.prototype = {
       that.ScoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
       that.winningCard.set(player.id, []);
     });
-    this.playedCards.push(new Map());
+    that.playedCards.push(new Map());
   },
 
   updateScoringGame: function (playerId, score) {
@@ -260,14 +260,14 @@ GameEngine.prototype = {
       listRank.forEach(function (rank) {
         if (!that.gameConfig.filtering || rank !== "1") {
           var card = new Card(id++, rank, suit, rank === 7 && suit === that.ppyou ? 40 : 0);
-          this.deck.push(card);
+          that.deck.push(card);
         }
       });
     });
 
     for (var rank = 1; rank < 21; rank++) {
       var card = new Card(id++, rank, 'B', rank);
-      this.deck.push(card);
+      that.deck.push(card);
     }
   },
 

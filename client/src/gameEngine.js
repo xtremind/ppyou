@@ -1,43 +1,28 @@
-// declare modules
-//import '../node_modules/phaser-ce/build/custom/pixi.js';
-//import '../node_modules/phaser-ce/build/custom/p2.js';
-//import '../node_modules/phaser-ce/build/custom/phaser-split.js';
+//Import modules
+import 'pixi';
+import 'p2';
+import Phaser from 'phaser';
+import io from 'socket.io-client';
 
-import PIXI from 'expose-loader?PIXI!phaser-ce/build/custom/pixi.js';
-import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
-import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
+//Import state
+import { Boot } from './states/boot';
+import { Preloader } from './states/preloader';
+import { MainMenu } from './states/main-menu';
+import { WaitingRoom } from './states/waiting-room';
+import { Party } from './states/party';
 
-import '../node_modules/@orange-games/phaser-input/build/phaser-input.js';
+//connect to server
+let socket = io.connect(window.location.href);
 
-import io from '../node_modules/socket.io-client/dist/socket.io.js';
+//Initialise game variable
+let game = new Phaser.Game(1200, 800, Phaser.CANVAS);
 
-// declare states
-import Boot from './states/Boot.js';
-import Preloader from './states/Preloader.js';
-import MainMenu from './states/MainMenu.js';
-import WaitingRoom from './states/WaitingRoom.js';
-import Party from './states/Party.js';
+//Declare states
+game.state.add('Boot', new Boot());
+game.state.add('Preloader', new Preloader());
+game.state.add('MainMenu', new MainMenu(socket));
+game.state.add('WaitingRoom', new WaitingRoom(socket));
+game.state.add('Party', new Party(socket));
 
-// declare Utils
-import './utils/graphics.js';
-import './utils/styles.js';
-
-window.onload = function () {
-
-  //connect to server
-  const socket = io.connect(window.location.href);
-
-  //Initialise game variable
-  var game = new Phaser.Game(1200, 800, Phaser.CANVAS);
-
-  //Declare states
-  game.state.add('Boot', Boot);
-  game.state.add('Preloader', Preloader);
-  game.state.add('MainMenu', MainMenu);
-  game.state.add('WaitingRoom', WaitingRoom);
-  game.state.add('Party', Party);
-
-  //Launch Boot state
-  game.state.start('Boot');
-
-};
+//Launch Boot state
+game.state.start('Boot');
