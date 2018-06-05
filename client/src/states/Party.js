@@ -1,6 +1,4 @@
-var Game = {};
-
-Game.Party = function (game) {
+var Party = function (game) {
   this.debug = false;
   this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
   this.action = this.actionList[0];
@@ -9,7 +7,7 @@ Game.Party = function (game) {
   this.hand = [];
 };
 
-Game.Party.prototype = {
+Party.prototype = {
   create: function () {
     that = this;
     // add a background image
@@ -129,3 +127,6 @@ Game.Party.prototype = {
     }
   }
 };
+
+
+export default Party;

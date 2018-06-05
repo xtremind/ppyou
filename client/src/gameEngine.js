@@ -12,11 +12,11 @@ import '../node_modules/@orange-games/phaser-input/build/phaser-input.js';
 import io from '../node_modules/socket.io-client/dist/socket.io.js';
 
 // declare states
-import './states/Boot.js';
-import './states/Preloader.js';
-import './states/MainMenu.js';
-import './states/WaitingRoom.js';
-import './states/Party.js';
+import Boot from './states/Boot.js';
+import Preloader from './states/Preloader.js';
+import MainMenu from './states/MainMenu.js';
+import WaitingRoom from './states/WaitingRoom.js';
+import Party from './states/Party.js';
 
 // declare Utils
 import './utils/graphics.js';
@@ -31,13 +31,11 @@ window.onload = function () {
   var game = new Phaser.Game(1200, 800, Phaser.CANVAS);
 
   //Declare states
-  var Game = {};
-
-  game.state.add('Boot', Game.Boot);
-  game.state.add('Preloader', Game.Preloader);
-  game.state.add('MainMenu', Game.MainMenu);
-  game.state.add('WaitingRoom', Game.WaitingRoom);
-  game.state.add('Party', Game.Party);
+  game.state.add('Boot', Boot);
+  game.state.add('Preloader', Preloader);
+  game.state.add('MainMenu', MainMenu);
+  game.state.add('WaitingRoom', WaitingRoom);
+  game.state.add('Party', Party);
 
   //Launch Boot state
   game.state.start('Boot');

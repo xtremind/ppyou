@@ -1,10 +1,8 @@
-var Game = {};
-
-Game.Preloader = function (game) {
+var Preloader = function (game) {
   //this.preloadBar = null;
 };
 
-Game.Preloader.prototype = {
+Preloader.prototype = {
   preload: function () {
 
     // add a 'Loading ...' label on the screen
@@ -26,3 +24,5 @@ Game.Preloader.prototype = {
     this.state.start('MainMenu');
   }
 };
+
+export default Preloader;

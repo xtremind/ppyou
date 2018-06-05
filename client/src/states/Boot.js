@@ -1,10 +1,8 @@
-var Game = {};
-
-Game.Boot = function (game) {
+var Boot = function (game) {
 
 };
 
-Game.Boot.prototype = {
+Boot.prototype = {
   init: function () {
     this.input.maxPointers = 1;
     this.stage.disableVisibilityChange = true;
@@ -42,3 +40,5 @@ Game.Boot.prototype = {
     this.state.start('Preloader');
   }
 };
+
+export default Boot;

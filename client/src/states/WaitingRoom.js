@@ -1,10 +1,8 @@
-var Game = {};
-
-Game.WaitingRoom = function (game) {
+var WaitingRoom = function (game) {
   this.playersList = [];
 };
 
-Game.WaitingRoom.prototype = {
+WaitingRoom.prototype = {
   create: function () {
     console.log("WaitingRoom.create");
 
@@ -78,3 +76,5 @@ Game.WaitingRoom.prototype = {
 
   start: function () { }
 };
+
+export default WaitingRoom;

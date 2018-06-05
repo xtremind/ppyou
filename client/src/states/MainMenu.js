@@ -1,10 +1,8 @@
-var Game = {};
-
-Game.MainMenu = function (game) {
+var MainMenu = function (game) {
   this.gameList = [];
 };
 
-Game.MainMenu.prototype = {
+MainMenu.prototype = {
   create: function () {
     console.log("MainMenu.create");
     position = 0,
@@ -69,3 +67,5 @@ Game.MainMenu.prototype = {
 
   start: function () { }
 };
+
+export default MainMenu;
