@@ -1,7 +1,7 @@
 {
   "name": "ppyou",
-  "version": "0.0.1",
-  "description": "test",
+  "version": "2.0.0-SNAPSHOT",
+  "description": "a multiplayer game for ppyou",
   "dependencies": {
     "concurrently": "^3.5.1"
   },
@@ -13,6 +13,7 @@
   "scripts": {
     "start": "node server/dist/bundle.js",
     "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix ./server install ./server\" \"npm --prefix ./client install ./client\" ",
+    "clean": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"rm -rf server/dist\" \"rm -rf client/dist\" ",
     "build": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix server run build\" \"npm --prefix client run build\" "
   },
   "author": "developer"
