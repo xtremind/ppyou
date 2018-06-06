@@ -35,7 +35,6 @@ GameEngine.prototype = {
 
   //should contains the logic of the game
   start: function () {
-    that = this;
     this.startingPlayPlayer = 0;
     this.currentTurnPlayer = 0;
     this.initiateGameScoring();
@@ -47,19 +46,22 @@ GameEngine.prototype = {
   },
 
   loadGameConfiguratiton: function (nbplayer) {
+    logger.debug("loadGameConfiguratiton");
     this.gameConfig = config.gameConfiguration.find(function (element) { return element.nbplayer === nbplayer });
   },
 
   startGame: function () {
+    logger.debug("startGame");
+    let stateScope = this;
     this.players.forEach(function (player) {
       // when all players ready, start a play by distribute the given 
       player.socket.addListener("ready to play", function () {
         logger.debug("EVENT : ready to play");
-        that.playerReady++;
-        if (that.playerReady == that.players.length) {
+        stateScope.playerReady++;
+        if (stateScope.playerReady == stateScope.players.length) {
           // action : send the given and wait for the gap
-          that.refreshData('GAP');
-          that.playerReady = 0;
+          stateScope.refreshData.call(stateScope, 'GAP');
+          stateScope.playerReady = 0;
         }
       });
 
@@ -67,106 +69,110 @@ GameEngine.prototype = {
       player.socket.addListener("gap", function (data) {
         logger.debug("EVENT : gap");
         //verify the gap
-        if (that.isValidGap(this.id, data)) {
-          that.playerReady++;
-          that.gapCards.set(this.id, data);
-        }
-        // when all gap defined, start a turn by designate the first player
-        if (that.playerReady == that.players.length) {
-          //dispatch the gap
-          that.dispatchGap();
-          //sent new hand to players
-          that.refreshData('NONE');
-          setTimeout(function () {
-            that.clearHand();
-            that.refreshData('PLAY');
-          }, 3000);
-          that.playerReady = 0;
+        if (stateScope.isValidGap.call(stateScope, this.id, data)) {
+          stateScope.playerReady++;
+          stateScope.gapCards.set(this.id, data);
+          // when all gap defined, start a turn by designate the first player
+          if (stateScope.playerReady == stateScope.players.length) {
+            //dispatch the gap
+            stateScope.dispatchGap.call(stateScope);
+            //sent new hand to players
+            stateScope.refreshData.call(stateScope, 'NONE');
+            setTimeout(function () {
+              stateScope.clearHand.call(stateScope);
+              stateScope.refreshData.call(stateScope, 'PLAY');
+            }, 3000);
+            stateScope.playerReady = 0;
+          }
+        } else {
+          logger.error("Gap Error");
+          //TODO tell the player to redo his choices
         }
       });
 
       // wait the played card for the given player, verify it, and update the game (send DTO)
       player.socket.addListener("play card", function (data) {
         logger.debug("EVENT : play card");
-        if (that.isValidPlayedCard(this.id, data)) {
-          var playedCard = that.givenCards.get(this.id).filter(function (card) { return card.id === data })[0];
-          if (that.firstCard === null) {
-            that.firstCard = playedCard;
+        if (stateScope.isValidPlayedCard.call(stateScope, this.id, data)) {
+          var playedCard = stateScope.givenCards.get(this.id).filter(function (card) { return card.id === data })[0];
+          if (stateScope.firstCard === null) {
+            stateScope.firstCard = playedCard;
           }
           // update table play
-          that.playedCards[that.playedCards.length - 1].set(this.id, playedCard);
+          stateScope.playedCards[stateScope.playedCards.length - 1].set(this.id, playedCard);
           // remove card from player
-          that.givenCards.set(this.id, that.givenCards.get(this.id).filter(function (card) { return card.id != playedCard.id; }))
+          stateScope.givenCards.set(this.id, stateScope.givenCards.get(this.id).filter(function (card) { return card.id != playedCard.id; }))
           // refresh display
-          that.refreshData('NONE');
+          stateScope.refreshData.call(stateScope, 'NONE');
           // if all cards are played, end play
-          if (that.playedCards.length === that.gameConfig.given.reduce(function (a, b) { return a + b }, 0) && that.playedCards[that.playedCards.length - 1].size === that.players.length) {
+          if (stateScope.playedCards.length === stateScope.gameConfig.given.reduce(function (a, b) { return a + b }, 0) && stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
             setTimeout(function () {
               // define winner
-              var winner = that.defineWinner(that.playedCards[that.playedCards.length - 1]);
+              var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
               // next played cards
-              that.playedCards[that.playedCards.length - 1].forEach(function (element) {
-                that.winningCard.get(winner).push(element);
+              stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+                stateScope.winningCard.get(winner).push(element);
               });
               // compute score
-              that.players.forEach(function (player) {
-                that.updateScoringGame(player.id, that.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
+              stateScope.players.forEach(function (player) {
+                stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
               });
               // display winning cards ?
               // define next starting player
-              that.startingPlayPlayer = (that.startingPlayPlayer + 1) % that.players.length;
+              stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
               // empty play table
-              that.playedCards = []
-              that.playedCards.push(new Map());
+              stateScope.playedCards = []
+              stateScope.playedCards.push(new Map());
               // empty starting card
-              that.firstCard = null;
+              stateScope.firstCard = null;
               // new distribution
-              that.players.forEach(function (player) {
-                that.winningCard.set(player.id, []);
+              stateScope.players.forEach(function (player) {
+                stateScope.winningCard.set(player.id, []);
               });
-              that.initiateDeck();
-              that.randomizeDeck();
-              that.distributeGiven(that.players.length);
-              that.refreshData('GAP');
+              stateScope.initiateDeck.call(stateScope);
+              stateScope.randomizeDeck.call(stateScope);
+              stateScope.distributeGiven.call(stateScope, stateScope.players.length);
+              stateScope.refreshData.call(stateScope, 'GAP');
             }, TIMEOUT_WAITING_TIME);
             // else if all players have played, end turn
-          } else if (that.playedCards[that.playedCards.length - 1].size === that.players.length) {
+          } else if (stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
             // wait a little
             setTimeout(function () {
               // define winner
-              var winner = that.defineWinner(that.playedCards[that.playedCards.length - 1]);
+              var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
               // next player will be winner
-              that.currentTurnPlayer = that.players.findIndex(function (player) { return player.id === winner });
+              stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
               // next played cards
-              that.playedCards[that.playedCards.length - 1].forEach(function (element) {
-                that.winningCard.get(winner).push(element);
+              stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+                stateScope.winningCard.get(winner).push(element);
               });
               // empty play table
-              that.playedCards.push(new Map());
+              stateScope.playedCards.push(new Map());
               // empty starting card
-              that.firstCard = null;
+              stateScope.firstCard = null;
               // refresh game
-              that.refreshData('PLAY');
+              stateScope.refreshData.call(stateScope, 'PLAY');
             }, TIMEOUT_WAITING_TIME);
           } else {
             // define next player
-            that.currentTurnPlayer = (that.currentTurnPlayer + 1) % that.players.length;
+            stateScope.currentTurnPlayer = (stateScope.currentTurnPlayer + 1) % stateScope.players.length;
             // refresh game
-            that.refreshData('PLAY');
+            stateScope.refreshData.call(stateScope, 'PLAY');
           }
         } else {
-          that.refreshData('PLAY');
+          stateScope.refreshData.call(stateScope, 'PLAY');
         }
       });
     })
   },
 
   defineWinner: function (tablePlay) {
+    logger.debug("defineWinner");
+    let stateScope = this;
     var winner = null;
-    var highestCard = that.firstCard;
-    //that.firstCard (find first player)
+    var highestCard = stateScope.firstCard;
     tablePlay.forEach(function (element, key) {
-      if (element === that.firstCard)
+      if (element === stateScope.firstCard)
         winner = key;
     });
     tablePlay.forEach(function (element, key) {
@@ -179,21 +185,24 @@ GameEngine.prototype = {
   },
 
   isValidPlayedCard: function (playerId, cardId) {
+    logger.debug("isValidPlayedCard");
+    let scopeState = this;
     var isValid;
     // the good player sent the card
-    isValid = that.players[that.currentTurnPlayer].id === playerId;
+    isValid = scopeState.players[scopeState.currentTurnPlayer].id === playerId;
     // the card is in his hand
-    var playedCard = that.givenCards.get(playerId).filter(function (card) { return card.id === cardId });
+    var playedCard = scopeState.givenCards.get(playerId).filter(function (card) { return card.id === cardId });
     isValid = isValid && playedCard.length === 1;
     // is first card played or the card play is of the same suit or the player has no card with the same suit
-    isValid = isValid && (that.firstCard === null || that.firstCard.suit === playedCard[0].suit || !that.givenCards.get(playerId).some(function (card) { return card.suit === that.firstCard.suit }));
+    isValid = isValid && (scopeState.firstCard === null || scopeState.firstCard.suit === playedCard[0].suit || !scopeState.givenCards.get(playerId).some(function (card) { return card.suit === scopeState.firstCard.suit }));
     return isValid;
   },
 
-
   clearHand: function () {
-    that.players.forEach(function (player) {
-      that.givenCards.set(player.id, that.givenCards.get(player.id).map(function (card) {
+    logger.debug("clearHand");
+    let stateScope = this;
+    stateScope.players.forEach(function (player) {
+      stateScope.givenCards.set(player.id, stateScope.givenCards.get(player.id).map(function (card) {
         card.selected = false;
         return card;
       }));
@@ -201,49 +210,56 @@ GameEngine.prototype = {
   },
 
   dispatchGap: function () {
-    that.players.forEach(function (player, index) {
+    logger.debug("dispatchGap");
+    let stateScope = this;
+    stateScope.players.forEach(function (player, index) {
       // add gap to next player
-      var currentGap = that.givenCards.get(player.id).filter(function (card) {
-        return that.gapCards.get(player.id).indexOf(card.id) >= 0;
+      var currentGap = stateScope.givenCards.get(player.id).filter(function (card) {
+        return stateScope.gapCards.get(player.id).indexOf(card.id) >= 0;
       }).map(function (card) {
         card.selected = true;
         return card;
       });
-      var nextPlayer = that.players[(index + 1) % that.players.length]
-      var nextPlayerHand = that.givenCards.get(nextPlayer.id).concat(currentGap);
+      var nextPlayer = stateScope.players[(index + 1) % stateScope.players.length]
+      var nextPlayerHand = stateScope.givenCards.get(nextPlayer.id).concat(currentGap);
       nextPlayerHand.sort(function (a, b) {
         return a.id - b.id;
       })
-      that.givenCards.set(nextPlayer.id, nextPlayerHand);
+      stateScope.givenCards.set(nextPlayer.id, nextPlayerHand);
       // refresh current player hand
-      var currentPlayerHand = that.givenCards.get(player.id).filter(function (card) {
-        return that.gapCards.get(player.id).indexOf(card.id) < 0;
+      var currentPlayerHand = stateScope.givenCards.get(player.id).filter(function (card) {
+        return stateScope.gapCards.get(player.id).indexOf(card.id) < 0;
       });
-      that.givenCards.set(player.id, currentPlayerHand);
+      stateScope.givenCards.set(player.id, currentPlayerHand);
     });
   },
 
   isValidGap: function (playerId, cards) {
     logger.debug("isValidGap");
-    return cards.every(function (r) { that.givenCards.get(playerId).map(function (card) { return card.id; }).indexOf(r) >= 0 });
+    let stateScope = this;
+    return cards.every(function (r) {
+      return stateScope.givenCards.get(playerId).map(function (card) { return card.id; }).indexOf(r) >= 0
+    });
   },
 
   refreshData: function (action) {
     logger.debug("refreshData");
+    let stateScope = this;
     // send DTO to refresh front
-    that.players.forEach(function (player, index) {
+    stateScope.players.forEach(function (player, index) {
       player.socket.emit("refresh data",
-        new GameDTO(that.ScoringGame, that.playedCards[that.playedCards.length - 1], that.givenCards.get(player.getId()), action === 'PLAY' && index === that.currentTurnPlayer || action !== "PLAY" ? action : "NONE", that.gameConfig.gap, that.ppyou, that.currentTurnPlayer));
+        new GameDTO(stateScope.ScoringGame, stateScope.playedCards[stateScope.playedCards.length - 1], stateScope.givenCards.get(player.getId()), action === 'PLAY' && index === stateScope.currentTurnPlayer || action !== "PLAY" ? action : "NONE", stateScope.gameConfig.gap, stateScope.ppyou, stateScope.currentTurnPlayer));
     });
   },
 
   initiateGameScoring: function () {
     logger.debug("initiateGameScoring");
-    this.players.forEach(function (player) {
-      that.ScoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
-      that.winningCard.set(player.id, []);
-    });
-    that.playedCards.push(new Map());
+
+    for (let player of this.players) {
+      this.ScoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
+      this.winningCard.set(player.id, []);
+    }
+    this.playedCards.push(new Map());
   },
 
   updateScoringGame: function (playerId, score) {
@@ -254,30 +270,32 @@ GameEngine.prototype = {
 
   initiateDeck: function () {
     logger.debug("initiateDeck");
-    that.ppyou = listSuit[Math.floor(Math.random() * listSuit.length)];
+    this.ppyou = listSuit[Math.floor(Math.random() * listSuit.length)];
     var id = 0;
-    listSuit.forEach(function (suit) {
-      listRank.forEach(function (rank) {
-        if (!that.gameConfig.filtering || rank !== "1") {
-          var card = new Card(id++, rank, suit, rank === 7 && suit === that.ppyou ? 40 : 0);
-          that.deck.push(card);
+    for (let suit of listSuit) {
+      for (let rank of listRank) {
+        if (!this.gameConfig.filtering || rank !== "1") {
+          var card = new Card(id++, rank, suit, rank === 7 && suit === this.ppyou ? 40 : 0);
+          this.deck.push(card);
         }
-      });
-    });
+      }
+    }
 
     for (var rank = 1; rank < 21; rank++) {
       var card = new Card(id++, rank, 'B', rank);
-      that.deck.push(card);
+      this.deck.push(card);
     }
   },
 
   randomizeDeck: function () {
+    logger.debug("randomizeDeck");
     this.deck.sort(function () { return 0.5 - Math.random() });
   },
 
   distributeGiven: function () {
-    this.gameConfig.given.forEach(function (nbCard) {
-      this.players.forEach(function (player) {
+    logger.debug("distributeGiven");
+    for (let nbCard of this.gameConfig.given) {
+      for (let player of this.players) {
         var hand = this.givenCards.get(player.id)
         if (typeof hand === "undefined") {
           hand = [];
@@ -288,9 +306,8 @@ GameEngine.prototype = {
         });
         this.givenCards.set(player.id, hand);
         this.deck = this.deck.slice(nbCard, this.deck.length);
-      });
-    });
-
+      }
+    }
   }
 }
 

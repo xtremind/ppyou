@@ -2,8 +2,6 @@ import Phaser from 'phaser';
 import graphics from '../utils/graphics';
 import styles from '../utils/styles';
 
-let scopeState;
-
 export class Party extends Phaser.State {
 
   constructor(socket) {
@@ -18,9 +16,9 @@ export class Party extends Phaser.State {
   }
 
   create() {
-    scopeState = this;
+    let stateScope = this;
     // add a background image
-    scopeState.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
+    stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     // get all datas to refresh display
     stateScope.socket.on("refresh data", function (data) {
       console.log("refresh data : " + data.action);
@@ -44,10 +42,11 @@ export class Party extends Phaser.State {
 
   refreshDisplay() {
     console.log("refreshDisplay");
+    let stateScope = this;
     //clear display
     stateScope.game.world.removeAll()
     // add a background image
-    scopeState.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
+    stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     //display message
     if (stateScope.action === 'WAIT') {
       graphics.drawText(stateScope.game, { x: stateScope.game.world.centerX, y: stateScope.game.world.centerY, height: 0, width: 0 }, "En attente des autres joueurs", styles.titleText);
@@ -115,6 +114,7 @@ export class Party extends Phaser.State {
   }
 
   computePlayedCardPosition(players) {
+    let stateScope = this;
     var playTable = { x0: 550, y0: 200, rayon: 200 };
     var radius = (Math.PI * 2) / players.length;
     var initial = players.findIndex(function (player) {

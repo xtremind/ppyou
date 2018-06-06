@@ -7,10 +7,9 @@ var GameDTO = function (scoringGame, playedCards, givenCards, action, gap, ppyou
   this.ppyou = ppyou;
   this.currentPlayer = currentPlayer;
 
-
   scoringGame.forEach(function (element) {
     this.scoringGame.push(element) //current score
-  });
+  }, this);
 
   playedCards.forEach(function (element, key) {
     this.playedCards.push({ id: key, card: element }) //all played cards in play

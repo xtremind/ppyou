@@ -1,3 +1,4 @@
+import styles from './styles';
 // Graphics Utility
 
 // private part
@@ -57,10 +58,10 @@ export default {
     var reverseCardDefinition = Object.assign({ x: cardPosition.x + 60, y: cardPosition.y + 140 }, cardstyle);
 
     var buttonRect = drawRoundedRect(graphics, cardDefinition, cardstyle);
-    var cardSuit = drawCardSuit(game, cardDefinition, suit, cardstyle);
-    var cardRank = drawCardRank(game, cardDefinition, card.rank, cardstyle);
-    var cardReverseSuit = drawCardSuit(game, reverseCardDefinition, card.rank, cardstyle);
-    var cardReverseRank = drawCardRank(game, reverseCardDefinition, suit, cardstyle);
+    var cardSuit = this.drawCardSuit(game, cardDefinition, suit, cardstyle);
+    var cardRank = this.drawCardRank(game, cardDefinition, card.rank, cardstyle);
+    var cardReverseSuit = this.drawCardSuit(game, reverseCardDefinition, card.rank, cardstyle);
+    var cardReverseRank = this.drawCardRank(game, reverseCardDefinition, suit, cardstyle);
     cardReverseRank.angle = 180;
     cardReverseSuit.angle = 180;
     buttonRect.addChild(cardSuit);
