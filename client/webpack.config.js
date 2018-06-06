@@ -43,7 +43,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Papayou'
+      title: 'Ppyou'
     })
   ],
   resolve: {
