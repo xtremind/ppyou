@@ -1,7 +1,7 @@
 server/node_modules/*
 client/node_modules/*
+server/dist/*
+client/dist/*
 node_modules/*
 vscode/*
 npm-debug.log
-server/dist/*
-client/dist/*
