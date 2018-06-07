@@ -19,7 +19,7 @@
     "build:deploy:client": "npm --prefix client run build",
     "prepare:server": "npm run install:server && npm run build:deploy:server",
     "prepare:client": "npm run install:client && npm run build:deploy:client",
-    "postinstall": "npm run prepare:server && npm run prepare:client",
+    "postinstall": " npm run prepare:client",
     "start": "node server/dist/bundle.js"
   },
   "author": "developer"
