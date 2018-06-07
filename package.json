@@ -11,10 +11,11 @@
   },
   "license": "Beerware",
   "scripts": {
-    "start": "node server/dist/bundle.js",
-    "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix ./server install ./server\" \"npm --prefix ./client install ./client\" ",
-    "clean": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"rm -rf server/dist\" \"rm -rf client/dist\" ",
-    "build": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix server run build\" \"npm --prefix client run build\" "
+    "install:child": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix ./server install ./server\" \"npm --prefix ./client install ./client\" ",
+    "build:clean": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"rm -rf server/dist\" \"rm -rf client/dist\" ",
+    "build:deploy": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm --prefix server run build\" \"npm --prefix client run build\" ",
+    "postinstall": "npm run install:child && npm run build:clean && npm run build:deploy",
+    "start": "node server/dist/bundle.js"
   },
   "author": "developer"
 }
