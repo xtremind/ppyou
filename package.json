@@ -17,8 +17,8 @@
     "build:clean:client": "rm -rf client/dist",
     "build:deploy:server": "npm --prefix server run build",
     "build:deploy:client": "npm --prefix client run build",
-    "prepare:server": "npm run install:server && npm run build:clean:server && npm run build:deploy:server",
-    "prepare:client": "npm run install:client && npm run build:clean:client && npm run build:deploy:client",
+    "prepare:server": "npm run install:server && npm run build:deploy:server",
+    "prepare:client": "npm run install:client && npm run build:deploy:client",
     "postinstall": "npm run prepare:server && npm run prepare:client",
     "start": "node server/dist/bundle.js"
   },
