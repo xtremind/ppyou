@@ -1,10 +1,8 @@
-Game.Preloader = function (game) {
-  //this.preloadBar = null;
-};
+import Phaser from 'phaser';
 
-Game.Preloader.prototype = {
-  preload: function () {
+export class Preloader extends Phaser.State {
 
+  preload() {
     // add a 'Loading ...' label on the screen
     var loadingLabel = this.add.text(this.world.centerX, 150, 'Loading ...', { font: '30px Arial', fill: '#ffffff' });
     loadingLabel.anchor.setTo(0.5, 0.5);
@@ -17,10 +15,9 @@ Game.Preloader.prototype = {
 
     //Load all assets
     this.load.image('cardTable', 'assets/img/cardTable.png');
-  },
+  }
 
-  create: function () {
-    //this.state.start('LevelSingle');
+  create() {
     this.state.start('MainMenu');
   }
 };
