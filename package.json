@@ -1,25 +1,19 @@
 {
   "name": "ppyou",
-  "version": "2.0.0-SNAPSHOT",
+  "version": "2.0.0",
   "description": "a multiplayer game for ppyou",
-  "dependencies": {
-    "concurrently": "^3.5.1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/xtremind/ppyou.git"
+  },
+  "dependencies": {
+    "concurrently": "^3.5.1"
   },
   "license": "Beerware",
   "scripts": {
     "install:server": "npm --prefix ./server install ./server",
     "install:client": "npm --prefix ./client install ./client",
-    "build:clean:server": "rm -rf server/dist",
-    "build:clean:client": "rm -rf client/dist",
-    "build:deploy:server": "npm --prefix server run build",
-    "build:deploy:client": "npm --prefix client run build",
-    "prepare:server": "npm run install:server && npm run build:clean:server && npm run build:deploy:server",
-    "prepare:client": "npm run install:client && npm run build:clean:client && npm run build:deploy:client",
-    "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run prepare:server\" \"npm run prepare:client\" ",
+    "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run install:server\" \"npm run install:client\" ",
     "start": "node server/dist/bundle.js"
   },
   "author": "developer"
