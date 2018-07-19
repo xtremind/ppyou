@@ -15,6 +15,7 @@ export class Preloader extends Phaser.State {
 
     //Load all assets
     this.load.image('cardTable', 'assets/img/cardTable.png');
+    this.load.audio('playCard', 'assets/audio/playcard.wav');
   }
 
   create() {

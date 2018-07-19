@@ -13,6 +13,7 @@ export class Party extends Phaser.State {
     this.playedCards = []
     this.playedCardPosition = new Map();
     this.hand = [];
+    this.fx = null;
   }
 
   create() {
@@ -34,6 +35,8 @@ export class Party extends Phaser.State {
       stateScope.currentPlayer = data.currentPlayer;
       stateScope.refreshDisplay();
     });
+
+    stateScope.fx = stateScope.add.audio('playCard');
 
     //send signal ready
     console.log("ready to play");
@@ -76,6 +79,7 @@ export class Party extends Phaser.State {
           }
         } else if (stateScope.action === "PLAY") {
           console.log("Card action : PLAY");
+          stateScope.fx.play();
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
           for (var i = 0; i < stateScope.hand.length; i++) {
             if (stateScope.hand[i].id == card.id && nbSelected < 1) {
