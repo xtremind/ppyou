@@ -22,3 +22,6 @@
 * TODO add troll reactions
 * TODO add chat
 * BUG
+
+
+* user postgres (https://docs.postgresql.fr/10/tutorial-accessdb.html || https://node-postgres.com/features/connecting)
