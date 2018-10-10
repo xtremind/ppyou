@@ -13,7 +13,7 @@ export class MainMenu extends Phaser.State {
 
   create() {
     console.log("MainMenu.create");
-    let stateScope = this;
+    const stateScope = this;
 
     //Add Library
     stateScope.game.add.plugin(PhaserInput.Plugin);
@@ -76,5 +76,4 @@ export class MainMenu extends Phaser.State {
     this.state.start('WaitingRoom');
   }
 
-  start() { }
-};
+}

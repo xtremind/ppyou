@@ -17,7 +17,7 @@ export class Party extends Phaser.State {
   }
 
   create() {
-    let stateScope = this;
+    const stateScope = this;
     // add a background image
     stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     // get all datas to refresh display
@@ -45,7 +45,7 @@ export class Party extends Phaser.State {
 
   refreshDisplay() {
     console.log("refreshDisplay");
-    let stateScope = this;
+    const stateScope = this;
     //clear display
     stateScope.game.world.removeAll()
     // add a background image
@@ -105,7 +105,7 @@ export class Party extends Phaser.State {
       });
     }
     // display card played
-    this.playedCards.forEach((playedCard, index) => {
+    this.playedCards.forEach((playedCard) => {
       graphics.drawCard(stateScope.game, stateScope.playedCardPosition.get(playedCard.id), playedCard.card, null);
     });
 
@@ -130,7 +130,4 @@ export class Party extends Phaser.State {
     });
   }
 
-  update() { }
-
-  render() { if (this.debug) { } }
-};
+}

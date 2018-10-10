@@ -36,4 +36,4 @@ export class Boot extends Phaser.State {
     }
     this.state.start('Preloader');
   }
-};
+}

@@ -19,7 +19,7 @@ export class WaitingRoom extends Phaser.State {
     // add a background image
     stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     // add a title
-    var title = graphics.drawText(stateScope.game, { x: this.world.centerX, y: 80, height: 0, width: 0 }, '♥ ♣  PPyou  ♠ ♦', styles.titleText);
+    graphics.drawText(stateScope.game, { x: this.world.centerX, y: 80, height: 0, width: 0 }, '♥ ♣  PPyou  ♠ ♦', styles.titleText);
     // add a subtitle
     var subtitle = graphics.drawText(stateScope.game, { x: this.world.centerX, y: -50, height: 0, width: 0 }, 'Game ' + stateScope.game.currentGameId, styles.subtitleText);
     //animate title
@@ -53,13 +53,13 @@ export class WaitingRoom extends Phaser.State {
       }
     });
 
-    stateScope.socket.on("end game", function (data) {
+    stateScope.socket.on("end game", function () {
       stateScope.resetEvents();
       stateScope.game.currentGameId = null;
       stateScope.state.start('MainMenu');
     });
 
-    stateScope.socket.on("start game", function (data) {
+    stateScope.socket.on("start game", function () {
       stateScope.resetEvents();
       stateScope.state.start('Party');
     });
@@ -80,5 +80,4 @@ export class WaitingRoom extends Phaser.State {
     this.socket.off("start game");
   }
 
-  start() { }
-};
+}
