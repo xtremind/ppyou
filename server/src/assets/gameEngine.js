@@ -8,12 +8,14 @@ var listSuit = ['S', 'H', 'C', 'D'];
 
 var TIMEOUT_WAITING_TIME = 3000;
 
-var GameEngine = function (id, players) {
+var GameEngine = function (id, players, logger) {
   this.id = id;
   this.players = players;
+  this.logger = logger;
+
   this.deck = [];
   this.gameConfig;
-
+  
   //
   this.playerReady = 0;
 
@@ -46,17 +48,17 @@ GameEngine.prototype = {
   },
 
   loadGameConfiguratiton: function (nbplayer) {
-    logger.debug("loadGameConfiguratiton");
+    this.logger.debug("loadGameConfiguratiton");
     this.gameConfig = config.gameConfiguration.find(function (element) { return element.nbplayer === nbplayer });
   },
 
   startGame: function () {
-    logger.debug("startGame");
+    this.logger.debug("startGame");
     let stateScope = this;
     this.players.forEach(function (player) {
       // when all players ready, start a play by distribute the given 
       player.socket.addListener("ready to play", function () {
-        logger.debug("EVENT : ready to play");
+        stateScope.logger.debug("EVENT : ready to play");
         stateScope.playerReady++;
         if (stateScope.playerReady == stateScope.players.length) {
           // action : send the given and wait for the gap
@@ -67,7 +69,7 @@ GameEngine.prototype = {
 
       // wait the gap of players, verify it, then distribute it (send DTO)
       player.socket.addListener("gap", function (data) {
-        logger.debug("EVENT : gap");
+        stateScope.logger.debug("EVENT : gap");
         //verify the gap
         if (stateScope.isValidGap.call(stateScope, this.id, data)) {
           stateScope.playerReady++;
@@ -85,14 +87,14 @@ GameEngine.prototype = {
             stateScope.playerReady = 0;
           }
         } else {
-          logger.error("Gap Error");
+          stateScope.logger.error("Gap Error");
           //TODO tell the player to redo his choices
         }
       });
 
       // wait the played card for the given player, verify it, and update the game (send DTO)
       player.socket.addListener("play card", function (data) {
-        logger.debug("EVENT : play card");
+        stateScope.logger.debug("EVENT : play card");
         if (stateScope.isValidPlayedCard.call(stateScope, this.id, data)) {
           var playedCard = stateScope.givenCards.get(this.id).filter(function (card) { return card.id === data })[0];
           if (stateScope.firstCard === null) {
@@ -167,7 +169,7 @@ GameEngine.prototype = {
   },
 
   defineWinner: function (tablePlay) {
-    logger.debug("defineWinner");
+    this.logger.debug("defineWinner");
     let stateScope = this;
     var winner = null;
     var highestCard = stateScope.firstCard;
@@ -185,7 +187,7 @@ GameEngine.prototype = {
   },
 
   isValidPlayedCard: function (playerId, cardId) {
-    logger.debug("isValidPlayedCard");
+    this.logger.debug("isValidPlayedCard");
     let scopeState = this;
     var isValid;
     // the good player sent the card
@@ -199,7 +201,7 @@ GameEngine.prototype = {
   },
 
   clearHand: function () {
-    logger.debug("clearHand");
+    this.logger.debug("clearHand");
     let stateScope = this;
     stateScope.players.forEach(function (player) {
       stateScope.givenCards.set(player.id, stateScope.givenCards.get(player.id).map(function (card) {
@@ -210,7 +212,7 @@ GameEngine.prototype = {
   },
 
   dispatchGap: function () {
-    logger.debug("dispatchGap");
+    this.logger.debug("dispatchGap");
     let stateScope = this;
     stateScope.players.forEach(function (player, index) {
       // add gap to next player
@@ -235,7 +237,7 @@ GameEngine.prototype = {
   },
 
   isValidGap: function (playerId, cards) {
-    logger.debug("isValidGap");
+    this.logger.debug("isValidGap");
     let stateScope = this;
     return cards.every(function (r) {
       return stateScope.givenCards.get(playerId).map(function (card) { return card.id; }).indexOf(r) >= 0
@@ -243,7 +245,7 @@ GameEngine.prototype = {
   },
 
   refreshData: function (action) {
-    logger.debug("refreshData");
+    this.logger.debug("refreshData");
     let stateScope = this;
     // send DTO to refresh front
     stateScope.players.forEach(function (player, index) {
@@ -253,7 +255,7 @@ GameEngine.prototype = {
   },
 
   initiateGameScoring: function () {
-    logger.debug("initiateGameScoring");
+    this.logger.debug("initiateGameScoring");
 
     for (let player of this.players) {
       this.ScoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
@@ -263,13 +265,13 @@ GameEngine.prototype = {
   },
 
   updateScoringGame: function (playerId, score) {
-    logger.debug("updateScoringGame");
+    this.logger.debug("updateScoringGame");
     var currentScore = this.ScoringGame.get(playerId);
     this.ScoringGame.set(playerId, { id: currentScore.id, name: currentScore.name, score: currentScore.score + score });
   },
 
   initiateDeck: function () {
-    logger.debug("initiateDeck");
+    this.logger.debug("initiateDeck");
     this.ppyou = listSuit[Math.floor(Math.random() * listSuit.length)];
     var id = 0;
     for (let suit of listSuit) {
@@ -288,12 +290,12 @@ GameEngine.prototype = {
   },
 
   randomizeDeck: function () {
-    logger.debug("randomizeDeck");
+    this.logger.debug("randomizeDeck");
     this.deck.sort(function () { return 0.5 - Math.random() });
   },
 
   distributeGiven: function () {
-    logger.debug("distributeGiven");
+    this.logger.debug("distributeGiven");
     for (let nbCard of this.gameConfig.given) {
       for (let player of this.players) {
         var hand = this.givenCards.get(player.id)

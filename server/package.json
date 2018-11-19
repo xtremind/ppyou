@@ -13,7 +13,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js --mode=production --progress --colors",
+    "build": "webpack --config webpack.config.js --mode=development --progress --colors",
     "start": "node ./dist/bundle.js",
     "watch": "webpack --watch"
   },
