@@ -28,9 +28,24 @@ logger = new (winston.Logger)({
 
 io.set('transports', ['polling', 'websocket']);
 
+//test connection PG
+const pg = require("pg");
+const pool = new pg.Pool({
+user: "sysadmin",
+  host: "127.0.0.1",
+  database: "ma_base",
+  password: "123",
+  port: "5432"
+});
+
+pool.query("SELECT NOW()", (err, res) => {
+  console.log(err, res);
+  pool.end();
+});
+//end test
+
 var Game = require("./entities/game"),
   Player = require("./entities/player");
-
 
 // Broadcasting loop works better than sending an update every time a player moves because waiting for player movement messages adds
 // another source of jitter.
