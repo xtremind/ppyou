@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { PhaserInput } from 'phaser-input';
 import graphics from '../utils/graphics';
 import styles from '../utils/styles';
+import cookie from 'browser-cookies'
 
 export class MainMenu extends Phaser.State {
 
@@ -28,7 +29,11 @@ export class MainMenu extends Phaser.State {
 
     //add input text for naming player
     if (typeof stateScope.game.playerName === 'undefined') {
-      stateScope.game.playerName = "Player_" + stateScope.socket.id.substring(0, 6);
+      // player registred in cookie
+      stateScope.game.playerName  = cookie.get("player");
+      if(stateScope.game.playerName === null){
+        stateScope.game.playerName = "Player_" + stateScope.socket.id.substring(0, 6);
+      }
     }
 
     graphics.drawText(stateScope.game, { x: stateScope.world.centerX - 100, y: 200, height: 0, width: 0 }, 'Player Name :', styles.hostText);
@@ -39,6 +44,7 @@ export class MainMenu extends Phaser.State {
       function () { 
         stateScope.game.playerName = playerName.value; 
         stateScope.socket.emit('host game', { name: playerName.value }); 
+        cookie.set("player", playerName.value);
     });
 
     stateScope.socket.on("list games", function (data) {

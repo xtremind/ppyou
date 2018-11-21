@@ -8,7 +8,8 @@
     "socket.io-client": "2.0.4",
     "babel-core": "6.26.3",
     "babel-loader": "7.1.4",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "browser-cookies": "1.2.0"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.19",
