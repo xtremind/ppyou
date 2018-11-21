@@ -4,9 +4,10 @@ import styles from '../utils/styles';
 
 export class Party extends Phaser.State {
 
-  constructor(socket) {
+  constructor(socket, logger) {
     super();
     this.socket = socket;
+    this.logger = logger;
     this.debug = false;
     this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
     this.action = this.actionList[0];
@@ -22,7 +23,7 @@ export class Party extends Phaser.State {
     stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     // get all datas to refresh display
     stateScope.socket.on("refresh data", function (data) {
-      console.log("refresh data : " + data.action);
+      stateScope.logger.debug("refresh data : " + data.action);
       if (stateScope.playedCardPosition.size === 0) {
         stateScope.computePlayedCardPosition(data.scoringGame);
       }
@@ -39,13 +40,13 @@ export class Party extends Phaser.State {
     stateScope.fx = stateScope.add.audio('playCard');
 
     //send signal ready
-    console.log("ready to play");
+    stateScope.logger.debug("ready to play");
     stateScope.socket.emit("ready to play", null);
   }
 
   refreshDisplay() {
-    console.log("refreshDisplay");
     const stateScope = this;
+    stateScope.logger.debug("refreshDisplay");
     //clear display
     stateScope.game.world.removeAll()
     // add a background image
@@ -71,14 +72,14 @@ export class Party extends Phaser.State {
 
       graphics.drawCard(stateScope.game, cardPosition, card, function () {
         if (stateScope.action === "GAP") {
-          console.log("Card action : GAP");
+          stateScope.logger.debug("Card action : GAP");
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
           for (var i = 0; i < stateScope.hand.length; i++) {
             if (stateScope.hand[i].id == card.id)
               stateScope.hand[i].selected = !stateScope.hand[i].selected && nbSelected < stateScope.gap;
           }
         } else if (stateScope.action === "PLAY") {
-          console.log("Card action : PLAY");
+          stateScope.logger.debug("Card action : PLAY");
           stateScope.fx.play();
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
           for (var i = 0; i < stateScope.hand.length; i++) {
@@ -89,7 +90,7 @@ export class Party extends Phaser.State {
             }
           }
         } else {
-          console.log("Card action : NONE");
+          stateScope.logger.debug("Card action : NONE");
         }
 
         stateScope.refreshDisplay();
@@ -98,7 +99,7 @@ export class Party extends Phaser.State {
     // draw valid gap
     if (stateScope.action === "GAP" && stateScope.hand.filter(function (card) { return card.selected }).length === stateScope.gap) {
       graphics.drawButtonWithText(stateScope.game, { x: stateScope.game.world.centerX - 100, y: stateScope.game.world.height - 300, height: 50, width: 200 }, styles.startButton, 'Valider ecart', styles.startText, 'test', function () {
-        console.log("Send Gap");
+        stateScope.logger.debug("Send Gap");
         stateScope.socket.emit("gap", stateScope.hand.filter(function (card) { return card.selected }).map(function (card) { return card.id }));
         stateScope.action = 'WAIT';
         stateScope.refreshDisplay();

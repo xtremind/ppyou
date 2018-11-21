@@ -6,15 +6,16 @@ import cookie from 'browser-cookies'
 
 export class MainMenu extends Phaser.State {
 
-  constructor(socket) {
+  constructor(socket, logger) {
     super();
     this.socket = socket;
+    this.logger = logger;
     this.gameList = [];
   }
 
   create() {
-    console.log("MainMenu.create");
     const stateScope = this;
+    stateScope.logger.debug("MainMenu.create");
 
     //Add Library
     stateScope.game.add.plugin(PhaserInput.Plugin);
@@ -60,7 +61,7 @@ export class MainMenu extends Phaser.State {
       data.forEach(function (party) {
         stateScope.gameList[party.id] = graphics.drawButtonWithText(stateScope.game, { x: stateScope.world.centerX + 50, y: 210 + 70 * ++position, height: 50, width: 200 }, styles.joinButton, 'join game', styles.joinText, 'join game', function () {
           stateScope.game.playerName = playerName.value;
-          console.log("join game " + party.id);
+          stateScope.logger.debug("join game " + party.id);
           stateScope.socket.emit('join game', { id: party.id, name: playerName.value });
         });
       });
@@ -74,7 +75,7 @@ export class MainMenu extends Phaser.State {
   }
 
   gameJoined(id) {
-    console.log("game joined " + id);
+    this.logger.debug("game joined " + id);
     this.socket.off("list games");
     this.socket.off("game joined");
     this.game.currentGameId = id;

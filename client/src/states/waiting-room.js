@@ -4,16 +4,17 @@ import styles from '../utils/styles';
 
 export class WaitingRoom extends Phaser.State {
 
-  constructor(socket) {
+  constructor(socket, logger) {
     super();
     this.socket = socket;
+    this.logger = logger;
     this.playersList = [];
   }
 
   create() {
-    console.log("WaitingRoom.create");
-
     var stateScope = this;
+    stateScope.logger.debug("WaitingRoom.create");
+
     var startButton = null;
 
     // add a background image
@@ -26,7 +27,7 @@ export class WaitingRoom extends Phaser.State {
     stateScope.game.add.tween(subtitle).to({ y: 150 }, 1000).easing(Phaser.Easing.Bounce.Out).start();
 
     stateScope.socket.on("list players", function (data) {
-      console.log("refresh list of players in the game");
+      stateScope.logger.debug("refresh list of players in the game");
       // delete current List            
       for (var key in stateScope.playersList) {
         graphics.deleteText(stateScope.playersList[key]);
