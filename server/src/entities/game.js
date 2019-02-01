@@ -1,5 +1,3 @@
-var GameEngine = require("../assets/gameEngine");
-
 var Game = function (id) {
   this.id = id;
   this.players = [];
@@ -15,7 +13,7 @@ Game.prototype = {
     return this.players;
   },
 
-  addPlayer: function (player) {
+  addPlayer: function (player) { 
     var existingPlayer = this.playerById(player.getId());
     if (!existingPlayer) {
       this.players.push(player);
@@ -44,8 +42,6 @@ Game.prototype = {
 
   start: function () {
     this.status = 'INPROGRESS';
-    this.gameEngine = new GameEngine(this.id, this.players);
-    this.gameEngine.start();
   }
 }
 
