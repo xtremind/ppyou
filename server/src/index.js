@@ -1,9 +1,10 @@
 // NPM Librairies
-var express = require("express"),
-  app = express(),
-  http = require("http").Server(app),
-  io = require('socket.io')(http, { serveClient: false }),
-  winston = require("winston");
+var express = require("express");
+var app = express();
+var path = require('path');
+var http = require("http").Server(app);
+var io = require('socket.io')(http, { serveClient: false });
+var winston = require("winston");
 
 // Customs Librairies
 var MainEngine = require("./assets/MainEngine");
@@ -33,7 +34,8 @@ var logger = new (winston.Logger)({
 io.set('transports', ['polling', 'websocket']);
 
 // Serve up index.html.
-app.use(express.static("client"));
+app.use(express.static("client/dist"));
+//app.use('/public', express.static(path.resolve(__dirname, '/client/assets'))); //FIXME to get assets item
 
 var server_port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
@@ -44,7 +46,7 @@ http.listen(server_port, null, function () {
 
 //redirect client part
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 var engine = new MainEngine (logger, io);

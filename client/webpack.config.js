@@ -1,58 +1,40 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-// see https://github.com/photonstorm/phaser/tree/v2.6.2#webpack
-const phaserModule = path.join(__dirname, '/node_modules/phaser-ce/');
+const CopyPlugin = require('copy-webpack-plugin');
 
-module.exports = {
-  entry: './src/gameEngine.js',
+// Phaser webpack config
+var phaserModule = path.join(__dirname, '/node_modules/phaser/')
+var phaser = path.join(phaserModule, 'src/phaser.js')
+
+let config = {
+  entry: path.resolve(__dirname, 'src/main.js'),
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['babel-preset-env']
-          }
-        }
-      },
-      {
-        test: /pixi\.js/,
-        use: ['expose-loader?PIXI']
-      },
-      {
-        test: /phaser-split\.js$/,
-        use: ['expose-loader?Phaser']
-      },
-      {
-        test: /p2\.js/,
-        use: ['expose-loader?p2']
-      },
-      {
-        test: /phaser\-input\.js$/,
-        use: 'exports-loader?PhaserInput=PhaserInput'
-      }
-    ],
+  devServer: {
+    contentBase: './dist'
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new HtmlWebpackPlugin({
-      title: 'Ppyou'
-    })
+      title: 'PPYOU'
+    }),
+    new CopyPlugin([
+      { from: 'assets', to: 'public' },
+    ])
   ],
+  module: {
+    rules: [
+      { test: /phaser-split\.js$/, use: ['expose-loader?Phaser'] }
+    ]
+  },
   resolve: {
     alias: {
-      'phaser': path.join(phaserModule, 'build/custom/phaser-split.js'),
-      'pixi': path.join(phaserModule, 'build/custom/pixi.js'),
-      'p2': path.join(phaserModule, 'build/custom/p2.js'),
-      'phaser-input': path.join(__dirname, 'node_modules/@orange-games/phaser-input/build/phaser-input.js')
+      'phaser': phaser
     }
-  },
-  devtool: 'inline-source-map'
+  }
 };
+
+module.exports = config;
