@@ -30,7 +30,6 @@ const formatCard = function(suitLabel){
         return card;
 }
 
-
 const buildCardSuit = function (scene, txtDefinition, label, labelStyle, reverse) {
     var textElement = scene.add.text(txtDefinition.x + 20, txtDefinition.y + 40, label, labelStyle);
     textElement.smoothed = true;
@@ -65,7 +64,7 @@ export default {
             var rect = new Phaser.Geom.Rectangle(btnDefinition.x, btnDefinition.y, btnDefinition.width, btnDefinition.height);
             rectangle.setInteractive(rect, Phaser.Geom.Rectangle.Contains);
             rectangle.input.cursor = "pointer";
-            rectangle.on('pointerup', callback);
+            rectangle.on('pointerdown', callback);
         }
         container.add(rectangle);
 

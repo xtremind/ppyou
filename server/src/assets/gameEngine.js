@@ -6,7 +6,8 @@ var config = require("./gameConfiguration.json");
 var listRank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 var listSuit = ['S', 'H', 'C', 'D'];
 
-var TIMEOUT_WAITING_TIME = 3000;
+var TIMEOUT_WAITING_TIME_END_TURN = 3000;
+var TIMEOUT_WAITING_TIME_BOT_END_PLAY = 500;
 
 var GameEngine = function (id, players, logger) {
   this.id = id;
@@ -54,16 +55,22 @@ GameEngine.prototype = {
 
   startGame: function () {
     this.logger.debug("startGame");
-    let stateScope = this;
+    const stateScope = this;
     this.players.forEach(function (player) {
+
+      if(player.type === "bot") {
+        stateScope.playerReady++;
+        return;
+      }
+
       // when all players ready, start a play by distribute the given 
       player.socket.addListener("ready to play", function () {
         stateScope.logger.debug("EVENT : ready to play");
         stateScope.playerReady++;
         if (stateScope.playerReady == stateScope.players.length) {
           // action : send the given and wait for the gap
-          stateScope.refreshData.call(stateScope, 'GAP');
           stateScope.playerReady = 0;
+          stateScope.refreshData.call(stateScope, 'GAP');
         }
       });
 
@@ -72,20 +79,7 @@ GameEngine.prototype = {
         stateScope.logger.debug("EVENT : gap");
         //verify the gap
         if (stateScope.isValidGap.call(stateScope, this.id, data)) {
-          stateScope.playerReady++;
-          stateScope.gapCards.set(this.id, data);
-          // when all gap defined, start a turn by designate the first player
-          if (stateScope.playerReady == stateScope.players.length) {
-            //dispatch the gap
-            stateScope.dispatchGap.call(stateScope);
-            //sent new hand to players
-            stateScope.refreshData.call(stateScope, 'NONE');
-            setTimeout(function () {
-              stateScope.clearHand.call(stateScope);
-              stateScope.refreshData.call(stateScope, 'PLAY');
-            }, 3000);
-            stateScope.playerReady = 0;
-          }
+          stateScope.takeIntoAccountGap(stateScope, this.id, data);
         } else {
           stateScope.logger.error("Gap Error");
           //TODO tell the player to redo his choices
@@ -96,71 +90,7 @@ GameEngine.prototype = {
       player.socket.addListener("play card", function (data) {
         stateScope.logger.debug("EVENT : play card");
         if (stateScope.isValidPlayedCard.call(stateScope, this.id, data)) {
-          var playedCard = stateScope.givenCards.get(this.id).filter(function (card) { return card.id === data })[0];
-          if (stateScope.firstCard === null) {
-            stateScope.firstCard = playedCard;
-          }
-          // update table play
-          stateScope.playedCards[stateScope.playedCards.length - 1].set(this.id, playedCard);
-          // remove card from player
-          stateScope.givenCards.set(this.id, stateScope.givenCards.get(this.id).filter(function (card) { return card.id != playedCard.id; }))
-          // refresh display
-          stateScope.refreshData.call(stateScope, 'NONE');
-          // if all cards are played, end play
-          if (stateScope.playedCards.length === stateScope.gameConfig.given.reduce(function (a, b) { return a + b }, 0) && stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
-            setTimeout(function () {
-              // define winner
-              var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
-              // next played cards
-              stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
-                stateScope.winningCard.get(winner).push(element);
-              });
-              // compute score
-              stateScope.players.forEach(function (player) {
-                stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
-              });
-              // display winning cards ?
-              // define next starting player
-              stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
-              // empty play table
-              stateScope.playedCards = []
-              stateScope.playedCards.push(new Map());
-              // empty starting card
-              stateScope.firstCard = null;
-              // new distribution
-              stateScope.players.forEach(function (player) {
-                stateScope.winningCard.set(player.id, []);
-              });
-              stateScope.initiateDeck.call(stateScope);
-              stateScope.randomizeDeck.call(stateScope);
-              stateScope.distributeGiven.call(stateScope, stateScope.players.length);
-              stateScope.refreshData.call(stateScope, 'GAP');
-            }, TIMEOUT_WAITING_TIME);
-            // else if all players have played, end turn
-          } else if (stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
-            // wait a little
-            setTimeout(function () {
-              // define winner
-              var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
-              // next player will be winner
-              stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
-              // next played cards
-              stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
-                stateScope.winningCard.get(winner).push(element);
-              });
-              // empty play table
-              stateScope.playedCards.push(new Map());
-              // empty starting card
-              stateScope.firstCard = null;
-              // refresh game
-              stateScope.refreshData.call(stateScope, 'PLAY');
-            }, TIMEOUT_WAITING_TIME);
-          } else {
-            // define next player
-            stateScope.currentTurnPlayer = (stateScope.currentTurnPlayer + 1) % stateScope.players.length;
-            // refresh game
-            stateScope.refreshData.call(stateScope, 'PLAY');
-          }
+          stateScope.takeIntoAccountPlayCard(stateScope, this.id, data);
         } else {
           stateScope.refreshData.call(stateScope, 'PLAY');
         }
@@ -168,14 +98,116 @@ GameEngine.prototype = {
     })
   },
 
+  takeIntoAccountGap: function(stateScope, playerId, data){
+    stateScope.logger.debug("takeIntoAccountGap");
+    stateScope.playerReady++;
+    stateScope.logger.debug("takeIntoAccountGap - playerReady : " + stateScope.playerReady + "/" + stateScope.players.length);
+    stateScope.gapCards.set(playerId, data);
+    // when all gap defined, start a turn by designate the first player
+    if (stateScope.playerReady == stateScope.players.length) {
+      stateScope.logger.debug("takeIntoAccountGap - ready");
+      //dispatch the gap
+      stateScope.dispatchGap.call(stateScope);
+      //sent new hand to players
+      stateScope.refreshData.call(stateScope, 'NONE');
+      setTimeout(function () {
+        stateScope.clearHand.call(stateScope);
+        stateScope.playerReady = 0;
+        stateScope.refreshData.call(stateScope, 'PLAY');
+      }, 3000);
+    }
+  },
+
+  takeIntoAccountPlayCard: function(stateScope, playerId, data){
+    //TODO not all the process should be in the setTimeout. Only the part of the next play (refresh data)
+    stateScope.logger.debug("takeIntoAccountPlayCard");
+    var playedCard = stateScope.givenCards.get(playerId).filter(function (card) { return card.id === data })[0];
+    if (stateScope.firstCard === null) {
+      stateScope.firstCard = playedCard;
+    }
+    // update table play
+    stateScope.playedCards[stateScope.playedCards.length - 1].set(playerId, playedCard);
+    // remove card from player
+    stateScope.givenCards.set(playerId, stateScope.givenCards.get(playerId).filter(function (card) { return card.id != playedCard.id; }));
+    // if all cards are played, end play
+    if (stateScope.playedCards.length === stateScope.gameConfig.given.reduce(function (a, b) { return a + b }, 0) && stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
+      stateScope.logger.debug("takeIntoAccountPlayCard - end play");
+      // refresh display
+      stateScope.logger.debug("takeIntoAccountPlayCard - refresh display");
+      stateScope.refreshData.call(stateScope, 'NONE');
+      setTimeout(function () {
+        // define winner
+        var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
+        // next played cards
+        stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+          stateScope.winningCard.get(winner).push(element);
+        });
+        // compute score
+        stateScope.players.forEach(function (player) {
+          stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
+        });
+        // display winning cards ?
+        // define next starting player
+        stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
+        // empty play table
+        stateScope.playedCards = []
+        stateScope.playedCards.push(new Map());
+        // empty starting card
+        stateScope.firstCard = null;
+        // new distribution
+        stateScope.players.forEach(function (player) {
+          stateScope.winningCard.set(player.id, []);
+        });
+        stateScope.initiateDeck.call(stateScope);
+        stateScope.randomizeDeck.call(stateScope);
+        stateScope.distributeGiven.call(stateScope, stateScope.players.length);
+        stateScope.refreshData.call(stateScope, 'GAP');
+      }, TIMEOUT_WAITING_TIME_END_TURN);
+      // else if all players have played, end turn
+    } else if (stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
+      stateScope.logger.debug("takeIntoAccountPlayCard - end turn");
+      // refresh display
+      stateScope.logger.debug("takeIntoAccountPlayCard - refresh display");
+      stateScope.refreshData.call(stateScope, 'NONE');
+      // wait a little
+      setTimeout(function () {
+        // define winner
+        var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
+        // next player will be winner
+        stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
+        // next played cards
+        stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+          stateScope.winningCard.get(winner).push(element);
+        });
+        // empty play table
+        stateScope.playedCards.push(new Map());
+        // empty starting card
+        stateScope.firstCard = null;
+        // refresh game
+        stateScope.refreshData.call(stateScope, 'PLAY');
+      }, TIMEOUT_WAITING_TIME_END_TURN);
+    } else {
+      stateScope.logger.debug("takeIntoAccountPlayCard - end player");
+      // define next player
+      stateScope.currentTurnPlayer = (stateScope.currentTurnPlayer + 1) % stateScope.players.length;
+      // refresh game
+      stateScope.refreshData.call(stateScope, 'PLAY');
+    }
+  },
+
   defineWinner: function (tablePlay) {
     this.logger.debug("defineWinner");
-    let stateScope = this;
+    const stateScope = this;
     var winner = null;
+    //stateScope.logger.debug("defineWinner " + stateScope.firstCard);
     var highestCard = stateScope.firstCard;
+    //stateScope.logger.debug("defineWinner " + highestCard);
     tablePlay.forEach(function (element, key) {
-      if (element === stateScope.firstCard)
+      //stateScope.logger.debug("defineWinner " + element + "/" + key);
+      if (element === stateScope.firstCard){
         winner = key;
+        //stateScope.logger.debug("defineWinner " + winner);
+      }
     });
     tablePlay.forEach(function (element, key) {
       if (element.suit === highestCard.suit && element.rank > highestCard.rank) {
@@ -183,26 +215,27 @@ GameEngine.prototype = {
         highestCard = element;
       }
     });
+    stateScope.logger.debug("defineWinner " + winner);
     return winner;
   },
 
   isValidPlayedCard: function (playerId, cardId) {
     this.logger.debug("isValidPlayedCard");
-    let scopeState = this;
+    const stateScope = this;
     var isValid;
     // the good player sent the card
-    isValid = scopeState.players[scopeState.currentTurnPlayer].id === playerId;
+    isValid = stateScope.players[stateScope.currentTurnPlayer].id === playerId;
     // the card is in his hand
-    var playedCard = scopeState.givenCards.get(playerId).filter(function (card) { return card.id === cardId });
+    var playedCard = stateScope.givenCards.get(playerId).filter(function (card) { return card.id === cardId });
     isValid = isValid && playedCard.length === 1;
     // is first card played or the card play is of the same suit or the player has no card with the same suit
-    isValid = isValid && (scopeState.firstCard === null || scopeState.firstCard.suit === playedCard[0].suit || !scopeState.givenCards.get(playerId).some(function (card) { return card.suit === scopeState.firstCard.suit }));
+    isValid = isValid && (stateScope.firstCard === null || stateScope.firstCard.suit === playedCard[0].suit || !stateScope.givenCards.get(playerId).some(function (card) { return card.suit === stateScope.firstCard.suit }));
     return isValid;
   },
 
   clearHand: function () {
     this.logger.debug("clearHand");
-    let stateScope = this;
+    const stateScope = this;
     stateScope.players.forEach(function (player) {
       stateScope.givenCards.set(player.id, stateScope.givenCards.get(player.id).map(function (card) {
         card.selected = false;
@@ -213,7 +246,7 @@ GameEngine.prototype = {
 
   dispatchGap: function () {
     this.logger.debug("dispatchGap");
-    let stateScope = this;
+    const stateScope = this;
     stateScope.players.forEach(function (player, index) {
       // add gap to next player
       var currentGap = stateScope.givenCards.get(player.id).filter(function (card) {
@@ -233,24 +266,44 @@ GameEngine.prototype = {
         return stateScope.gapCards.get(player.id).indexOf(card.id) < 0;
       });
       stateScope.givenCards.set(player.id, currentPlayerHand);
+      if(player.type === "bot")
+        player.setGiven(currentPlayerHand);
     });
   },
 
   isValidGap: function (playerId, cards) {
     this.logger.debug("isValidGap");
-    let stateScope = this;
+    const stateScope = this;
     return cards.every(function (r) {
       return stateScope.givenCards.get(playerId).map(function (card) { return card.id; }).indexOf(r) >= 0
     });
   },
 
   refreshData: function (action) {
-    this.logger.debug("refreshData");
-    let stateScope = this;
-    // send DTO to refresh front
+    this.logger.debug("refreshData - " + this.currentTurnPlayer);
+    const stateScope = this;
     stateScope.players.forEach(function (player, index) {
-      player.socket.emit("refresh data",
-        new GameDTO(stateScope.ScoringGame, stateScope.playedCards[stateScope.playedCards.length - 1], stateScope.givenCards.get(player.getId()), action === 'PLAY' && index === stateScope.currentTurnPlayer || action !== "PLAY" ? action : "NONE", stateScope.gameConfig.gap, stateScope.ppyou, stateScope.currentTurnPlayer));
+      if(player.type === "bot") {
+        //ask not to play
+        stateScope.logger.debug("refreshData : bot");
+        if(action === "GAP"){
+          stateScope.logger.debug("refreshData : bot - choose the gap");
+          stateScope.takeIntoAccountGap(stateScope, player.getId(), player.getGap(stateScope.gameConfig.gap))
+        } else if(action === "PLAY" && index === stateScope.currentTurnPlayer){
+          setTimeout(function () {
+            stateScope.logger.debug("refreshData : bot - play a card");
+            stateScope.takeIntoAccountPlayCard(stateScope, player.getId(), player.getCardToPlay(stateScope.firstCard, stateScope.playedCards[stateScope.playedCards.length - 1]));
+            player.setGiven(stateScope.givenCards.get(player.getId()));
+          }, TIMEOUT_WAITING_TIME_BOT_END_PLAY);
+        } else {
+          stateScope.logger.debug("refreshData : bot - nothing to do");
+        }
+        return;
+      } else {
+        // send DTO to refresh front
+        player.socket.emit("refresh data",
+          new GameDTO(stateScope.ScoringGame, stateScope.playedCards[stateScope.playedCards.length - 1], stateScope.givenCards.get(player.getId()), action === 'PLAY' && index === stateScope.currentTurnPlayer || action !== "PLAY" ? action : "NONE", stateScope.gameConfig.gap, stateScope.ppyou, stateScope.currentTurnPlayer));
+      }
     });
   },
 
@@ -308,6 +361,9 @@ GameEngine.prototype = {
         });
         this.givenCards.set(player.id, hand);
         this.deck = this.deck.slice(nbCard, this.deck.length);
+        if(player.type === "bot") {
+          player.setGiven(this.givenCards.get(player.getId()));
+        }
       }
     }
   }
