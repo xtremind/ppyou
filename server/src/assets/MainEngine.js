@@ -51,7 +51,6 @@ MainEngine.prototype = {
 
             client.on("start game", stateScope.onStartGame.bind(stateScope, client));
 
-            //TODO add functions to add/remove bot
             client.on("add bot", stateScope.onAddBot.bind(stateScope, client));
             client.on("remove bot", stateScope.onRemoveBot.bind(stateScope, client));
         });
@@ -276,27 +275,11 @@ MainEngine.prototype = {
             return;
         }
 
-        // TODO : if game is inprogress, force endgame with scoreboard 
-        /*if (gameId === client.id || currentGame.getStatus() === 'INPROGRESS') {
-
-            // force leave current game
-            client.to(gameId).broadcast.emit("end game", currentGame.id);
-
-            //remove the hosted game from the list of games
-            this.gameList.splice(this.gameList.indexOf(currentGame), 1);
-
-            //force refresh gamelist to others
-            client.broadcast.emit("list games", this.gameList.filter(this.checkWaitingGame).slice(0, 4).map(function (game) {
-                return { "id": game.getId() }
-            }));
-
-        } else {*/
-            if (currentGame.getStatus() === 'WAITING') {
-                currentGame.removePlayer(data.id);
-                client.to(gameId).broadcast.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
-                client.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
-            }
-        /*}*/
+        if (currentGame.getStatus() === 'WAITING') {
+            currentGame.removePlayer(data.id);
+            client.to(gameId).broadcast.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+            client.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+        }
     }
 
 }

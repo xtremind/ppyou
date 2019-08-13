@@ -135,32 +135,31 @@ GameEngine.prototype = {
       // refresh display
       stateScope.logger.debug("takeIntoAccountPlayCard - refresh display");
       stateScope.refreshData.call(stateScope, 'NONE');
+      // define winner
+      var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
+      // next played cards
+      stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+        stateScope.winningCard.get(winner).push(element);
+      });
+      // compute score
+      stateScope.players.forEach(function (player) {
+        stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
+      });
+      // define next starting player
+      stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
+      // empty play table
+      stateScope.playedCards = []
+      stateScope.playedCards.push(new Map());
+      // empty starting card
+      stateScope.firstCard = null;
+      // new distribution
+      stateScope.players.forEach(function (player) {
+        stateScope.winningCard.set(player.id, []);
+      });
+      stateScope.initiateDeck.call(stateScope);
+      stateScope.randomizeDeck.call(stateScope);
+      stateScope.distributeGiven.call(stateScope, stateScope.players.length);
       setTimeout(function () {
-        // define winner
-        var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
-        // next played cards
-        stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
-          stateScope.winningCard.get(winner).push(element);
-        });
-        // compute score
-        stateScope.players.forEach(function (player) {
-          stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
-        });
-        // display winning cards ?
-        // define next starting player
-        stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
-        // empty play table
-        stateScope.playedCards = []
-        stateScope.playedCards.push(new Map());
-        // empty starting card
-        stateScope.firstCard = null;
-        // new distribution
-        stateScope.players.forEach(function (player) {
-          stateScope.winningCard.set(player.id, []);
-        });
-        stateScope.initiateDeck.call(stateScope);
-        stateScope.randomizeDeck.call(stateScope);
-        stateScope.distributeGiven.call(stateScope, stateScope.players.length);
         stateScope.refreshData.call(stateScope, 'GAP');
       }, TIMEOUT_WAITING_TIME_END_TURN);
       // else if all players have played, end turn
@@ -169,20 +168,20 @@ GameEngine.prototype = {
       // refresh display
       stateScope.logger.debug("takeIntoAccountPlayCard - refresh display");
       stateScope.refreshData.call(stateScope, 'NONE');
+      // define winner
+      var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
+      // next player will be winner
+      stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
+      // next played cards
+      stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+        stateScope.winningCard.get(winner).push(element);
+      });
+      // empty play table
+      stateScope.playedCards.push(new Map());
+      // empty starting card
+      stateScope.firstCard = null;
       // wait a little
       setTimeout(function () {
-        // define winner
-        var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
-        // next player will be winner
-        stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
-        // next played cards
-        stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
-          stateScope.winningCard.get(winner).push(element);
-        });
-        // empty play table
-        stateScope.playedCards.push(new Map());
-        // empty starting card
-        stateScope.firstCard = null;
         // refresh game
         stateScope.refreshData.call(stateScope, 'PLAY');
       }, TIMEOUT_WAITING_TIME_END_TURN);
