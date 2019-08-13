@@ -1,9 +1,8 @@
 var GapStrategy = require('./strategies/GapStrategy');
-var PlayCardStrategy  = require( './strategies/PlayCardStrategy');
+var PlayCardStrategy = require( './strategies/PlayCardStrategy');
 
 class Bot {
     // TODO : depending of the level, choose a method to compute gap
-    // FIXME : rework regarding import/require module
     constructor(id){
         this.id = id;
         this.name = 'bot_' + id.substring(id.length-6, id.length);
@@ -25,14 +24,11 @@ class Bot {
     }
     getGap(nbCardsForGap){
         console.log("!BOT_"+this.id+"!getGap " + nbCardsForGap);
-        console.log("!BOT_"+this.id+"!getGap " + GapStrategy);
-        console.log("!BOT_"+this.id+"!getGap " + Object.keys(GapStrategy));
-        console.log("!BOT_"+this.id+"!getGap " + GapStrategy.default);
-        return GapStrategy.default.get(this.given, nbCardsForGap);
+        return GapStrategy.get(this.given, nbCardsForGap);
     }
     getCardToPlay(firstCard, currentPlay){
         console.log("!BOT_"+this.id+"!getCardToPlay");
-        return PlayCardStrategy.default.get(this.given, firstCard, currentPlay);
+        return PlayCardStrategy.get(this.given, firstCard, currentPlay);
     }
     getDTO() {
         return {

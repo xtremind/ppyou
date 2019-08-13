@@ -15,8 +15,6 @@ const functionList = [random, first];
 const weigthList = [0.8, 0.2];
  
 //Public functions
-export default {
-    get: function(given, nbCardsForGap){
-        return Utils.getRandomItem(functionList, weigthList)(given, nbCardsForGap);
-    }
-};
+export function get(given, nbCardsForGap){
+    return Utils.getRandomItem(functionList, weigthList)(given, nbCardsForGap);
+}

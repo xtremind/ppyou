@@ -30,8 +30,6 @@ const functionList = [random, first];
 const weigthList = [0.5, 0.5];
  
 //Public functions
-export default {
-    get(given, firstCard, currentPlay){
-        return Utils.getRandomItem(functionList, weigthList)(given, firstCard, currentPlay);
-    }
+export function get(given, firstCard, currentPlay){
+    return Utils.getRandomItem(functionList, weigthList)(given, firstCard, currentPlay);  
 }
