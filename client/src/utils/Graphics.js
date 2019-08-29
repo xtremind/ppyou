@@ -116,15 +116,9 @@ export default {
         var suitStyle = Object.assign({ }, formattedCard.style);
         suitStyle.font = '50px Arial';
 
-        var ppyouDefinition = { x: 1130, y: 30, height: 20, width: 40 };
-        var container = this.drawButton(scene, ppyouDefinition, formattedCard.style, '', {}, '', null);
-        var cardReverseRank = buildCardRank(scene, ppyouDefinition, formattedCard.suit, formattedCard.style, true);
-        container.add(cardReverseRank);
-
-        // FIXME Reuse function from drawCard
-        //var ppyouDefinition = { x: 1130, y: 30, height: 40, width: 40 };
-        //var container = this.drawButton(scene, ppyouDefinition, Styles.ppyouButton, formattedCard.suit, suitStyle, '', null);
-        //container.getAt(1).angle = 180;
+        var ppyouDefinition = { x: 1130, y: 30, height: 40, width: 40 };
+        var container = this.drawButton(scene, ppyouDefinition, formattedCard.style, formattedCard.suit, formattedCard.style, '', null);
+        container.getAt(1).angle = 180;
 
         return container;
     },
