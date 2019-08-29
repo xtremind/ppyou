@@ -119,7 +119,6 @@ GameEngine.prototype = {
   },
 
   takeIntoAccountPlayCard: function(stateScope, playerId, data){
-    //TODO not all the process should be in the setTimeout. Only the part of the next play (refresh data)
     stateScope.logger.debug("takeIntoAccountPlayCard");
     var playedCard = stateScope.givenCards.get(playerId).filter(function (card) { return card.id === data })[0];
     if (stateScope.firstCard === null) {

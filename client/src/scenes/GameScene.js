@@ -70,7 +70,8 @@ class GameScene extends Phaser.Scene {
       }
       // display current score
       sceneScope.scoringGame.forEach(function (element, index) {
-        var style = Object.assign(index === sceneScope.currentPlayer && sceneScope.action != "GAP" ? { 'fontStyle': 'bold' } : {}, Styles.playerScore); //FIXME bold not applying
+        var style = Object.assign( {}, Styles.playerScore);
+        style.font = index === sceneScope.currentPlayer && sceneScope.action != "GAP" ?  'bold ' + Styles.playerScore.font : Styles.playerScore.font;
         Graphics.drawText(sceneScope, { x: 30, y: 30 + index * 20, height: 0, width: 0 }, element.name + " : " + element.score, style, false);
       });
       // display ppyou

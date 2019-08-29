@@ -11,10 +11,9 @@ class PreloadScene extends Phaser.Scene {
   
     preload() {
       console.log("PreloadScene");
-  
-        // FIXME add a 'Loading ...' label on the screen
-        const loadingLabel = this.add.text(this.sys.game.config.height/2, 150, 'Loading ...', { font: '30px Arial', fill: '#ffffff' });
-        //loadingLabel.anchor.setTo(0.5, 0.5);
+
+      const loadingLabel = this.add.text(this.sys.game.config.height/2, 150, 'Loading ...', { font: '30px Arial', fill: '#ffffff' });
+      //loadingLabel.anchor.setTo(0.5, 0.5);
 
       const progress = this.add.graphics();
   
@@ -37,7 +36,6 @@ class PreloadScene extends Phaser.Scene {
       //Load all assets
       this.load.image('cardTable', 'public/img/cardTable.png');
       this.load.audio('playCard', 'public/audio/playcard.wav');
-  
     }
   }
   
