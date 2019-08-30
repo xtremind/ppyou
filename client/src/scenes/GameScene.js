@@ -121,7 +121,7 @@ class GameScene extends Phaser.Scene {
         Graphics.drawCard(sceneScope, sceneScope.playedCardPosition.get(playedCard.id), playedCard.card, null);
       });
   
-      // display last hand played
+      // TODO display last hand played
       //lastHand = Graphics.drawButtonWithText(sceneScope, {x:50, y:170, height:50, width: 200}, Styles.startButton, 'Last hand', Styles.startText, 'test', function(){
       //sceneScope.sys.game.socket.emit("ready to play", null);
       //if( sceneScope.action != sceneScope.actionList[0])
