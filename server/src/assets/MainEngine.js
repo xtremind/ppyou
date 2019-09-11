@@ -132,7 +132,7 @@ MainEngine.prototype = {
         this.playersInGame[client.id] = null;
 
         // TODO : if game is inprogress, force endgame with scoreboard 
-        if (gameId === client.id || currentGame.getStatus() === 'INPROGRESS') {
+        if (gameId === client.id && currentGame.getStatus() != 'INPROGRESS') {
 
             // force leave current game
             client.to(gameId).broadcast.emit("end game", currentGame.id);
@@ -149,6 +149,13 @@ MainEngine.prototype = {
             if (currentGame.getStatus() === 'WAITING') {
                 currentGame.removePlayer(client.id);
                 client.to(gameId).broadcast.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+            } else if (currentGame.getStatus() === 'INPROGRESS') {
+                this.logger.debug("Exiting game in progress");
+                // force leave current game
+                client.to(gameId).broadcast.emit("stop game", currentGame.id);
+
+                // we need to keep the game data until the ScoreScene is displayed, so the game status has to change to STOPPED
+                currentGame.stop();
             }
         }
     },
@@ -216,7 +223,9 @@ MainEngine.prototype = {
         currentPlayer.setName(data.name);
         game.addPlayer(currentPlayer);
 
-        this.playersInGame[client.id] = client.id;
+        this.playersInGame[client.id] = data.id;
+
+        this.logger.debug(client.id)
 
         client.to(data.id).broadcast.emit("list players", game.getPlayers().map(function (player) { return player.getDTO(); }));
         client.emit("game joined", { "id": game.getId() });

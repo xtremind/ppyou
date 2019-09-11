@@ -44,14 +44,24 @@ class GameScene extends Phaser.Scene {
         sceneScope.currentPlayer = data.currentPlayer;
         sceneScope.refreshDisplay();
       });
+      
+      sceneScope.sys.game.socket.on("stop game", function (data) {
+        sceneScope.resetEvents();
+        sceneScope.sys.game.currentGameId = null;
+        sceneScope.scene.start('ScoreScene');
+      });
 
       //sceneScope.fx = sceneScope.add.audio('playCard');
-
-      //TODO if receive 'END Game', go to scoreScene
 
       //send signal ready
       console.log("ready to play");
       sceneScope.sys.game.socket.emit("ready to play", null);
+    }
+
+    
+    resetEvents() {
+      this.sys.game.socket.off("refresh data");
+      this.sys.game.socket.off("stop game");
     }
 
     refreshDisplay() {

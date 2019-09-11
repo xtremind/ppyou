@@ -42,6 +42,10 @@ Game.prototype = {
 
   start: function () {
     this.status = 'INPROGRESS';
+  },
+
+  stop: function (){
+    this.status = 'STOPPED';
   }
 }
 

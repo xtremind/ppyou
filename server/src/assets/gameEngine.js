@@ -1,3 +1,4 @@
+var History = require( '../entities/History');
 var Card = require("../entities/game/card");
 var GameDTO = require("../dto/gameDTO");
 var config = require("./gameConfiguration.json");
@@ -17,6 +18,9 @@ var GameEngine = function (id, players, logger) {
   this.deck = [];
   this.gameConfig;
   
+  //
+  this.history = new History();
+
   //
   this.playerReady = 0;
 
@@ -88,12 +92,17 @@ GameEngine.prototype = {
 
       // wait the played card for the given player, verify it, and update the game (send DTO)
       player.socket.addListener("play card", function (data) {
-        stateScope.logger.debug("EVENT : play card");
+        stateScope.logger.debug("EVENT : play card " + player);
         if (stateScope.isValidPlayedCard.call(stateScope, this.id, data)) {
           stateScope.takeIntoAccountPlayCard(stateScope, this.id, data);
         } else {
           stateScope.refreshData.call(stateScope, 'PLAY');
         }
+      });
+
+      player.socket.addListener("get score", function(){
+        stateScope.logger.debug("EVENT : get score for player " + player.getId() + " " + stateScope.history.getDTO());
+        player.socket.emit('score', stateScope.history.getDTO());
       });
     })
   },
@@ -144,6 +153,12 @@ GameEngine.prototype = {
       stateScope.players.forEach(function (player) {
         stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
       });
+
+      // add previous play to history
+      //stateScope.logger.debug("updating history");
+      stateScope.history.add(stateScope.playedCards, stateScope.ScoringGame, stateScope.ppyou);
+      //stateScope.logger.debug("history updated");
+
       // define next starting player
       stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
       // empty play table
