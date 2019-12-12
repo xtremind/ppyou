@@ -3,7 +3,8 @@
   "version": "2.0.0-SNAPSHOT",
   "description": "a multiplayer game for ppyou",
   "dependencies": {
-    "concurrently": "^3.5.1"
+    "concurrently": "^3.5.1",
+    "snyk": "^1.258.2"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,10 @@
     "prepare:server": "npm run install:server && npm run build:clean:server && npm run build:deploy:server",
     "prepare:client": "npm run install:client && npm run build:clean:client && npm run build:deploy:client",
     "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run prepare:server\" \"npm run prepare:client\" ",
-    "start": "node server/dist/bundle.js"
+    "start": "node server/dist/bundle.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
-  "author": "developer"
+  "author": "developer",
+  "snyk": true
 }
