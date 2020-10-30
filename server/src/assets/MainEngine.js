@@ -1,11 +1,12 @@
 var Game = require("../entities/game"),
     Player = require("../entities/player"),
+    Bot = require("../entities/Bot"),
     GameEngine = require("../assets/gameEngine");
 
 
 // Broadcasting loop works better than sending an update every time a player moves because waiting for player movement messages adds
 // another source of jitter.
-var updateInterval = 100; // Broadcast updates every 100 ms.
+//var updateInterval = 100; // Broadcast updates every 100 ms.
 
 var MainEngine = function(logger, io) {
     this.gameList = [],
@@ -49,6 +50,9 @@ MainEngine.prototype = {
             client.on("leave game", stateScope.onLeaveGame.bind(stateScope, client));
 
             client.on("start game", stateScope.onStartGame.bind(stateScope, client));
+
+            client.on("add bot", stateScope.onAddBot.bind(stateScope, client));
+            client.on("remove bot", stateScope.onRemoveBot.bind(stateScope, client));
         });
     },
 
@@ -238,6 +242,44 @@ MainEngine.prototype = {
         gameEngine.start();
 
         client.to(gameId).broadcast.emit("start game");
+    },
+
+    onAddBot: function(client, data) {
+        this.logger.debug("onAddBot");
+        //find the game by his id
+        var gameId = this.playersInGame[client.id];
+        var currentGame = this.gameById(gameId);
+
+        //if no game find
+        if (!currentGame) {
+            this.logger.debug("Game not found: " + data.id);
+            return;
+        }
+
+        //add bot to game
+        var bot = new Bot(client.id + "_" + Date.now());
+        currentGame.addPlayer(bot);
+        
+        client.to(gameId).broadcast.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+        client.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+    },
+
+    onRemoveBot: function(client, data){
+        this.logger.debug("onRemoveBot");
+        //find the game by his id
+        var gameId = this.playersInGame[client.id];
+        var currentGame = this.gameById(gameId);
+        //if no game find
+         if (!currentGame) {
+            this.logger.debug("Game not found: " + data.id);
+            return;
+        }
+
+        if (currentGame.getStatus() === 'WAITING') {
+            currentGame.removePlayer(data.id);
+            client.to(gameId).broadcast.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+            client.emit("list players", currentGame.getPlayers().map(function (player) { return player.getDTO(); }));
+        }
     }
 
 }

@@ -34,6 +34,7 @@ io.set('transports', ['polling', 'websocket']);
 
 // Serve up index.html.
 app.use(express.static("client"));
+//r3 app.use(express.static("client/dist"));
 
 var server_port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
@@ -45,6 +46,7 @@ http.listen(server_port, null, function () {
 //redirect client part
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/client/index.html');
+  //r3 res.sendFile(__dirname + '/index.html');
 });
 
 var engine = new MainEngine (logger, io);

@@ -4,11 +4,11 @@
   "description": "a client for multi game of ppyou",
   "dependencies": {
     "@orange-games/phaser-input": "2.0.5",
-    "phaser-ce": "2.10.3",
-    "socket.io-client": "2.0.4",
     "babel-core": "6.26.3",
     "babel-loader": "7.1.4",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "phaser-ce": "2.10.3",
+    "socket.io-client": "2.0.4"
   },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.19",
