@@ -9,7 +9,6 @@ var History = function(){
     this.playDatas = [];
 }
 
-
 History.prototype = {
     add: function(playedCardPlay, scoringPlay, ppyouPlay){
         this.playDatas.push({
@@ -18,11 +17,8 @@ History.prototype = {
             "score": scoringPlay, 
             "ppyou": ppyouPlay
         });
-
-        //console.log(this.playDatas);
     },
     getDTO: function(){
-        //console.log("getDTO")
         return this.playDatas;
     }
 }

@@ -23,12 +23,12 @@ class Bot {
         this.given = given;
     }
     getGap(nbCardsForGap){
-        console.log("!BOT_"+this.id+"!getGap " + nbCardsForGap)+"/"+GapStrategy.get(this.given, nbCardsForGap);
+        //console.log("!BOT_"+this.id+"!getGap " + nbCardsForGap)+"/"+GapStrategy.get(this.given, nbCardsForGap);
         return GapStrategy.get(this.given, nbCardsForGap);
     }
     getCardToPlay(firstCard, currentPlay){
-        console.log("takeIntoAccountPlayCard - played Cards " + this.given.map((card) => card.id).join(', '));
-        console.log("!BOT_"+this.id+"!getCardToPlay/"+PlayCardStrategy.get(this.given, firstCard, currentPlay));
+        //console.log("takeIntoAccountPlayCard - played Cards " + this.given.map((card) => card.id).join(', '));
+        //console.log("!BOT_"+this.id+"!getCardToPlay/"+PlayCardStrategy.get(this.given, firstCard, currentPlay));
         return PlayCardStrategy.get(this.given, firstCard, currentPlay);
     }
     getDTO() {
