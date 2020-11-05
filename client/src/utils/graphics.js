@@ -114,7 +114,7 @@ export default {
         cardstyle = Object.assign({}, styles.blackCard);
         break;
       default:
-        throw "unknowd suit";
+        throw "unknown suit";
     }
 
     var ppyouDefinition = { x: 1130, y: 30, height: 40, width: 40 };

@@ -1,7 +1,8 @@
 var Player = function (id, socket) {
   this.id = id;
-  this.name = 'player' + id.substring(0, 6);
+  this.name = 'player_' + id.substring(0, 6);
   this.socket = socket;
+  this.type = "player";
 };
 
 Player.prototype = {
@@ -20,7 +21,8 @@ Player.prototype = {
   getDTO: function () {
     return {
       "id": this.getId(),
-      "name": this.getName()
+      "name": this.getName(),
+      "type": this.type
     }
   }
 };

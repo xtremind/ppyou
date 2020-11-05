@@ -7,7 +7,6 @@ export class Party extends Phaser.State {
   constructor(socket) {
     super();
     this.socket = socket;
-    this.debug = false;
     this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
     this.action = this.actionList[0];
     this.playedCards = []

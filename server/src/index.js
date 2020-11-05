@@ -10,7 +10,7 @@ var MainEngine = require("./assets/MainEngine");
 
 var config = winston.config;
 var logger = new (winston.Logger)({
-  level: 'debug',
+  level: process.env.NODE_ENV ===  'development' ? 'debug' : 'info',
   transports: [
     new (winston.transports.Console)({
       timestamp: function () {
@@ -37,7 +37,7 @@ app.use(express.static("client"));
 
 var server_port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-//http.listen(server_port, null);
+
 http.listen(server_port, null, function () {
   logger.debug("Listening on " + this._connectionKey);
 });
