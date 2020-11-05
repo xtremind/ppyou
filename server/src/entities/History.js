@@ -18,7 +18,7 @@ History.prototype = {
             "ppyou": ppyouPlay
         });
     },
-    getDTO: function(){
+    getLastPlayDTO: function(){
         return this.playDatas;
     }
 }

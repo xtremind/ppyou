@@ -99,9 +99,9 @@ GameEngine.prototype = {
         }
       });
 
-      player.socket.addListener("get score", function() {
-        stateScope.logger.debug("EVENT : get score for player "+ player.getId() + " " + stateScope.history.getDTO());
-        player.socket.emit("score", stateScope.history.getDTO());
+      player.socket.addListener("get last play", function() {
+        stateScope.logger.debug("EVENT : get score for player "+ player.getId() + " " + stateScope.history.getLastPlayDTO());
+        player.socket.emit("last play", stateScope.history.getLastPlayDTO());
       });
     })
   },
@@ -128,8 +128,8 @@ GameEngine.prototype = {
   takeIntoAccountPlayCard: function(stateScope, playerId, data){
     stateScope.logger.debug("takeIntoAccountPlayCard - " + playerId + "=> " + data);
     var playedCard = stateScope.givenCards.get(playerId).filter(function (card) { return card.id === data })[0];
-    stateScope.logger.debug("takeIntoAccountPlayCard - played Cards " + stateScope.givenCards.get(playerId).map((card) => card.id).join(', '));
-    stateScope.logger.debug("takeIntoAccountPlayCard - playedCard " + playedCard);
+    //stateScope.logger.debug("takeIntoAccountPlayCard - played Cards " + stateScope.givenCards.get(playerId).map((card) => card.id).join(', '));
+    //stateScope.logger.debug("takeIntoAccountPlayCard - playedCard " + playedCard);
     var winner;
     if (stateScope.firstCard === null) {
       stateScope.firstCard = playedCard;
@@ -297,6 +297,7 @@ GameEngine.prototype = {
         } else if(action === "PLAY" && index === stateScope.currentTurnPlayer){
           setTimeout(function () {
             stateScope.logger.debug("refreshData : bot - play a card");
+            stateScope.logger.debug(player.givenCards)
             stateScope.takeIntoAccountPlayCard(stateScope, player.getId(), player.getCardToPlay(stateScope.firstCard, stateScope.playedCards[stateScope.playedCards.length - 1]));
             player.setGiven(stateScope.givenCards.get(player.getId()));
           }, TIMEOUT_WAITING_TIME_BOT_END_PLAY);
@@ -329,9 +330,11 @@ GameEngine.prototype = {
 
   initiateDeck: function () {
     this.logger.debug("initiateDeck");
+    this.deck = [];
     this.ppyou = listSuit[Math.floor(Math.random() * listSuit.length)];
     var id = 0;
     var card;
+  this.deck = [];
     for (const suit of listSuit) {
       for (const rank of listRank) {
         if (!this.gameConfig.filtering || rank !== "1") {
@@ -354,6 +357,7 @@ GameEngine.prototype = {
 
   distributeGiven: function () {
     this.logger.debug("distributeGiven");
+
     for (const nbCard of this.gameConfig.given) {
       for (const player of this.players) {
         var hand = this.givenCards.get(player.id)
@@ -366,6 +370,7 @@ GameEngine.prototype = {
         });
         this.givenCards.set(player.id, hand);
         this.deck = this.deck.slice(nbCard, this.deck.length);
+
         if(player.type === "bot"){
           player.setGiven(this.givenCards.get(player.getId()));
         }
