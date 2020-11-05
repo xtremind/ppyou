@@ -23,7 +23,7 @@ export class WaitingRoom extends Phaser.State {
     graphics.drawText(stateScope.game, { x: this.world.centerX, y: 80, height: 0, width: 0 }, '♥ ♣  PPyou  ♠ ♦', styles.titleText);
     // add a subtitle
     var subtitle = graphics.drawText(stateScope.game, { x: this.world.centerX, y: -50, height: 0, width: 0 }, 'Game ' + stateScope.game.currentGameId, styles.subtitleText);
-    //animate title
+    //animate subtitle
     stateScope.game.add.tween(subtitle).to({ y: 150 }, 1000).easing(Phaser.Easing.Bounce.Out).start();
 
     stateScope.socket.on("list players", function (data) {

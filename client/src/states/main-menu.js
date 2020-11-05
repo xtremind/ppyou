@@ -36,9 +36,15 @@ export class MainMenu extends Phaser.State {
 
     //add rounded buttons
     graphics.drawButtonWithText(stateScope.game, { x: stateScope.world.centerX - 200, y: 280, height: 50, width: 200 }, styles.hostButton, 'host game', styles.hostText, 'host game', 
-      function () { 
+      function () {
         stateScope.game.playerName = playerName.value; 
         stateScope.socket.emit('host game', { name: playerName.value }); 
+    });
+
+
+    graphics.drawButtonWithText(stateScope.game, { x: 1130, y: 30, height: 40, width: 40 }, styles.hostButton, '?', styles.hostText, '?', 
+      function () {
+        stateScope.state.start('Help');
     });
 
     stateScope.socket.on("list games", function (data) {
