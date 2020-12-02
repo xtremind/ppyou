@@ -82,7 +82,6 @@ export class Party extends Phaser.State {
           }
         } else if (stateScope.action === "PLAY") {
           console.log("Card action : PLAY");
-          stateScope.fx.play();
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
           for (var i = 0; i < stateScope.hand.length; i++) {
             if (stateScope.hand[i].id == card.id && nbSelected < 1) {
@@ -112,10 +111,15 @@ export class Party extends Phaser.State {
       graphics.drawCard(stateScope.game, stateScope.playedCardPosition.get(playedCard.id), playedCard.card, null);
     });
 
+    if (this.playedCards.length != 0){
+      stateScope.fx.play();
+    }
+    
     // display last hand played
     var lastHand = graphics.drawButtonWithText(stateScope.game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Last hand', styles.startText, 'test', function(){
       stateScope.socket.emit("get last play", null);
     });
+
   }
 
   computePlayedCardPosition(players) {
