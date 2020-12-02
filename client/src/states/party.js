@@ -80,6 +80,7 @@ export class Party extends Phaser.State {
             if (stateScope.hand[i].id == card.id)
               stateScope.hand[i].selected = !stateScope.hand[i].selected && nbSelected < stateScope.gap;
           }
+          stateScope.refreshDisplay();
         } else if (stateScope.action === "PLAY") {
           console.log("Card action : PLAY");
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
@@ -90,11 +91,10 @@ export class Party extends Phaser.State {
               stateScope.action === "NONE"
             }
           }
+          stateScope.refreshDisplay();
         } else {
           console.log("Card action : NONE");
         }
-
-        stateScope.refreshDisplay();
       });
     });
     // draw valid gap
@@ -123,7 +123,7 @@ export class Party extends Phaser.State {
   }
 
   computePlayedCardPosition(players) {
-    let stateScope = this;
+    const stateScope = this;
     var playTable = { x0: 550, y0: 200, rayon: 200 };
     var radius = (Math.PI * 2) / players.length;
     var initial = players.findIndex(function (player) {
