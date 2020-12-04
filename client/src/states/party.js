@@ -36,8 +36,10 @@ export class Party extends Phaser.State {
     });
 
     stateScope.socket.on("last play", function (data) {
-      //TODO afficher une popup avec la dernière main
-      //TODO avec un bouton de cloture avec une demande de refresh data ?
+      console.log("last play : " + data);
+      if(data.lastPlayedCards.length > 0){
+        graphics.showPopup(data.lastPlayedCards.map((element) => element.card));
+      }
     });
     stateScope.fx = stateScope.add.audio('playCard');
 
@@ -115,10 +117,12 @@ export class Party extends Phaser.State {
       stateScope.fx.play();
     }
     
-    // display last hand played
-    var lastHand = graphics.drawButtonWithText(stateScope.game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Last hand', styles.startText, 'test', function(){
-      stateScope.socket.emit("get last play", null);
-    });
+    // display last turn played if it's my turn
+    if (stateScope.action === "PLAY"){ 
+      graphics.drawButtonWithText(stateScope.game, {x:970, y:30, height:40, width: 150}, styles.startButton, 'Last turn', styles.lastTurnText, 'Last turn', function(){
+        stateScope.socket.emit("get last turn", null);
+      });
+    }
 
   }
 
