@@ -5,9 +5,73 @@
   <meta charset="UTF-8" />
   <title>PPyou</title>
   <script src="./dist/bundle.js"></script>
+  <style>
+.body-blackout {
+  position: absolute;
+  z-index: 1010;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .65);
+  display: none;
+}
+.body-blackout.is-blacked-out {
+    display: block;
+}
+.popup-modal {
+  background-color: #2ECC71;
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  padding: 45px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 300ms ease-in-out;
+  z-index: 1011; 
+  border-radius: 10px;
+}
+
+.popup-modal.is--visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.card {
+  width: 100px;
+  height: 200px;
+  padding: 10px;
+  display: inline-block;
+  border-radius: 7px;
+  font: 25px Arial;
+  margin: 3px;
+}
+.redCard{
+  border: solid 2px #ff0000;
+  background-color: white;
+  color: #ff0000;
+}
+.blackCard{
+  border: solid 2px #000000;  
+  background-color: white;
+  color: #000000;
+}
+.inverseCard{
+  border: solid 2px #ffffff;
+  background-color: black;
+  color: #ffffff;
+}
+  </style>
 </head>
 
 <body>
+  <!-- body overlay -->
+  <div class="body-blackout"></div> 
+  <!-- Modals -->
+  <div id="popup-modal" class="popup-modal shadow" data-popup-modal="one">
+    <div id="modal-content"></div>
+  </div>
 </body>
+
 
 </html>

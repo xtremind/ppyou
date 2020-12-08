@@ -35,6 +35,12 @@ export class Party extends Phaser.State {
       stateScope.refreshDisplay();
     });
 
+    stateScope.socket.on("last play", function (data) {
+      console.log("last play : " + data);
+      if(data.lastPlayedCards.length > 0){
+        graphics.showPopup(data.lastPlayedCards.map((element) => element.card));
+      }
+    });
     stateScope.fx = stateScope.add.audio('playCard');
 
     //send signal ready
@@ -76,9 +82,9 @@ export class Party extends Phaser.State {
             if (stateScope.hand[i].id == card.id)
               stateScope.hand[i].selected = !stateScope.hand[i].selected && nbSelected < stateScope.gap;
           }
+          stateScope.refreshDisplay();
         } else if (stateScope.action === "PLAY") {
           console.log("Card action : PLAY");
-          stateScope.fx.play();
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
           for (var i = 0; i < stateScope.hand.length; i++) {
             if (stateScope.hand[i].id == card.id && nbSelected < 1) {
@@ -87,11 +93,10 @@ export class Party extends Phaser.State {
               stateScope.action === "NONE"
             }
           }
+          stateScope.refreshDisplay();
         } else {
           console.log("Card action : NONE");
         }
-
-        stateScope.refreshDisplay();
       });
     });
     // draw valid gap
@@ -108,16 +113,21 @@ export class Party extends Phaser.State {
       graphics.drawCard(stateScope.game, stateScope.playedCardPosition.get(playedCard.id), playedCard.card, null);
     });
 
-    // display last hand played
-    //lastHand = graphics.drawButtonWithText(stateScope.game, {x:50, y:170, height:50, width: 200}, styles.startButton, 'Last hand', styles.startText, 'test', function(){
-    //stateScope.socket.emit("ready to play", null);
-    //if( stateScope.action != stateScope.actionList[0])
-    //  stateScope.socket.emit(stateScope.action, stateScope.cardID).value;
-    //});
+    if (this.playedCards.length != 0){
+      stateScope.fx.play();
+    }
+    
+    // display last turn played if it's my turn
+    if (stateScope.action === "PLAY"){ 
+      graphics.drawButtonWithText(stateScope.game, {x:970, y:30, height:40, width: 150}, styles.startButton, 'Last turn', styles.lastTurnText, 'Last turn', function(){
+        stateScope.socket.emit("get last turn", null);
+      });
+    }
+
   }
 
   computePlayedCardPosition(players) {
-    let stateScope = this;
+    const stateScope = this;
     var playTable = { x0: 550, y0: 200, rayon: 200 };
     var radius = (Math.PI * 2) / players.length;
     var initial = players.findIndex(function (player) {

@@ -170,6 +170,67 @@ export default {
   deleteText: function (text) {
     text.destroy();
     return null;
+  },
+
+  showPopup: function(cards){
+    const popupModal = document.querySelector('#popup-modal');
+    const bodyBlackout = document.querySelector('.body-blackout');
+    const canvas = document.querySelector('canvas');
+
+    popupModal.style.width = (canvas.width - 200) +'px' ;
+    popupModal.style.height = (canvas.height - 200)  +'px';
+
+    popupModal.classList.add('is--visible');
+    bodyBlackout.classList.add('is-blacked-out');
+    
+    popupModal.addEventListener('click', () => {
+      popupModal.classList.remove('is--visible');
+      bodyBlackout.classList.remove('is-blacked-out');
+    });
+    
+    bodyBlackout.addEventListener('click', () => {
+      popupModal.classList.remove('is--visible');
+      bodyBlackout.classList.remove('is-blacked-out');
+    });
+
+    document.getElementById("modal-content").innerHTML = "";
+    cards.forEach((card) => this.drawModalCard(card))
+  },
+
+  drawModalCard: function(card){
+    
+    //id, rank, suit, value
+    var cardstyle = null;
+    var suit = "";
+    switch (card.suit) {
+      case "H":
+        cardstyle = 'redCard';
+        suit = "♥";
+        break;
+      case "D":
+        cardstyle = 'redCard';
+        suit = "♦";
+        break;
+      case "S":
+        cardstyle = 'blackCard';
+        suit = "♠";
+        break;
+      case "C":
+        cardstyle = 'blackCard';
+        suit = "♣";
+        break;
+      case "B":
+        cardstyle = 'inverseCard';
+        suit = ""
+        break;
+      default:
+        throw "unknownd card";
+    }
+
+		var cardHtml = document.createElement("div");
+		cardHtml.innerHTML = card.rank + '<br>' + suit;
+    cardHtml.className = 'card '+cardstyle;
+		document.getElementById("modal-content").appendChild(cardHtml);
   }
 
 };

@@ -20,6 +20,7 @@ var GameEngine = function (id, players, logger) {
   
   //
   this.history = new History();
+  this.nbPlay = 0;
 
   //
   this.playerReady = 0;
@@ -49,6 +50,7 @@ GameEngine.prototype = {
     this.initiateDeck();
     this.randomizeDeck();
     this.distributeGiven(this.players.length);
+    this.history.addPlay(this.nbPlay++, this.ppyou);
     this.startGame();
   },
 
@@ -99,9 +101,9 @@ GameEngine.prototype = {
         }
       });
 
-      player.socket.addListener("get score", function() {
-        stateScope.logger.debug("EVENT : get score for player "+ player.getId() + " " + stateScope.history.getDTO());
-        player.socket.emit("score", stateScope.history.getDTO());
+      player.socket.addListener("get last turn", function() {
+        stateScope.logger.debug("EVENT : get last turn");
+        player.socket.emit("last play", stateScope.history.getPlayedCardLastTurnDTO());
       });
     })
   },
@@ -128,9 +130,6 @@ GameEngine.prototype = {
   takeIntoAccountPlayCard: function(stateScope, playerId, data){
     stateScope.logger.debug("takeIntoAccountPlayCard - " + playerId + "=> " + data);
     var playedCard = stateScope.givenCards.get(playerId).filter(function (card) { return card.id === data })[0];
-    stateScope.logger.debug("takeIntoAccountPlayCard - played Cards " + stateScope.givenCards.get(playerId).map((card) => card.id).join(', '));
-    stateScope.logger.debug("takeIntoAccountPlayCard - playedCard " + playedCard);
-    var winner;
     if (stateScope.firstCard === null) {
       stateScope.firstCard = playedCard;
     }
@@ -138,72 +137,92 @@ GameEngine.prototype = {
     stateScope.playedCards[stateScope.playedCards.length - 1].set(playerId, playedCard);
     // remove card from player
     stateScope.givenCards.set(playerId, stateScope.givenCards.get(playerId).filter(function (card) { return card.id != playedCard.id; }))
-    // if all cards are played, end play
-    if (stateScope.playedCards.length === stateScope.gameConfig.given.reduce(function (a, b) { return a + b }, 0) && stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
-      stateScope.logger.debug("takeIntoAccountPlayCard - end play");
-      // refresh display
-      stateScope.refreshData.call(stateScope, 'NONE');
+    //if all players have played
+    if (stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
       // define winner
-      winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
-      // next played cards
-      stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
-        stateScope.winningCard.get(winner).push(element);
-      });
-      // compute score
-      stateScope.players.forEach(function (player) {
-        stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
-      });
-      // add Previous play to history
-      stateScope.history.add(stateScope.playedCards, stateScope.ScoringGame, stateScope.ppyou)
-      // display winning cards ?
-      // define next starting player
-      stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
-      // empty play table
-      stateScope.playedCards = []
-      stateScope.playedCards.push(new Map());
-      // empty starting card
-      stateScope.firstCard = null;
-      // new distribution
-      stateScope.players.forEach(function (player) {
-        stateScope.winningCard.set(player.id, []);
-      });
-      stateScope.initiateDeck.call(stateScope);
-      stateScope.randomizeDeck.call(stateScope);
-      stateScope.distributeGiven.call(stateScope, stateScope.players.length);
-      setTimeout(function () {
-        stateScope.refreshData.call(stateScope, 'GAP');
-      }, TIMEOUT_WAITING_TIME_END_TURN);
-      // else if all players have played, end turn
-    } else if (stateScope.playedCards[stateScope.playedCards.length - 1].size === stateScope.players.length) {
-      stateScope.logger.debug("takeIntoAccountPlayCard - end turn");
-      // refresh display
-      stateScope.refreshData.call(stateScope, 'NONE');
-      // define winner
-      winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
-      // next player will be winner
-      stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
-      // next played cards
-      stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
-        stateScope.winningCard.get(winner).push(element);
-      });
-      // empty play table
-      stateScope.playedCards.push(new Map());
-      // empty starting card
-      stateScope.firstCard = null;
-      // wait a little
-      setTimeout(function () {
-        // refresh game
-        stateScope.refreshData.call(stateScope, 'PLAY');
-      }, TIMEOUT_WAITING_TIME_END_TURN);
+      var winner = stateScope.defineWinner.call(stateScope, stateScope.playedCards[stateScope.playedCards.length - 1]);
+      stateScope.computeEndTurn(winner);
+      if(stateScope.playedCards.length === stateScope.gameConfig.given.reduce(function (a, b) { return a + b }, 0) ){
+        // if all cards are played, end play
+        stateScope.prepareNextPlay();
+      } else {
+        // else, end turn
+        stateScope.prepareNextTurn(winner);
+      }
     } else {
-      stateScope.logger.debug("takeIntoAccountPlayCard - end player");
-      // define next player
-      stateScope.currentTurnPlayer = (stateScope.currentTurnPlayer + 1) % stateScope.players.length;
-      // refresh game
-      stateScope.refreshData.call(stateScope, 'PLAY');
+      stateScope.prepareNextPlayer();
     }
   },
   
+  computeEndTurn: function(winner){
+    this.logger.debug("computeEndTurn");
+    const stateScope = this;
+    // refresh display
+    stateScope.refreshData.call(stateScope, 'NONE');
+    // next played cards
+    stateScope.playedCards[stateScope.playedCards.length - 1].forEach(function (element) {
+      stateScope.winningCard.get(winner).push(element);
+    });
+    stateScope.history.updatePlayedCards(stateScope.playedCards);
+  },
+
+  prepareNextPlay: function(){
+    this.logger.debug("prepareNextPlay");
+    const stateScope = this;
+    // compute score
+    stateScope.players.forEach(function (player) {
+      stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
+    });
+    // add Previous play to history
+    stateScope.history.endPlay(stateScope.ScoringGame);
+
+    // display winning cards ?
+    // define next starting player
+    stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
+    // empty play table
+    stateScope.playedCards = []
+    stateScope.playedCards.push(new Map());
+    // empty starting card
+    stateScope.firstCard = null;
+    // new distribution
+    stateScope.players.forEach(function (player) {
+      stateScope.winningCard.set(player.id, []);
+    });
+    stateScope.initiateDeck.call(stateScope);
+    stateScope.randomizeDeck.call(stateScope);
+    stateScope.distributeGiven.call(stateScope, stateScope.players.length);
+
+    stateScope.history.addPlay(stateScope.nbPlay, stateScope.ppyou);
+    setTimeout(function () {
+      stateScope.refreshData.call(stateScope, 'GAP');
+    }, TIMEOUT_WAITING_TIME_END_TURN);
+},
+
+  prepareNextTurn: function(winner){
+    this.logger.debug("prepareNextTurn");
+    const stateScope = this;
+    // next player will be winner
+    stateScope.currentTurnPlayer = stateScope.players.findIndex(function (player) { return player.id === winner });
+    // empty play table
+    stateScope.playedCards.push(new Map());
+    // empty starting card
+    stateScope.firstCard = null;
+    // wait a little
+    setTimeout(function () {
+      // refresh game
+      stateScope.refreshData.call(stateScope, 'PLAY');
+    }, TIMEOUT_WAITING_TIME_END_TURN);
+  },
+
+  prepareNextPlayer: function() {
+    this.logger.debug("prepareNextPlayer");
+    const stateScope = this;
+    // define next player
+    stateScope.currentTurnPlayer = (stateScope.currentTurnPlayer + 1) % stateScope.players.length;
+    // refresh game
+    stateScope.refreshData.call(stateScope, 'PLAY');
+  },
+
   defineWinner: function (tablePlay) {
     this.logger.debug("defineWinner");
     const stateScope = this;
@@ -297,6 +316,7 @@ GameEngine.prototype = {
         } else if(action === "PLAY" && index === stateScope.currentTurnPlayer){
           setTimeout(function () {
             stateScope.logger.debug("refreshData : bot - play a card");
+            stateScope.logger.debug(player.givenCards)
             stateScope.takeIntoAccountPlayCard(stateScope, player.getId(), player.getCardToPlay(stateScope.firstCard, stateScope.playedCards[stateScope.playedCards.length - 1]));
             player.setGiven(stateScope.givenCards.get(player.getId()));
           }, TIMEOUT_WAITING_TIME_BOT_END_PLAY);
@@ -329,9 +349,11 @@ GameEngine.prototype = {
 
   initiateDeck: function () {
     this.logger.debug("initiateDeck");
+    this.deck = [];
     this.ppyou = listSuit[Math.floor(Math.random() * listSuit.length)];
     var id = 0;
     var card;
+    this.deck = [];
     for (const suit of listSuit) {
       for (const rank of listRank) {
         if (!this.gameConfig.filtering || rank !== "1") {
@@ -354,6 +376,7 @@ GameEngine.prototype = {
 
   distributeGiven: function () {
     this.logger.debug("distributeGiven");
+
     for (const nbCard of this.gameConfig.given) {
       for (const player of this.players) {
         var hand = this.givenCards.get(player.id)
@@ -366,6 +389,7 @@ GameEngine.prototype = {
         });
         this.givenCards.set(player.id, hand);
         this.deck = this.deck.slice(nbCard, this.deck.length);
+
         if(player.type === "bot"){
           player.setGiven(this.givenCards.get(player.getId()));
         }

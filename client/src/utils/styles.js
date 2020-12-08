@@ -21,6 +21,7 @@ export default {
    playerScore : { font: '20px Arial', fill: '#ffffff' },
    helpTitleText : { font: '25px Arial', fill: '#ffffff' },
    helpCommentText : { font: '20px Arial', fill: '#ffffff' },
+   lastTurnText : { font: '20px Arial', fill: '#ffffff' },
 
   // card Style
    redCard : { radius: 7, bSize: 2, bColor: 0xFF0000, bAlpha: 1, fColor: 0xFFFFFF, fAlpha: 1, font: '25px Arial', fill: '#ff0000' },

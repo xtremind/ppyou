@@ -1,6 +1,6 @@
 {
   "name": "ppyou-client",
-  "version": "2.0.0-SNAPSHOT",
+  "version": "2.2.0",
   "description": "a client for multi game of ppyou",
   "dependencies": {
     "@orange-games/phaser-input": "2.0.5",
