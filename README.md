@@ -8,12 +8,14 @@
 * DONE add feedback to display current player
 * FIX click pointer on played card
 * DONE add feedback when player has to play
+* DONE add button to display last play
+
+* INPROGRESS : 2.3 : adding end play screen, displayed if a specific number of play has been done (4x each player)
 
 * TODO add log module with devlopment and production profile
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
-* TODO take into account when player quit game
-* TODO add button to display last play
+* TODO take into account when player quit game by replacing it by a bot
 * TODO show winning cards before starting new play
 * TODO save player's name with a cookie
 * TODO when connected, get saved player
