@@ -6,7 +6,7 @@
     "babel-core": "6.26.3",
     "babel-loader": "7.1.4",
     "express": "^4.16.3",
-    "socket.io": "^2.1.1",
+    "socket.io": "^2.4.0",
     "webpack": "^4.10.2",
     "webpack-cli": "^3.0.1",
     "winston": "2.4.2"
