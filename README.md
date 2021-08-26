@@ -1,5 +1,6 @@
 # PPYou
 
+## VERSION 2.2
 * DONE room to send informations to only the players connected to the same game
 * DONE review process in client disconnected
 * DONE adding player's name
@@ -9,8 +10,14 @@
 * FIX click pointer on played card
 * DONE add feedback when player has to play
 
-* FIXME hide ppyou when choose card to dispatch
 
+## TODO LIST
+
+### BUG
+* FIXME ppyou is displayed when choose card to dispatch
+* FIXME flip card sound is played twice when playing in last position
+
+### IMPROVEMENT
 * TODO add log module with devlopment and production profile
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
@@ -23,7 +30,4 @@
 * TODO add achievements by player
 * TODO add troll reactions
 * TODO add chat
-* BUG
-
-
-* user postgres (https://docs.postgresql.fr/10/tutorial-accessdb.html || https://node-postgres.com/features/connecting)
+* TODO user postgres (https://docs.postgresql.fr/10/tutorial-accessdb.html || https://node-postgres.com/features/connecting)
