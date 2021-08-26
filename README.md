@@ -9,6 +9,8 @@
 * FIX click pointer on played card
 * DONE add feedback when player has to play
 
+* FIXME hide ppyou when choose card to dispatch
+
 * TODO add log module with devlopment and production profile
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
