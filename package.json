@@ -22,5 +22,8 @@
     "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run prepare:server\" \"npm run prepare:client\" ",
     "start": "node server/dist/bundle.js"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "author": "developer"
 }

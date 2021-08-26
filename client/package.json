@@ -8,9 +8,7 @@
     "babel-loader": "7.1.4",
     "babel-preset-env": "^1.6.1",
     "phaser-ce": "2.10.3",
-    "socket.io-client": "2.0.4"
-  },
-  "devDependencies": {
+    "socket.io-client": "2.0.4",
     "clean-webpack-plugin": "^0.1.19",
     "eslint": "^4.19.1",
     "exports-loader": "^0.7.0",
