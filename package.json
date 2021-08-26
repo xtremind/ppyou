@@ -13,8 +13,8 @@
   "scripts": {
     "install:server": "npm --prefix ./server install ./server",
     "install:client": "npm --prefix ./client install ./client",
-    "build:clean:server": "rm -rf server/dist",
-    "build:clean:client": "rm -rf client/dist",
+    "build:clean:server": "rm -rf server/dist && ls server/node_modules",
+    "build:clean:client": "rm -rf client/dist && ls client/node_modules",
     "build:deploy:server": "npm --prefix server run build",
     "build:deploy:client": "npm --prefix client run build",
     "prepare:server": "npm run install:server && npm run build:clean:server && npm run build:deploy:server",
