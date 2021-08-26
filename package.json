@@ -12,7 +12,7 @@
   "license": "Beerware",
   "scripts": {
     "install:server": "npm --prefix ./server install ./server",
-    "install:client": "npm --prefix ./client install ./client",
+    "install:client": "npm --prefix ./client install ./client --verbose",
     "build:clean:server": "rm -rf server/dist",
     "build:clean:client": "rm -rf client/dist && cp -r server/node_modules/* client/node_modules/ && ls client/node_modules",
     "build:deploy:server": "npm --prefix server run build",
