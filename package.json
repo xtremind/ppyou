@@ -23,7 +23,7 @@
     "start": "node server/dist/bundle.js"
   },
   "engines": {
-    "node": "6.x"
+    "node": "14.x"
   },
   "author": "developer"
 }
