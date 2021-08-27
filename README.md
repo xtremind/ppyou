@@ -10,14 +10,16 @@
 * FIX click pointer on played card
 * DONE add feedback when player has to play
 
+## VERSION 2.2.1
+* FIX ppyou is displayed when choose card to dispatch
+* FIX flip card sound is played twice when playing in last position
 
 ## TODO LIST
 
 ### BUG
-* FIXME ppyou is displayed when choose card to dispatch
-* FIXME flip card sound is played twice when playing in last position
 
 ### IMPROVEMENT
+* TODO add sound when bad card is played
 * TODO add log module with devlopment and production profile
 * TODO style for buttons and informations on each screen
 * TODO display player's name on table or display an icon
