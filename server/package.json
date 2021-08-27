@@ -1,6 +1,6 @@
 {
   "name": "ppyou-server",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "a server for multi game of ppyou",
   "dependencies": {
     "babel-core": "6.26.3",

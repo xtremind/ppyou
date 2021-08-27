@@ -9,6 +9,7 @@ export class Party extends Phaser.State {
     this.socket = socket;
     this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
     this.action = this.actionList[0];
+    this.nbPlayedCardsBefore = 0;
     this.playedCards = []
     this.playedCardPosition = new Map();
     this.hand = [];
@@ -29,10 +30,11 @@ export class Party extends Phaser.State {
       stateScope.action = data.action;
       stateScope.gap = data.action === "GAP" ? data.gap : 0;
       stateScope.hand = data.givenCards;
+      stateScope.nbPlayedCardsBefore = stateScope.playedCards.length;
       stateScope.playedCards = data.playedCards;
       stateScope.ppyou = data.ppyou;
       stateScope.currentPlayer = data.currentPlayer;
-      stateScope.refreshDisplay();
+      stateScope.refreshDisplay(true);
     });
 
     stateScope.socket.on("last play", function (data) {
@@ -48,7 +50,7 @@ export class Party extends Phaser.State {
     stateScope.socket.emit("ready to play", null);
   }
 
-  refreshDisplay() {
+  refreshDisplay(full) {
     console.log("refreshDisplay");
     const stateScope = this;
     //clear display
@@ -68,7 +70,9 @@ export class Party extends Phaser.State {
       graphics.drawLeftText(stateScope.game, { x: 30, y: 30 + index * 20, height: 0, width: 0 }, element.name + " : " + element.score, style);
     })
     // display ppyou
-    graphics.drawPpyou(stateScope.game, stateScope.ppyou);
+    if (stateScope.action != "GAP") {
+      graphics.drawPpyou(stateScope.game, stateScope.ppyou);
+    }
     // display card in hand
     var posX = (1200 - (100 + (this.hand.length - 1) * 50)) / 2
     this.hand.forEach((card, index) => {
@@ -82,7 +86,7 @@ export class Party extends Phaser.State {
             if (stateScope.hand[i].id == card.id)
               stateScope.hand[i].selected = !stateScope.hand[i].selected && nbSelected < stateScope.gap;
           }
-          stateScope.refreshDisplay();
+          stateScope.refreshDisplay(false);
         } else if (stateScope.action === "PLAY") {
           console.log("Card action : PLAY");
           var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
@@ -93,7 +97,7 @@ export class Party extends Phaser.State {
               stateScope.action === "NONE"
             }
           }
-          stateScope.refreshDisplay();
+          stateScope.refreshDisplay(false);
         } else {
           console.log("Card action : NONE");
         }
@@ -105,7 +109,7 @@ export class Party extends Phaser.State {
         console.log("Send Gap");
         stateScope.socket.emit("gap", stateScope.hand.filter(function (card) { return card.selected }).map(function (card) { return card.id }));
         stateScope.action = 'WAIT';
-        stateScope.refreshDisplay();
+        stateScope.refreshDisplay(false);
       });
     }
     // display card played
@@ -113,8 +117,12 @@ export class Party extends Phaser.State {
       graphics.drawCard(stateScope.game, stateScope.playedCardPosition.get(playedCard.id), playedCard.card, null);
     });
 
-    if (this.playedCards.length != 0){
-      stateScope.fx.play();
+    if (stateScope.action != "GAP" && full && this.playedCards.length != 0){
+      if (this.nbPlayedCardsBefore != this.playedCards.length) {
+        stateScope.fx.play();
+      } else {
+        console.log("Bad card played");
+      }
     }
     
     // display last turn played if it's my turn
