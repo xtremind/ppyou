@@ -117,8 +117,12 @@ export class Party extends Phaser.State {
       graphics.drawCard(stateScope.game, stateScope.playedCardPosition.get(playedCard.id), playedCard.card, null);
     });
 
-    if (stateScope.action != "GAP" && full && this.playedCards.length != 0 && this.nbPlayedCardsBefore != this.playedCards.length) {
-      stateScope.fx.play();
+    if (stateScope.action != "GAP" && full && this.playedCards.length != 0){
+      if (this.nbPlayedCardsBefore != this.playedCards.length) {
+        stateScope.fx.play();
+      } else {
+        console.log("Bad card played");
+      }
     }
     
     // display last turn played if it's my turn
