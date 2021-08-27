@@ -68,7 +68,9 @@ export class Party extends Phaser.State {
       graphics.drawLeftText(stateScope.game, { x: 30, y: 30 + index * 20, height: 0, width: 0 }, element.name + " : " + element.score, style);
     })
     // display ppyou
-    graphics.drawPpyou(stateScope.game, stateScope.ppyou);
+    if (stateScope.action != "GAP") {
+      graphics.drawPpyou(stateScope.game, stateScope.ppyou);
+    }
     // display card in hand
     var posX = (1200 - (100 + (this.hand.length - 1) * 50)) / 2
     this.hand.forEach((card, index) => {
