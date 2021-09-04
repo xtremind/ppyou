@@ -9,16 +9,21 @@
 * DONE add feedback to display current player
 * FIX click pointer on played card
 * DONE add feedback when player has to play
+* DONE add button to display last play
 
 ## VERSION 2.2.1
 * FIX ppyou is displayed when choose card to dispatch
 * FIX flip card sound is played twice when playing in last position
+
+## VERSION 2.3.0 - INPROGRESS
+* FEAT adding end play screen, displayed if a specific number of play has been done (4x each player)
 
 ## TODO LIST
 
 ### BUG
 
 ### IMPROVEMENT
+* TODO take into account when player quit game by replacing it by a bot
 * TODO add sound when bad card is played
 * TODO add log module with devlopment and production profile
 * TODO style for buttons and informations on each screen
