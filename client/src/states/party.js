@@ -43,6 +43,12 @@ export class Party extends Phaser.State {
         graphics.showPopup(data.lastPlayedCards.map((element) => element.card));
       }
     });
+
+    stateScope.socket.on("end game", function () {
+      console.log("end game");
+      stateScope.state.start('EndRoom');
+    });
+
     stateScope.fx = stateScope.add.audio('playCard');
 
     //send signal ready

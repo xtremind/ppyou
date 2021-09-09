@@ -10,6 +10,7 @@ import { Preloader } from './states/preloader';
 import { MainMenu } from './states/main-menu';
 import { Help } from './states/help';
 import { WaitingRoom } from './states/waiting-room';
+import { EndRoom } from './states/end-room';
 import { Party } from './states/party';
 
 //connect to server
@@ -24,6 +25,7 @@ game.state.add('Preloader', new Preloader());
 game.state.add('MainMenu', new MainMenu(socket));
 game.state.add('Help', new Help());
 game.state.add('WaitingRoom', new WaitingRoom(socket));
+game.state.add('EndRoom', new EndRoom(socket));
 game.state.add('Party', new Party(socket));
 
 //Launch Boot state
