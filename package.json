@@ -21,6 +21,7 @@
     "build:client": "npm run build:clean:client && npm run build:deploy:client",
     "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run install:server\" \"npm run install:client\" ",
     "build": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run build:server\" \"npm run build:client\" ",
+    "start:dev": "node server/src/index.js",
     "start": "node server/dist/bundle.js"
   },
   "engines": {

@@ -1,10 +1,10 @@
 //Public functions
-export default {
-    rand: function(min, max) {
+module.exports = function () {
+    var rand = function(min, max) {
        return Math.random() * (max - min) + min;
-   },
+   }
    
-   getRandomItem: function(list, weight) {
+   var getRandomItem = function(list, weight) {
        var total_weight = weight.reduce(function (prev, cur) {
            return prev + cur;
        });
@@ -20,5 +20,10 @@ export default {
                return list[i];
            }
        }
+   }
+
+   return {
+    rand: rand,
+    getRandomItem: getRandomItem
    }
 }
