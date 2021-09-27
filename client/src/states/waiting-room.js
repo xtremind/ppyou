@@ -8,6 +8,7 @@ export class WaitingRoom extends Phaser.State {
     super();
     this.socket = socket;
     this.playersList = [];
+    this.botsList = [];
   }
 
   create() {
@@ -16,6 +17,9 @@ export class WaitingRoom extends Phaser.State {
     var stateScope = this;
     var startButton = null;
     var addBotButton = null;
+
+    stateScope.playersList = [];
+    stateScope.botsList = [];
 
     // add a background image
     stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
@@ -79,11 +83,16 @@ export class WaitingRoom extends Phaser.State {
     stateScope.socket.on("end game", function () {
       stateScope.resetEvents();
       stateScope.game.currentGameId = null;
+      stateScope.playersList = [];
+      stateScope.botsList = [];
       stateScope.state.start('MainMenu');
     });
 
     stateScope.socket.on("start game", function () {
       stateScope.resetEvents();
+      stateScope.playersList = [];
+      stateScope.botsList = [];
+      addBotButton = null;
       stateScope.state.start('Party');
     });
 

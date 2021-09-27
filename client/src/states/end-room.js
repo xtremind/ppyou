@@ -21,25 +21,27 @@ export class EndRoom extends Phaser.State {
     //animate title
     stateScope.game.add.tween(title).to({ y: 80 }, 1000).easing(Phaser.Easing.Bounce.Out).start();
 
-    //when receiving datas
-        // show hall of fame
+    // show hall of fame
     stateScope.socket.on("ranking", function (data) {
       console.log("ranking");
-      console.log(data);
-      // display final score
-      let currentRank = -1;
-      data.forEach(function (player, index) {
-        graphics.drawLeftText(stateScope.game, { x: 100, y: 200 + index * 30, height: 0, width: 0 }, player.rank + " -> " +player.name, styles.playerScore);
-        graphics.drawText(stateScope.game, { x: 400, y: 200 + index * 30, height: 0, width: 0 }, player.score, styles.playerScore);
-      })
+      //console.log(data);
+      // let currentRank = -1; // changer la taille de police en fonction du rank
+      data.forEach(function (player, index) { // 🏆🥇🥈🥉 
+        let medal = player.rank === 1 ? "🏆" : player.rank === 2 ? "🥈" : player.rank === 3 ? "🥉" : player.rank;
+        graphics.drawLeftText(stateScope.game, { x: 100, y: 200 + index * 30, height: 0, width: 0 }, medal + " " +player.name, styles.playerScore);
+        graphics.drawLeftText(stateScope.game, { x: 400, y: 200 + index * 30, height: 0, width: 0 }, player.score, styles.playerScore);
+      });
     });
 
-    // show achievement (best player, badest player, ...)
+    // show achievement
     stateScope.socket.on("achievement", function (data) {
-      console.log("achievement "  + data);
+      console.log("achievement");
+      console.log(data);
+      data.forEach(function(achievement, index) {
+        graphics.drawText(stateScope.game, { x: 800, y: 200 + index * 100, height: 0, width: 0 }, achievement.name , styles.playerScore);
+        graphics.drawText(stateScope.game, { x: 800, y: 230 + index * 100, height: 0, width: 0 }, achievement.player + " (" + achievement.score+ ")", styles.playerScore);
+      });
     });
-
-    //asks for data
 
     //add button to go into the main menu
     graphics.drawButtonWithText(stateScope.game, { x: this.world.centerX - 100 , y: 700, height: 50, width: 200 }, styles.leaveButton, 'leave game', styles.leaveText, 'leave game', function () {
@@ -49,14 +51,13 @@ export class EndRoom extends Phaser.State {
         stateScope.state.start('MainMenu');
     });
 
-      
     console.log("get ranking");
     stateScope.socket.emit("get ranking", null);
     stateScope.socket.emit("get achievement", null);
   }
   
-
   resetEvents() {
-    //this.socket.off("list players");
+      this.socket.off("ranking");
+      this.socket.off("achievement");
   }
 }

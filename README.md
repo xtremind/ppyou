@@ -17,6 +17,7 @@
 
 ## VERSION 2.3.0 - INPROGRESS
 * FEAT adding end play screen, displayed if a specific number of play has been done (4x each player)
+* FIX at the second game, the given is empty after the gap
 
 ## TODO LIST
 

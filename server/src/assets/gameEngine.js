@@ -2,6 +2,7 @@ var History = require('../entities/History');
 var Card = require("../entities/game/card");
 var GameDTO = require("../dto/gameDTO");
 var config = require("./gameConfiguration.json");
+var AchievementEngine = require("./achievementEngine")();
 
 //see https://en.wikipedia.org/wiki/French_playing_cards#Paris_pattern
 var listRank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -28,16 +29,6 @@ var GameEngine = function (id, players, logger) {
 
   this.scoringGame = new Map();
   
-  // ACHIEVEMENTS  
-  this.achievements = new Map();
-  // Achievements possibles : 
-  // miss clic => player who has choose a bad card most of the time
-  // best player => player who has scored 0 most of the time
-  // bad player => player who has scored 250 most of the time
-  // stack best player => player who has stack the lesser point
-  // stack bad player => player who has stack the higher point
-  // discard player => player who has choose the papayou most of the time
-  // papayou player => player who has got the papayou most of the time
 
   // a play is finish when all cards are played
   this.playedCards = [];
@@ -55,6 +46,7 @@ GameEngine.prototype = {
 
   //should contains the logic of the game
   start: function () {
+    AchievementEngine.initialize(this.logger, this.players);
     this.startingPlayPlayer = 0;
     this.currentTurnPlayer = 0;
     this.initiateGameScoring();
@@ -110,6 +102,7 @@ GameEngine.prototype = {
           stateScope.takeIntoAccountPlayCard(stateScope, this.id, data);
         } else {
           stateScope.refreshData.call(stateScope, 'PLAY');
+          AchievementEngine.missClic(this.id);
         }
       });
 
@@ -121,11 +114,14 @@ GameEngine.prototype = {
       player.socket.addListener("get ranking", function() {
         stateScope.logger.debug("EVENT : get ranking");
         player.socket.emit("ranking", stateScope.computeRanking.call(stateScope));
+        player.socket.removeAllListeners("get ranking");
       });
 
       player.socket.addListener("get achievement", function() {
         stateScope.logger.debug("EVENT : get achievement");
-        player.socket.emit("achievement", null);
+        let achievements = AchievementEngine.getAchievements(stateScope.players);
+        player.socket.emit("achievement", achievements);
+        player.socket.removeAllListeners("get achievement");
       });
 
     })
@@ -188,7 +184,11 @@ GameEngine.prototype = {
     this.logger.debug("prepareEndParty");
     const stateScope = this;
     stateScope.players.filter(player => player.type != "bot").forEach(function (player) {
-      player.socket.emit("end game")
+      player.socket.emit("end game");
+      player.socket.removeAllListeners("ready to play"); 
+      player.socket.removeAllListeners("gap"); 
+      player.socket.removeAllListeners("play card"); 
+      player.socket.removeAllListeners("get last turn");
     });
   },
 
@@ -206,6 +206,7 @@ GameEngine.prototype = {
         player.rank = ++currentRanking;
       }
       currentScore = player.score;
+      // 👑🏆🥇🥈🥉 
     });
     return ranking;
   },
@@ -227,7 +228,12 @@ GameEngine.prototype = {
     const stateScope = this;
     // compute score
     stateScope.players.forEach(function (player) {
-      stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
+      let currentCards = stateScope.winningCard.get(player.id);
+      let currentScore = currentCards.map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0);
+      stateScope.updateScoringGame.call(stateScope, player.id, currentScore);
+
+      AchievementEngine.computePlay(player.id, currentCards);
+
     });
     // add Previous play to history
     stateScope.history.endPlay(stateScope.scoringGame);
@@ -340,6 +346,9 @@ GameEngine.prototype = {
         card.selected = true;
         return card;
       });
+      
+      AchievementEngine.computeGap(player.id, currentGap);
+
       var nextPlayer = stateScope.players[(index + 1) % stateScope.players.length]
       var nextPlayerHand = stateScope.givenCards.get(nextPlayer.id).concat(currentGap);
       nextPlayerHand.sort(function (a, b) {
@@ -374,17 +383,16 @@ GameEngine.prototype = {
         //ask not to play
         //stateScope.logger.debug("refreshData : bot");
         if(action === "GAP"){
-          stateScope.logger.debug("refreshData : bot - choose the gap");
+          stateScope.logger.debug("refreshData : bot "+ player.id+" - choose the gap");
           stateScope.takeIntoAccountGap(stateScope, player.getId(), player.getGap(stateScope.gameConfig.gap))
         } else if(action === "PLAY" && index === stateScope.currentTurnPlayer){
           setTimeout(function () {
-            stateScope.logger.debug("refreshData : bot - play a card");
-            stateScope.logger.debug(player.givenCards)
+            stateScope.logger.debug("refreshData : bot "+ player.id+" - play a card");
             stateScope.takeIntoAccountPlayCard(stateScope, player.getId(), player.getCardToPlay(stateScope.firstCard, stateScope.playedCards[stateScope.playedCards.length - 1]));
             player.setGiven(stateScope.givenCards.get(player.getId()));
           }, TIMEOUT_WAITING_TIME_BOT_END_PLAY);
         } else {
-          stateScope.logger.debug("refreshData : bot - nothing to do");
+            stateScope.logger.debug("refreshData : bot "+ player.id+" - nothing to do");
         }
         return;
       } else {
@@ -419,7 +427,7 @@ GameEngine.prototype = {
     this.deck = [];
     for (const suit of listSuit) {
       for (const rank of listRank) {
-        if (!this.gameConfig.filtering || rank !== "1") {
+        if (!this.gameConfig.filtering || rank !== 1) {
           card = new Card(id++, rank, suit, rank === 7 && suit === this.ppyou ? 40 : 0);
           this.deck.push(card);
         }

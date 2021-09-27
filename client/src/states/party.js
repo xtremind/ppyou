@@ -7,17 +7,11 @@ export class Party extends Phaser.State {
   constructor(socket) {
     super();
     this.socket = socket;
-    this.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
-    this.action = this.actionList[0];
-    this.nbPlayedCardsBefore = 0;
-    this.playedCards = []
-    this.playedCardPosition = new Map();
-    this.hand = [];
-    this.fx = null;
   }
 
   create() {
     const stateScope = this;
+    stateScope.initiateProperties();
     // add a background image
     stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     // get all datas to refresh display
@@ -46,6 +40,7 @@ export class Party extends Phaser.State {
 
     stateScope.socket.on("end game", function () {
       console.log("end game");
+      stateScope.resetEvents();
       stateScope.state.start('EndRoom');
     });
 
@@ -54,6 +49,18 @@ export class Party extends Phaser.State {
     //send signal ready
     console.log("ready to play");
     stateScope.socket.emit("ready to play", null);
+  }
+
+  initiateProperties(){
+    const stateScope = this;
+    stateScope.actionList = ['NONE', 'GAP', 'SELECT', 'PLAY', 'WAIT']
+    stateScope.action = stateScope.actionList[0];
+    stateScope.nbPlayedCardsBefore = 0;
+    stateScope.playedCards = []
+    stateScope.playedCardPosition = new Map();
+    stateScope.hand = [];
+    stateScope.fx = null;
+    stateScope.playedCardPosition = new Map();
   }
 
   refreshDisplay(full) {
@@ -151,6 +158,12 @@ export class Party extends Phaser.State {
       var cardPosition = { x: playTable.x0 + playTable.rayon * Math.sin(radius * (index - initial % players.length)), y: playTable.y0 + playTable.rayon * Math.cos(radius * (index - initial % players.length)) };
       stateScope.playedCardPosition.set(player.id, cardPosition);
     });
+  }
+
+  resetEvents() {
+    this.socket.off("refresh data");
+    this.socket.off("last play");
+    this.socket.off("end game");
   }
 
 }
