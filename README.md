@@ -1,7 +1,7 @@
 # PPYou
 
 ## VERSION 2.2
-* FEAT room to send informations to only the players connected to the same game
+* FEAT room to send information to only the players connected to the same game
 * FEAT review process in client disconnected
 * FEAT adding player's name
 * FEAT editing name's player
@@ -12,7 +12,7 @@
 * BUGFIX vertical scaling
 
 ## VERSION 2.2.1
-* BUGFIX ppyou is displayed when choose card to dispatch
+* BUGFIX PPyou is displayed when choose card to dispatch
 * BUGFIX flip card sound is played twice when playing in last position
 
 ## VERSION 2.3.0
@@ -25,10 +25,10 @@
 
 ## VERSION 2.4.0 - IN PROGRESS
 * FEAT improve client logger by sending data to server logger
+* FEAT improve server logger by saving in file
 
 ## TODO LIST
 
-* FEAT improve server logger by saving in file
 * FEAT improve display regarding current player (blink, color, ...)
 * FEAT display player's name on table or display an icon
 * FEAT add troll reactions
@@ -38,8 +38,8 @@
 ### IMPROVEMENT
 * FEAT take into account when player quit game by replacing it by a bot
 * FEAT add sound when bad card is played
-* FEAT add log module with devlopment and production profile
-* FEAT style for buttons and informations on each screen
+* FEAT add log module with development and production profile
+* FEAT style for buttons and information on each screen
 * FEAT show winning cards before starting new play
 * FEAT save player's name with a cookie
 * FEAT when connected, get saved player
