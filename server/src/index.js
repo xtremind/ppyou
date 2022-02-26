@@ -1,9 +1,9 @@
 // NPM Librairies
-var express = require("express"),
-  app = express(),
-  http = require("http").Server(app),
-  io = require('socket.io')(http, { serveClient: false }),
-  winston = require("winston");
+var express = require("express");
+var app = express();
+var http = require("http").Server(app);
+var io = require('socket.io')(http, { serveClient: false, pingTimeout: 30000, pingInterval: 5000 });
+var winston = require("winston");
 
 // Customs Librairies
 var MainEngine = require("./assets/MainEngine");
