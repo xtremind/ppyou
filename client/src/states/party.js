@@ -156,13 +156,13 @@ export class Party extends Phaser.State {
 
   computePlayedCardPosition(players) {
     const stateScope = this;
-    var playTable = { x0: 550, y0: 200, rayon: 200 };
+    var playTable = { x0: 550, y0: 200, rx: 350, ry: 200 };
     var radius = (Math.PI * 2) / players.length;
     var initial = players.findIndex(function (player) {
       return player.id === stateScope.socket.id;
     });
     players.forEach((player, index) => {
-      var cardPosition = { x: playTable.x0 + playTable.rayon * Math.sin(radius * (index - initial % players.length)), y: playTable.y0 + playTable.rayon * Math.cos(radius * (index - initial % players.length)) };
+      var cardPosition = { x: playTable.x0 + playTable.rx * Math.sin(radius * (index - initial % players.length)), y: playTable.y0 + playTable.ry * Math.cos(radius * (index - initial % players.length)) };
       stateScope.playedCardPosition.set(player.id, cardPosition);
     });
   }
