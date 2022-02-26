@@ -27,6 +27,8 @@
 
 ## TODO LIST
 
+* FEAT improve server logger by saving in file
+* FEAT improve client logger by sending data to server logger
 * FEAT improve display regarding current player (blink, color, ...)
 * FEAT display player's name on table or display an icon
 * FEAT add troll reactions
