@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import graphics from '../utils/graphics';
+import logger from '../utils/logger';
 import styles from '../utils/styles';
 
 export class Party extends Phaser.State {
@@ -16,7 +17,7 @@ export class Party extends Phaser.State {
     stateScope.sprite = stateScope.game.add.tileSprite(0, 0, 1200, 800, 'cardTable');
     // get all datas to refresh display
     stateScope.socket.on("refresh data", function (data) {
-      console.log("refresh data : " + data.action);
+      logger.debug(stateScope.socket, "refresh data : " + data.action);
       if (stateScope.playedCardPosition.size === 0) {
         stateScope.computePlayedCardPosition(data.scoringGame);
       }
@@ -32,14 +33,14 @@ export class Party extends Phaser.State {
     });
 
     stateScope.socket.on("last play", function (data) {
-      console.log("last play : " + data);
+      logger.debug(stateScope.socket, "last play : " + data);
       if(data.lastPlayedCards.length > 0){
         graphics.showPopup(data.lastPlayedCards.map((element) => element.card));
       }
     });
 
     stateScope.socket.on("end game", function () {
-      console.log("end game");
+      logger.debug(stateScope.socket, "end game");
       stateScope.resetEvents();
       stateScope.state.start('EndRoom');
     });
@@ -47,7 +48,7 @@ export class Party extends Phaser.State {
     stateScope.fx = stateScope.add.audio('playCard');
 
     //send signal ready
-    console.log("ready to play");
+    logger.debug(stateScope.socket, "ready to play");
     stateScope.socket.emit("ready to play", null);
   }
 
@@ -64,7 +65,7 @@ export class Party extends Phaser.State {
   }
 
   refreshDisplay(full) {
-    console.log("refreshDisplay");
+    logger.debug(this.socket, "refreshDisplay");
     const stateScope = this;
     //clear display
     stateScope.game.world.removeAll()
@@ -92,18 +93,19 @@ export class Party extends Phaser.State {
       var cardPosition = { x: posX + 50 * index++, y: stateScope.game.world.height - (card.selected ? 200 : 150) };
 
       graphics.drawCard(stateScope.game, cardPosition, card, function () {
+        var nbSelected = 0
         if (stateScope.action === "GAP") {
-          console.log("Card action : GAP");
-          var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
-          for (var i = 0; i < stateScope.hand.length; i++) {
+          logger.debug(stateScope.socket, "Card action : GAP");
+          nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
+          for (let i = 0; i < stateScope.hand.length; i++) {
             if (stateScope.hand[i].id == card.id)
               stateScope.hand[i].selected = !stateScope.hand[i].selected && nbSelected < stateScope.gap;
           }
           stateScope.refreshDisplay(false);
         } else if (stateScope.action === "PLAY") {
-          console.log("Card action : PLAY");
-          var nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
-          for (var i = 0; i < stateScope.hand.length; i++) {
+          logger.debug(stateScope.socket, "Card action : PLAY");
+          nbSelected = stateScope.hand.filter(function (card) { return card.selected }).length;
+          for (let i = 0; i < stateScope.hand.length; i++) {
             if (stateScope.hand[i].id == card.id && nbSelected < 1) {
               stateScope.hand[i].selected = true;
               stateScope.socket.emit("play card", card.id);
@@ -112,14 +114,14 @@ export class Party extends Phaser.State {
           }
           stateScope.refreshDisplay(false);
         } else {
-          console.log("Card action : NONE");
+          logger.debug(stateScope.socket, "Card action : NONE");
         }
       });
     });
     // draw valid gap
     if (stateScope.action === "GAP" && stateScope.hand.filter(function (card) { return card.selected }).length === stateScope.gap) {
       graphics.drawButtonWithText(stateScope.game, { x: stateScope.game.world.centerX - 100, y: stateScope.game.world.height - 300, height: 50, width: 200 }, styles.startButton, 'Valider ecart', styles.startText, 'test', function () {
-        console.log("Send Gap");
+        logger.debug(stateScope.socket, "Send Gap");
         stateScope.socket.emit("gap", stateScope.hand.filter(function (card) { return card.selected }).map(function (card) { return card.id }));
         stateScope.action = 'WAIT';
         stateScope.refreshDisplay(false);
@@ -134,7 +136,7 @@ export class Party extends Phaser.State {
       if (this.nbPlayedCardsBefore != this.playedCards.length) {
         stateScope.fx.play();
       } else {
-        console.log("Bad card played");
+        logger.debug(stateScope.socket, "Bad card played");
       }
     }
     

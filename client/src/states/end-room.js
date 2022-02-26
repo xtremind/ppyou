@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import graphics from '../utils/graphics';
+import logger from '../utils/logger';
 import styles from '../utils/styles';
 
 export class EndRoom extends Phaser.State {
@@ -10,7 +11,7 @@ export class EndRoom extends Phaser.State {
   }
 
   create() {
-    console.log("EndRoom.create");
+    logger.debug(this.socket, "EndRoom.create");
     const stateScope = this;
 
     // add a background image
@@ -23,7 +24,7 @@ export class EndRoom extends Phaser.State {
 
     // show hall of fame
     stateScope.socket.on("ranking", function (data) {
-      console.log("ranking");
+      logger.debug(stateScope.socket, "ranking");
       //console.log(data);
       // let currentRank = -1; // changer la taille de police en fonction du rank
       data.forEach(function (player, index) { // 🏆🥇🥈🥉 
@@ -35,8 +36,8 @@ export class EndRoom extends Phaser.State {
 
     // show achievement
     stateScope.socket.on("achievement", function (data) {
-      console.log("achievement");
-      console.log(data);
+      logger.debug(stateScope.socket, "achievement");
+      //console.log(data);
       data.forEach(function(achievement, index) {
         graphics.drawText(stateScope.game, { x: 800, y: 200 + index * 100, height: 0, width: 0 }, achievement.name , styles.playerScore);
         graphics.drawText(stateScope.game, { x: 800, y: 230 + index * 100, height: 0, width: 0 }, achievement.player + " (" + achievement.score+ ")", styles.playerScore);
@@ -51,7 +52,7 @@ export class EndRoom extends Phaser.State {
         stateScope.state.start('MainMenu');
     });
 
-    console.log("get ranking");
+    logger.debug(stateScope.socket, "get ranking");
     stateScope.socket.emit("get ranking", null);
     stateScope.socket.emit("get achievement", null);
   }
