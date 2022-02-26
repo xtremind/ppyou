@@ -80,8 +80,13 @@ export class Party extends Phaser.State {
     }
     // display current score
     stateScope.scoringGame.forEach(function (element, index) {
-      var style = Object.assign(index === stateScope.currentPlayer && stateScope.action != "GAP" ? { fontWeight: 'bold' } : {}, styles.playerScore);
-      graphics.drawLeftText(stateScope.game, { x: 30, y: 30 + index * 20, height: 0, width: 0 }, element.name + " : " + element.score, style);
+      var style = Object.assign(index === stateScope.currentPlayer && stateScope.action != "GAP" ? { fontWeight: 'bold'} : {}, styles.playerScore);
+      const playerElement = graphics.drawLeftText(stateScope.game, { x: 30, y: 30 + index * 20, height: 0, width: 0 }, element.name + " : " + element.score, style);
+      if(index === stateScope.currentPlayer && stateScope.action != "GAP"){
+        playerElement.alpha = 0.1;
+        playerElement.addColor('#ff6347', 0);
+        graphics.blink(stateScope.game, playerElement);
+      }
     })
     // display ppyou
     if (stateScope.action != "GAP") {

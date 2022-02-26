@@ -231,6 +231,10 @@ export default {
 		cardHtml.innerHTML = card.rank + '<br>' + suit;
     cardHtml.className = 'card '+cardstyle;
 		document.getElementById("modal-content").appendChild(cardHtml);
+  },
+  
+  blink : function (scene, element, easing = 'Linear', overallDuration = 500, visiblePauseDuration = 125){
+    const flashDuration = overallDuration - visiblePauseDuration / 2;
+    scene.add.tween(element).to( { alpha: 1 }, flashDuration, easing, true, 0, -1).yoyo(true, flashDuration);
   }
-
 };

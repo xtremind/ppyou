@@ -26,10 +26,10 @@
 ## VERSION 2.4.0 - IN PROGRESS
 * FEAT improve client logger by sending data to server logger
 * FEAT improve server logger by saving in file
+* FEAT improve display regarding current player (blink, color, ...)
 
 ## TODO LIST
 
-* FEAT improve display regarding current player (blink, color, ...)
 * FEAT display player's name on table or display an icon
 * FEAT add troll reactions
 
