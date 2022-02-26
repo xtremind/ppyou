@@ -1,5 +1,5 @@
-var GapStrategy = require('./strategies/GapStrategy');
-var PlayCardStrategy = require( './strategies/PlayCardStrategy');
+const GapStrategy = require('./strategies/GapStrategy')();
+const PlayCardStrategy = require( './strategies/PlayCardStrategy')();
 
 class Bot {
     // TODO : depending of the level, choose a method to compute gap

@@ -10,7 +10,7 @@ var MainEngine = require("./assets/MainEngine");
 
 var config = winston.config;
 var logger = new (winston.Logger)({
-  level: process.env.NODE_ENV ===  'development' ? 'debug' : 'info',
+  level: process.env.NODE_ENV ===  'production' ? 'info' : 'debug',
   transports: [
     new (winston.transports.Console)({
       timestamp: function () {

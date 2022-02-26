@@ -1,9 +1,12 @@
 {
   "name": "ppyou",
-  "version": "2.2.1",
+  "version": "2.3.0-SNAPSHOT",
   "description": "a multiplayer game for ppyou",
   "dependencies": {
-    "concurrently": "^3.5.1"
+    "concurrently": "^3.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   },
   "repository": {
     "type": "git",
@@ -17,9 +20,11 @@
     "build:clean:client": "rm -rf client/dist",
     "build:deploy:server": "npm --prefix server run build",
     "build:deploy:client": "npm --prefix client run build",
-    "prepare:server": "npm run install:server && npm run build:clean:server && npm run build:deploy:server",
-    "prepare:client": "npm run install:client && npm run build:clean:client && npm run build:deploy:client",
-    "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run prepare:server\" \"npm run prepare:client\" ",
+    "build:server": "npm run build:clean:server && npm run build:deploy:server",
+    "build:client": "npm run build:clean:client && npm run build:deploy:client",
+    "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run install:server\" \"npm run install:client\" ",
+    "build": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run build:server\" \"npm run build:client\" ",
+    "start:dev": "nodemon --inspect server/src/index.js",
     "start": "node server/dist/bundle.js"
   },
   "engines": {

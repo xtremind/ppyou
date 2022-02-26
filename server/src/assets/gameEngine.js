@@ -2,6 +2,7 @@ var History = require('../entities/History');
 var Card = require("../entities/game/card");
 var GameDTO = require("../dto/gameDTO");
 var config = require("./gameConfiguration.json");
+var AchievementEngine = require("./achievementEngine")();
 
 //see https://en.wikipedia.org/wiki/French_playing_cards#Paris_pattern
 var listRank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -25,8 +26,10 @@ var GameEngine = function (id, players, logger) {
   //
   this.playerReady = 0;
 
-  // a game is finish after 10 play ? after a cap is over ?
-  this.ScoringGame = new Map();
+
+  this.scoringGame = new Map();
+  
+
   // a play is finish when all cards are played
   this.playedCards = [];
   this.givenCards = new Map();
@@ -43,6 +46,7 @@ GameEngine.prototype = {
 
   //should contains the logic of the game
   start: function () {
+    AchievementEngine.initialize(this.logger, this.players);
     this.startingPlayPlayer = 0;
     this.currentTurnPlayer = 0;
     this.initiateGameScoring();
@@ -98,6 +102,7 @@ GameEngine.prototype = {
           stateScope.takeIntoAccountPlayCard(stateScope, this.id, data);
         } else {
           stateScope.refreshData.call(stateScope, 'PLAY');
+          AchievementEngine.missClic(this.id);
         }
       });
 
@@ -105,6 +110,20 @@ GameEngine.prototype = {
         stateScope.logger.debug("EVENT : get last turn");
         player.socket.emit("last play", stateScope.history.getPlayedCardLastTurnDTO());
       });
+
+      player.socket.addListener("get ranking", function() {
+        stateScope.logger.debug("EVENT : get ranking");
+        player.socket.emit("ranking", stateScope.computeRanking.call(stateScope));
+        player.socket.removeAllListeners("get ranking");
+      });
+
+      player.socket.addListener("get achievement", function() {
+        stateScope.logger.debug("EVENT : get achievement");
+        let achievements = AchievementEngine.getAchievements(stateScope.players);
+        player.socket.emit("achievement", achievements);
+        player.socket.removeAllListeners("get achievement");
+      });
+
     })
   },
 
@@ -146,14 +165,52 @@ GameEngine.prototype = {
         // if all cards are played, end play
         stateScope.prepareNextPlay();
       } else {
-        // else, end turn
-        stateScope.prepareNextTurn(winner);
+          // else, end turn
+          stateScope.prepareNextTurn(winner);
       }
     } else {
       stateScope.prepareNextPlayer();
     }
   },
   
+  hasLimitBeenPassed: function() {
+    this.logger.debug("hasLimitBeenPassed");
+    const stateScope = this;
+    const limitHasBeenPassed = (player) => player.score >= stateScope.gameConfig.endScore;
+    return Array.from(stateScope.scoringGame.values()).some(limitHasBeenPassed);
+  },
+
+  prepareEndParty: function() {
+    this.logger.debug("prepareEndParty");
+    const stateScope = this;
+    stateScope.players.filter(player => player.type != "bot").forEach(function (player) {
+      player.socket.emit("end game");
+      player.socket.removeAllListeners("ready to play"); 
+      player.socket.removeAllListeners("gap"); 
+      player.socket.removeAllListeners("play card"); 
+      player.socket.removeAllListeners("get last turn");
+    });
+  },
+
+  //compute ranking
+  computeRanking: function(){
+    this.logger.debug("computeRanking");
+    const stateScope = this;
+    let ranking = Array.from(stateScope.scoringGame.values());
+    ranking.sort((a, b) => a.score - b.score);
+    let currentScore = -1, currentRanking = 1;
+    ranking.forEach((player) => {
+      if(currentScore === -1 || currentScore === player.score) {
+        player.rank = currentRanking;
+      } else {
+        player.rank = ++currentRanking;
+      }
+      currentScore = player.score;
+      // 👑🏆🥇🥈🥉 
+    });
+    return ranking;
+  },
+
   computeEndTurn: function(winner){
     this.logger.debug("computeEndTurn");
     const stateScope = this;
@@ -171,32 +228,45 @@ GameEngine.prototype = {
     const stateScope = this;
     // compute score
     stateScope.players.forEach(function (player) {
-      stateScope.updateScoringGame.call(stateScope, player.id, stateScope.winningCard.get(player.id).map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0));
+      let currentCards = stateScope.winningCard.get(player.id);
+      let currentScore = currentCards.map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0);
+      stateScope.updateScoringGame.call(stateScope, player.id, currentScore);
+
+      AchievementEngine.computePlay(player.id, currentCards);
+
     });
     // add Previous play to history
-    stateScope.history.endPlay(stateScope.ScoringGame);
+    stateScope.history.endPlay(stateScope.scoringGame);
 
-    // display winning cards ?
-    // define next starting player
-    stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
-    // empty play table
-    stateScope.playedCards = []
-    stateScope.playedCards.push(new Map());
-    // empty starting card
-    stateScope.firstCard = null;
-    // new distribution
-    stateScope.players.forEach(function (player) {
-      stateScope.winningCard.set(player.id, []);
-    });
-    stateScope.initiateDeck.call(stateScope);
-    stateScope.randomizeDeck.call(stateScope);
-    stateScope.distributeGiven.call(stateScope, stateScope.players.length);
+    //if a least one player has a score upper than config.endGame
+    if (stateScope.hasLimitBeenPassed.call(stateScope)) {
+      //send endGame
+      stateScope.prepareEndParty();
+    } else {
+      // display winning cards ?
+      // define next starting player
+      stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
+      stateScope.currentTurnPlayer = stateScope.startingPlayPlayer;
+      // empty play table
+      stateScope.playedCards = []
+      stateScope.playedCards.push(new Map());
+      // empty starting card
+      stateScope.firstCard = null;
+      // new distribution
+      stateScope.players.forEach(function (player) {
+        stateScope.winningCard.set(player.id, []);
+      });
+      stateScope.initiateDeck.call(stateScope);
+      stateScope.randomizeDeck.call(stateScope);
+      stateScope.distributeGiven.call(stateScope, stateScope.players.length);
 
-    stateScope.history.addPlay(stateScope.nbPlay, stateScope.ppyou);
-    setTimeout(function () {
-      stateScope.refreshData.call(stateScope, 'GAP');
-    }, TIMEOUT_WAITING_TIME_END_TURN);
-},
+      stateScope.history.addPlay(stateScope.nbPlay, stateScope.ppyou);
+      setTimeout(function () {
+        stateScope.refreshData.call(stateScope, 'GAP');
+      }, TIMEOUT_WAITING_TIME_END_TURN);
+      
+    }
+  },
 
   prepareNextTurn: function(winner){
     this.logger.debug("prepareNextTurn");
@@ -277,6 +347,9 @@ GameEngine.prototype = {
         card.selected = true;
         return card;
       });
+      
+      AchievementEngine.computeGap(player.id, currentGap);
+
       var nextPlayer = stateScope.players[(index + 1) % stateScope.players.length]
       var nextPlayerHand = stateScope.givenCards.get(nextPlayer.id).concat(currentGap);
       nextPlayerHand.sort(function (a, b) {
@@ -311,22 +384,21 @@ GameEngine.prototype = {
         //ask not to play
         //stateScope.logger.debug("refreshData : bot");
         if(action === "GAP"){
-          stateScope.logger.debug("refreshData : bot - choose the gap");
+          stateScope.logger.debug("refreshData : bot "+ player.id+" - choose the gap");
           stateScope.takeIntoAccountGap(stateScope, player.getId(), player.getGap(stateScope.gameConfig.gap))
         } else if(action === "PLAY" && index === stateScope.currentTurnPlayer){
           setTimeout(function () {
-            stateScope.logger.debug("refreshData : bot - play a card");
-            stateScope.logger.debug(player.givenCards)
+            stateScope.logger.debug("refreshData : bot "+ player.id+" - play a card");
             stateScope.takeIntoAccountPlayCard(stateScope, player.getId(), player.getCardToPlay(stateScope.firstCard, stateScope.playedCards[stateScope.playedCards.length - 1]));
             player.setGiven(stateScope.givenCards.get(player.getId()));
           }, TIMEOUT_WAITING_TIME_BOT_END_PLAY);
         } else {
-          stateScope.logger.debug("refreshData : bot - nothing to do");
+            stateScope.logger.debug("refreshData : bot "+ player.id+" - nothing to do");
         }
         return;
       } else {
         player.socket.emit("refresh data",
-          new GameDTO(stateScope.ScoringGame, stateScope.playedCards[stateScope.playedCards.length - 1], stateScope.givenCards.get(player.getId()), action === 'PLAY' && index === stateScope.currentTurnPlayer || action !== "PLAY" ? action : "NONE", stateScope.gameConfig.gap, stateScope.ppyou, stateScope.currentTurnPlayer));
+          new GameDTO(stateScope.scoringGame, stateScope.playedCards[stateScope.playedCards.length - 1], stateScope.givenCards.get(player.getId()), action === 'PLAY' && index === stateScope.currentTurnPlayer || action !== "PLAY" ? action : "NONE", stateScope.gameConfig.gap, stateScope.ppyou, stateScope.currentTurnPlayer));
       }
     });
   },
@@ -335,7 +407,7 @@ GameEngine.prototype = {
     this.logger.debug("initiateGameScoring");
 
     for (const player of this.players) {
-      this.ScoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
+      this.scoringGame.set(player.id, { id: player.id, name: player.name, score: 0 });
       this.winningCard.set(player.id, []);
     }
     this.playedCards.push(new Map());
@@ -343,8 +415,8 @@ GameEngine.prototype = {
 
   updateScoringGame: function (playerId, score) {
     this.logger.debug("updateScoringGame");
-    var currentScore = this.ScoringGame.get(playerId);
-    this.ScoringGame.set(playerId, { id: currentScore.id, name: currentScore.name, score: currentScore.score + score });
+    var currentScore = this.scoringGame.get(playerId);
+    this.scoringGame.set(playerId, { id: currentScore.id, name: currentScore.name, score: currentScore.score + score });
   },
 
   initiateDeck: function () {
@@ -356,7 +428,7 @@ GameEngine.prototype = {
     this.deck = [];
     for (const suit of listSuit) {
       for (const rank of listRank) {
-        if (!this.gameConfig.filtering || rank !== "1") {
+        if (!this.gameConfig.filtering || rank !== 1) {
           card = new Card(id++, rank, suit, rank === 7 && suit === this.ppyou ? 40 : 0);
           this.deck.push(card);
         }
@@ -399,3 +471,4 @@ GameEngine.prototype = {
 }
 
 module.exports = GameEngine;
+
