@@ -246,6 +246,7 @@ GameEngine.prototype = {
       // display winning cards ?
       // define next starting player
       stateScope.startingPlayPlayer = (stateScope.startingPlayPlayer + 1) % stateScope.players.length;
+      stateScope.currentTurnPlayer = stateScope.startingPlayPlayer;
       // empty play table
       stateScope.playedCards = []
       stateScope.playedCards.push(new Map());
