@@ -1,7 +1,7 @@
 {
   "name": "ppyou",
-  "version": "2.3.0-SNAPSHOT",
-  "description": "a multiplayer game for ppyou",
+  "version": "2.4.0",
+  "description": "a multiplayer game for PPyou",
   "dependencies": {
     "concurrently": "^3.6.1"
   },
@@ -24,7 +24,9 @@
     "build:client": "npm run build:clean:client && npm run build:deploy:client",
     "postinstall": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run install:server\" \"npm run install:client\" ",
     "build": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run build:server\" \"npm run build:client\" ",
-    "start:dev": "nodemon --inspect server/src/index.js",
+    "watch": "concurrently -p \"name\" -n \"server,client\" -c \"red,blue\" \"npm run watch:server\" \"npm run watch:client\"",
+    "watch:client": "npm --prefix ./client run watch",
+    "watch:server": "nodemon --inspect server/src/index.js --watch \"./server/src\"",
     "start": "node server/dist/bundle.js"
   },
   "engines": {

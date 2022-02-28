@@ -1,11 +1,12 @@
 {
   "name": "ppyou-server",
-  "version": "2.3.0-SNAPSHOT",
+  "version": "2.4.0",
   "description": "a server for multi game of ppyou",
   "dependencies": {
     "babel-core": "6.26.3",
     "babel-loader": "7.1.4",
     "express": "^4.16.3",
+    "express-rate-limit": "^6.3.0",
     "socket.io": "^2.1.1",
     "webpack": "^4.10.2",
     "webpack-cli": "^3.0.1",

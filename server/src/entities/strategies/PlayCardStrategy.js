@@ -30,9 +30,9 @@ module.exports =  function (){
     
     //Properties to Weighted the call of each strategy
     const functionList = [random, first];
-    const weigthList = [0.5, 0.5];
+    const weightList = [0.5, 0.5];
 
     return {
-        get: (given, firstCard, currentPlay) => Utils.getRandomItem(functionList, weigthList)(given, firstCard, currentPlay)  
+        get: (given, firstCard, currentPlay) => Utils.getRandomItem(functionList, weightList)(given, firstCard, currentPlay)  
     }
 }

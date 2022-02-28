@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PhaserInput } from 'phaser-input';
 import graphics from '../utils/graphics';
+import logger from '../utils/logger';
 import styles from '../utils/styles';
 
 export class MainMenu extends Phaser.State {
@@ -12,7 +13,7 @@ export class MainMenu extends Phaser.State {
   }
 
   create() {
-    console.log("MainMenu.create");
+    logger.debug(this.socket, "MainMenu.create");
     const stateScope = this;
 
     //Add Library
@@ -60,7 +61,7 @@ export class MainMenu extends Phaser.State {
       data.forEach(function (party) {
         stateScope.gameList[party.id] = graphics.drawButtonWithText(stateScope.game, { x: stateScope.world.centerX + 50, y: 210 + 70 * ++position, height: 50, width: 200 }, styles.joinButton, 'join game', styles.joinText, 'join game', function () {
           stateScope.game.playerName = playerName.value;
-          console.log("join game " + party.id);
+          logger.debug(stateScope.socket, "join game " + party.id);
           stateScope.socket.emit('join game', { id: party.id, name: playerName.value });
         });
       });
@@ -74,7 +75,7 @@ export class MainMenu extends Phaser.State {
   }
 
   gameJoined(id) {
-    console.log("game joined " + id);
+    logger.debug(this.socket, "game joined " + id);
     this.socket.off("list games");
     this.socket.off("game joined");
     this.game.currentGameId = id;

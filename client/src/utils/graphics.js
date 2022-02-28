@@ -51,7 +51,7 @@ export default {
         suit = ""
         break;
       default:
-        throw "unknownd card";
+        throw new Error("unknown card");
     }
 
     var cardDefinition = { x: cardPosition.x, y: cardPosition.y, height: 200, width: 100 };
@@ -114,7 +114,7 @@ export default {
         cardstyle = Object.assign({}, styles.blackCard);
         break;
       default:
-        throw "unknown suit";
+        throw new Error("unknown suit");
     }
 
     var ppyouDefinition = { x: 1130, y: 30, height: 40, width: 40 };
@@ -224,13 +224,17 @@ export default {
         suit = ""
         break;
       default:
-        throw "unknownd card";
+        throw new Error("unknown card");
     }
 
 		var cardHtml = document.createElement("div");
 		cardHtml.innerHTML = card.rank + '<br>' + suit;
     cardHtml.className = 'card '+cardstyle;
 		document.getElementById("modal-content").appendChild(cardHtml);
+  },
+  
+  blink : function (scene, element, easing = 'Linear', overallDuration = 500, visiblePauseDuration = 125){
+    const flashDuration = overallDuration - visiblePauseDuration / 2;
+    scene.add.tween(element).to( { alpha: 1 }, flashDuration, easing, true, 0, -1).yoyo(true, flashDuration);
   }
-
 };

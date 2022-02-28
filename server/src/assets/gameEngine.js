@@ -119,8 +119,7 @@ GameEngine.prototype = {
 
       player.socket.addListener("get achievement", function() {
         stateScope.logger.debug("EVENT : get achievement");
-        let achievements = AchievementEngine.getAchievements(stateScope.players);
-        player.socket.emit("achievement", achievements);
+        player.socket.emit("achievement", AchievementEngine.getAchievements(stateScope.players));
         player.socket.removeAllListeners("get achievement");
       });
 
@@ -183,7 +182,7 @@ GameEngine.prototype = {
   prepareEndParty: function() {
     this.logger.debug("prepareEndParty");
     const stateScope = this;
-    stateScope.players.filter(player => player.type != "bot").forEach(function (player) {
+    stateScope.players.filter((player) => player.type != "bot").forEach(function (player) {
       player.socket.emit("end game");
       player.socket.removeAllListeners("ready to play"); 
       player.socket.removeAllListeners("gap"); 
@@ -196,7 +195,7 @@ GameEngine.prototype = {
   computeRanking: function(){
     this.logger.debug("computeRanking");
     const stateScope = this;
-    let ranking = Array.from(stateScope.scoringGame.values());
+    const ranking = Array.from(stateScope.scoringGame.values());
     ranking.sort((a, b) => a.score - b.score);
     let currentScore = -1, currentRanking = 1;
     ranking.forEach((player) => {
@@ -228,8 +227,8 @@ GameEngine.prototype = {
     const stateScope = this;
     // compute score
     stateScope.players.forEach(function (player) {
-      let currentCards = stateScope.winningCard.get(player.id);
-      let currentScore = currentCards.map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0);
+      const currentCards = stateScope.winningCard.get(player.id);
+      const currentScore = currentCards.map(function (card) { return card.value }).reduce(function (a, b) { return a + b }, 0);
       stateScope.updateScoringGame.call(stateScope, player.id, currentScore);
 
       AchievementEngine.computePlay(player.id, currentCards);

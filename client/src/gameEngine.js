@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 //Import modules
 import 'pixi';
 import 'p2';
@@ -14,10 +15,10 @@ import { EndRoom } from './states/end-room';
 import { Party } from './states/party';
 
 //connect to server
-let socket = io.connect(window.location.href);
+const socket = io.connect(window.location.href, {reconnectionAttempts: 10});
 
 //Initialise game variable
-let game = new Phaser.Game(1200, 800, Phaser.CANVAS);
+const game = new Phaser.Game(1200, 800, Phaser.CANVAS);
 
 //Declare states
 game.state.add('Boot', new Boot());

@@ -53,7 +53,14 @@ MainEngine.prototype = {
 
             client.on("add bot", stateScope.onAddBot.bind(stateScope, client));
             client.on("remove bot", stateScope.onRemoveBot.bind(stateScope, client));
+            
+            client.on("log", stateScope.onLog.bind(stateScope, client));
         });
+    },
+
+    onLog: function(client, log) {
+      //this.logger.debug("onLog");
+      this.logger[log.level]("[client] [" +client.id +"] " + log.message );
     },
 
     onRename: function(client, data) {

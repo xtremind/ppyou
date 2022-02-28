@@ -15,9 +15,9 @@ module.exports = function (){
 
     //Properties to Weighted the call of each strategy
     const functionList = [random, first];
-    const weigthList = [0.8, 0.2];
+    const weightList = [0.8, 0.2];
 
     return {
-        get : (given, nbCardsForGap) => Utils.getRandomItem(functionList, weigthList)(given, nbCardsForGap)
+        get : (given, nbCardsForGap) => Utils.getRandomItem(functionList, weightList)(given, nbCardsForGap)
     }
 }

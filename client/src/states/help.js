@@ -11,7 +11,7 @@ export class Help extends Phaser.State {
   }
 
   create() {
-    console.log("Help.create");
+    //console.log("Help.create");
     this.display();
   }
 
