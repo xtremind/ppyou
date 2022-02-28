@@ -30,12 +30,12 @@
 
 ## TODO LIST
 
-* FEAT display player's name on table or display an icon
 * FEAT add troll reactions
 
 ### BUG
 
 ### IMPROVEMENT
+* FEAT display player's name on table or display an icon
 * FEAT take into account when player quit game by replacing it by a bot
 * FEAT add sound when bad card is played
 * FEAT add log module with development and production profile

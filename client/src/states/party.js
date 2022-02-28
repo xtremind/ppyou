@@ -150,6 +150,7 @@ export class Party extends Phaser.State {
       graphics.drawButtonWithText(stateScope.game, {x:970, y:30, height:40, width: 150}, styles.startButton, 'Last turn', styles.lastTurnText, 'Last turn', function(){
         stateScope.socket.emit("get last turn", null);
       });
+      //show play ...
     }
 
   }

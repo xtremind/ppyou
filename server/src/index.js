@@ -1,6 +1,7 @@
 // NPM Libraries
 var express = require("express");
 var app = express();
+const path = require('path')
 var http = require("http").Server(app);
 var io = require('socket.io')(http, { serveClient: false, pingTimeout: 30000, pingInterval: 5000 });
 var winston = require("winston");
@@ -52,7 +53,7 @@ io.set('transports', ['polling', 'websocket']);
 app.use(express.static("client"));
 
 var server_port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var server_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+//var server_ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 http.listen(server_port, null, function () {
   logger.debug("Listening on " + this._connectionKey);
@@ -60,7 +61,7 @@ http.listen(server_port, null, function () {
 
 //redirect client part
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/client/index.html');
+  res.sendFile(path.join(__dirname,'/client/index.html'));
 });
 
 var engine = new MainEngine (logger, io);

@@ -26,9 +26,10 @@ export class EndRoom extends Phaser.State {
     stateScope.socket.on("ranking", function (data) {
       logger.debug(stateScope.socket, "ranking");
       //console.log(data);
+      let medal;
       // let currentRank = -1; // changer la taille de police en fonction du rank
       data.forEach(function (player, index) { // 🏆🥇🥈🥉 
-        let medal = player.rank === 1 ? "🏆" : player.rank === 2 ? "🥈" : player.rank === 3 ? "🥉" : player.rank;
+        medal = player.rank === 1 ? "🏆" : player.rank === 2 ? "🥈" : player.rank === 3 ? "🥉" : player.rank;
         graphics.drawLeftText(stateScope.game, { x: 100, y: 200 + index * 30, height: 0, width: 0 }, medal + " " +player.name, styles.playerScore);
         graphics.drawLeftText(stateScope.game, { x: 400, y: 200 + index * 30, height: 0, width: 0 }, player.score, styles.playerScore);
       });
