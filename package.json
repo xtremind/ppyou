@@ -1,6 +1,6 @@
 {
   "name": "ppyou",
-  "version": "2.4.0",
+  "version": "2.5.0-SNAPSHOT",
   "description": "a multiplayer game for PPyou",
   "dependencies": {
     "concurrently": "^3.6.1"

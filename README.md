@@ -23,10 +23,12 @@
 * FEAT add button to display last play
 * FEAT add achievements by player
 
-## VERSION 2.4.0 - IN PROGRESS
+## VERSION 2.4.0
 * FEAT improve client logger by sending data to server logger
 * FEAT improve server logger by saving in file
 * FEAT improve display regarding current player (blink, color, ...)
+
+## VERSION 2.5.0 - IN PROGRESS
 
 ## TODO LIST
 
