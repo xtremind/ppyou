@@ -5,7 +5,7 @@ const path = require('path')
 var http = require("http").Server(app);
 var io = require('socket.io')(http, { serveClient: false, pingTimeout: 30000, pingInterval: 5000 });
 var winston = require("winston");
-var RateLimit = require('express-rate-limit');
+//var RateLimit = require('express-rate-limit');
 // Customs Libraries
 var MainEngine = require("./assets/MainEngine");
 
@@ -50,13 +50,13 @@ if(process.env.NODE_ENV ===  'production'){
 io.set('transports', ['polling', 'websocket']);
 
 // set up rate limiter: maximum of five requests per minute
-var limiter = new RateLimit({
-  windowMs: 1*60*1000, // 1 minute
-  max: 5
-});
+//var limiter = new RateLimit({
+//  windowMs: 1*60*1000, // 1 minute
+//  max: 5
+//});
 
 // apply rate limiter to all requests
-app.use(limiter);
+//app.use(limiter);
 
 // Serve up index.html.
 app.use(express.static("client"));
